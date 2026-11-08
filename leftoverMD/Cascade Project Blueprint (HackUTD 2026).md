@@ -37,7 +37,6 @@ Build every P0 item first; cut from the bottom of the table upward, never the ot
 | P1 | Risk ranking, KPI strip, and extraction accuracy panel (found X of 10) | Answers "how do you know it is right" |
 | P2 | Replay of the ASHRAE RP-1043 chiller data through the anomaly detector | Real-data credibility |
 | P2 | CardDemo analysis tab (graph and explanations only) | Shows it works beyond our seed data |
-| P2 | Deploy on Brev | Prize credits; not judged on its own |
 | Cut | Login, multi-user, file upload UI, model training, contacting real tenants | No demo value in a hackathon |
 
 Anomaly detection stays statistical (no model training); the RP-1043 replay validates it offline.

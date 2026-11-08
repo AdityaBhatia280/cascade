@@ -17,7 +17,7 @@ This file was trimmed from an earlier version that also covered an oilfield spon
   - Some search snippets attach "Predict Before It Spreads" to NVIDIA. The site itself shows it under CBRE.
   - The third sponsor track found was EOG Resources' (oilfield, out of scope). **No NorthMark (NMC²) track text was captured in this research** (see "What I could not find").
 - **Entry rules.** "Each team may enter up to three sponsor tracks and one HackUTD track (Best Hardware, Best Design, or Virality)". Final submissions need a title, a description, a repo, the tracks entered, and a **demo video of at most 2 minutes**. [official] Devpost
-- **Prizes.** NVIDIA awards **2 places**: 1st is 2× RTX 5080 plus $200 Brev credits, 2nd is 1× RTX 5080 plus $200 Brev credits. CBRE awards 3 (Sony XM5, Kindle, camera). [official]
+- **Prizes.** NVIDIA awards **2 places**: 1st is 2× RTX 5080 plus $200 in NVIDIA cloud credits, 2nd is 1× RTX 5080 plus $200 in NVIDIA cloud credits. CBRE awards 3 (Sony XM5, Kindle, camera). [official]
 - **Judging layers:**
   1. **General criteria** (Devpost): Innovation and Creativity, Technical Complexity, Completeness, Design, Impact, Presentation.
   2. **NVIDIA's four required components**, which double as its de facto criteria.
