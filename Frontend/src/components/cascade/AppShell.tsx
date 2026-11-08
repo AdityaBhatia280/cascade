@@ -106,9 +106,6 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex h-8 items-center justify-center border-b border-border bg-secondary px-4 text-center text-xs text-muted-foreground">
-        Demo mode — simulated building data. No real tenants are contacted.
-      </div>
       <div className="flex flex-1">
         <aside className="sticky top-0 hidden h-screen w-16 shrink-0 flex-col border-r border-border bg-sidebar md:flex lg:w-[var(--sidebar-width)]">
           <div className="lg:hidden"><Brand compact /></div>
