@@ -35,6 +35,7 @@ export function rankRisk(): RiskEntry[] {
  * k-of-n cascade evaluator, syncing distinct Incident tickets per root fault, and broadcasting over SSE.
  */
 export function applyCustomFaults(faults: string[], skipAutoIncident = false): WhatIfResult {
+  const previousFaults = store.injectedFaults;
   store.injectedFaults = new Set(faults.filter((f) => store.getNode(f)));
   const result = evaluateFaults([...store.injectedFaults]);
 
@@ -45,9 +46,9 @@ export function applyCustomFaults(faults: string[], skipAutoIncident = false): W
       broadcastAgentEvent('incident', inc);
     }
   } else {
-    // Resolve any open incidents whose root_node is no longer faulted
+    // Only a fault this call cleared resolves its incident; incidents opened elsewhere stay open.
     for (const inc of store.getOpenIncidents()) {
-      if (!store.injectedFaults.has(inc.root_node)) {
+      if (previousFaults.has(inc.root_node) && !store.injectedFaults.has(inc.root_node)) {
         inc.status = 'resolved';
         broadcastAgentEvent('incident', inc);
       }
