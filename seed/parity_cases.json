@@ -1,0 +1,99 @@
+[
+  {
+    "id": "CASE-01",
+    "tenant_id": "TNT-NW-01",
+    "tenant_name": "Northwind Retail (Amended 2021 Base)",
+    "area_sf": 8200,
+    "base_year": 2021,
+    "base_expense_per_sf": 12.05,
+    "current_expense_per_sf": 13.40,
+    "expected_monthly": 922.50,
+    "expected_formatted": "0000922.50",
+    "description": "Northwind contractually correct billing under 2021 Lease Amendment: (13.40 - 12.05) * 8200 / 12"
+  },
+  {
+    "id": "CASE-02",
+    "tenant_id": "TNT-NW-01-BUG",
+    "tenant_name": "Northwind Retail (COBOL Hardcoded 2019 Bug)",
+    "area_sf": 8200,
+    "base_year": 2019,
+    "base_expense_per_sf": 11.20,
+    "current_expense_per_sf": 13.40,
+    "expected_monthly": 1503.33,
+    "expected_formatted": "0001503.33",
+    "description": "What legacy LEASEBIL.cbl produces with hardcoded 2019 base year: (13.40 - 11.20) * 8200 / 12"
+  },
+  {
+    "id": "CASE-03",
+    "tenant_id": "TNT-MRD-01",
+    "tenant_name": "Meridian Analytics",
+    "area_sf": 4800,
+    "base_year": 2022,
+    "base_expense_per_sf": 12.80,
+    "current_expense_per_sf": 13.40,
+    "expected_monthly": 240.00,
+    "expected_formatted": "0000240.00",
+    "description": "Standard CAM billing: (13.40 - 12.80) * 4800 / 12 = 0.60 * 400"
+  },
+  {
+    "id": "CASE-04",
+    "tenant_id": "TNT-PIN-01",
+    "tenant_name": "Pinnacle Financial",
+    "area_sf": 6200,
+    "base_year": 2020,
+    "base_expense_per_sf": 11.60,
+    "current_expense_per_sf": 13.40,
+    "expected_monthly": 930.00,
+    "expected_formatted": "0000930.00",
+    "description": "Standard calculation: (13.40 - 11.60) * 6200 / 12 = 1.80 * 6200 / 12"
+  },
+  {
+    "id": "CASE-05",
+    "tenant_id": "TNT-ROUND-1",
+    "tenant_name": "Boundary Test 1 (Half-Cent Truncation)",
+    "area_sf": 1000,
+    "base_year": 2023,
+    "base_expense_per_sf": 10.00,
+    "current_expense_per_sf": 10.07,
+    "expected_monthly": 5.83,
+    "expected_formatted": "0000005.83",
+    "description": "0.07 * 1000 / 12 = 70 / 12 = 5.8333... without ROUNDED in COMPUTE truncates to .83"
+  },
+  {
+    "id": "CASE-06",
+    "tenant_id": "TNT-ROUND-2",
+    "tenant_name": "Boundary Test 2 (Exact Half-Cent .005)",
+    "area_sf": 300,
+    "base_year": 2023,
+    "base_expense_per_sf": 10.00,
+    "current_expense_per_sf": 10.10,
+    "expected_monthly": 2.50,
+    "expected_formatted": "0000002.50",
+    "description": "0.10 * 300 / 12 = 30 / 12 = 2.50 exact boundary"
+  },
+  {
+    "id": "CASE-07",
+    "tenant_id": "TNT-ZERO-01",
+    "tenant_name": "Zero Expense Increase",
+    "area_sf": 5000,
+    "base_year": 2024,
+    "base_expense_per_sf": 13.40,
+    "current_expense_per_sf": 13.40,
+    "expected_monthly": 0.00,
+    "expected_formatted": "0000000.00",
+    "description": "Zero change produces exact zero monthly charge"
+  },
+  {
+    "id": "CASE-08",
+    "tenant_id": "TNT-NEG-01",
+    "tenant_name": "Negative Expense Adjustment (Expense Reduction)",
+    "area_sf": 4000,
+    "base_year": 2023,
+    "base_expense_per_sf": 14.00,
+    "current_expense_per_sf": 13.40,
+    "expected_monthly": 0.00,
+    "expected_formatted": "0000000.00",
+    "description": "Operating expenses decreased; floor at 0.00 (landlord does not pay tenant)"
+  }
+]
+

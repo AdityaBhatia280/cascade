@@ -1,0 +1,25 @@
+reader_id,door_name,controller_id,controller_name,network_switch,badge_group,location
+RDR-0101,Main Lobby Entrance,CTL-01,Lobby Access Controller,SW-01,ALL_TENANTS,Floor 1 - Main Entrance
+RDR-0102,Main Lobby Exit,CTL-01,Lobby Access Controller,SW-01,ALL_TENANTS,Floor 1 - Main Entrance
+RDR-0103,Loading Dock Entry,CTL-02,Loading Dock Controller,SW-04,VENDOR-DELIVERY,Floor G - Loading Dock
+RDR-0104,Loading Dock Exit,CTL-02,Loading Dock Controller,SW-04,VENDOR-DELIVERY,Floor G - Loading Dock
+RDR-0201,Suite 110 Main,CTL-03,Retail Wing Controller,SW-01,NW-RETAIL,Floor 1 - Suite 110
+RDR-0202,Suite 110 Rear,CTL-03,Retail Wing Controller,SW-01,NW-RETAIL,Floor 1 - Suite 110
+RDR-0301,DC Hall 200 Main,CTL-04,Data Center Hall Controller,SW-03,ACME-DC,Floor 2 - DC Hall 200
+RDR-0302,DC Hall 200 Emergency,CTL-04,Data Center Hall Controller,SW-03,ACME-DC,Floor 2 - DC Hall 200
+RDR-0303,DC Hall 200 Mantrap Inner,CTL-05,DC Mantrap Controller,SW-03,ACME-DC,Floor 2 - DC Mantrap
+RDR-0304,DC Hall 200 Mantrap Outer,CTL-05,DC Mantrap Controller,SW-03,ACME-DC,Floor 2 - DC Mantrap
+RDR-0401,Mech Room B2 Entry,CTL-06,Mechanical Room Controller,SW-03,FACILITIES,Basement 2 - Mechanical
+RDR-0402,Electrical Room B1 Entry,CTL-07,Electrical Room Controller,SW-03,FACILITIES,Basement 1 - Electrical
+RDR-0501,Suite 305 Main,CTL-08,Floor 3 Controller,SW-01,MRD-OFFICE,Floor 3 - Suite 305
+RDR-0502,Suite 305 Fire Exit,CTL-08,Floor 3 Controller,SW-01,MRD-OFFICE,Floor 3 - Suite 305
+RDR-0601,Suite 410 Main,CTL-09,Floor 4 Controller,SW-02,SMT-OFFICE,Floor 4 - Suite 410
+RDR-0602,Suite 410 Conference Wing,CTL-09,Floor 4 Controller,SW-02,SMT-OFFICE,Floor 4 - Suite 410
+RDR-0701,Suite 502 Main,CTL-10,Floor 5 Controller,SW-02,PIN-OFFICE,Floor 5 - Suite 502
+RDR-0801,Warehouse G01 Entry,CTL-11,Warehouse Controller,SW-04,CST-WAREHOUSE,Floor G - Warehouse
+RDR-0802,Warehouse G01 Bay Door,CTL-11,Warehouse Controller,SW-04,CST-WAREHOUSE,Floor G - Warehouse
+RDR-0901,Roof Access,CTL-12,Roof Controller,SW-02,FACILITIES,Roof
+RDR-0902,Stairwell B1-Roof,CTL-13,Stairwell Controller,SW-01,ALL_TENANTS,Stairwell B
+RDR-0903,Stairwell A1-5,CTL-14,Stairwell Controller,SW-01,ALL_TENANTS,Stairwell A
+RDR-1001,Parking Garage Entry,CTL-15,Parking Controller,SW-04,ALL_TENANTS,Parking Level P1
+RDR-1002,Parking Garage Exit,CTL-15,Parking Controller,SW-04,ALL_TENANTS,Parking Level P1

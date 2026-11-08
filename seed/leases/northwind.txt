@@ -1,0 +1,142 @@
+============================================================================
+                     COMMERCIAL LEASE AGREEMENT
+                      FIRST AMENDMENT EXCERPT
+
+                    CASCADE TOWER — SUITE 110
+
+LANDLORD:    Cascade Property Holdings LLC
+TENANT:      Northwind Retail Corp ("Tenant")
+LEASE ID:    LS-NW-2019
+============================================================================
+
+                        ARTICLE I — PREMISES
+
+Section 1.1  Premises.  Landlord leases to Tenant approximately
+eight thousand two hundred (8,200) rentable square feet located
+at Suite 110, Floor 1, Cascade Tower, 500 Commerce Drive,
+Chicago, IL 60601 (the "Premises").
+
+Section 1.2  Building.  The Building contains approximately
+fifty thousand (50,000) rentable square feet.
+
+                     ARTICLE II — LEASE TERM
+
+Section 2.1  Original Term.  The original Lease commenced on
+March 1, 2019 and expires on February 28, 2029 (the "Term").
+
+Section 2.2  Amendment Date.  This First Amendment is effective
+as of June 15, 2023.
+
+                      ARTICLE III — BASE RENT
+
+Section 3.1  Monthly Base Rent.  Tenant shall pay monthly base
+rent of Fourteen Thousand Three Hundred Fifty Dollars ($14,350.00)
+per month, subject to annual escalation as set forth below.
+
+Section 3.2  Annual Escalation.  Base Rent shall increase by
+three percent (3%) per annum on each anniversary of the
+Commencement Date.
+
+                 ARTICLE IV — OPERATING EXPENSES
+
+Section 4.1  Base Year.  The Base Year for purposes of computing
+Tenant's share of Operating Expense increases shall be calendar
+year 2019 (the "Original Base Year").
+
+  ** FIRST AMENDMENT — Section 4.1A (replaces Section 4.1): **
+
+  Effective as of the date of this First Amendment (June 15, 2023),
+  the Base Year for purposes of computing Tenant's share of
+  Operating Expense increases is hereby amended to calendar year
+  2021 (the "Amended Base Year"). All references to "Base Year"
+  in the Lease shall hereafter refer to calendar year 2021.
+
+  The parties acknowledge the following historical Operating
+  Expense levels:
+
+    Calendar Year 2019:  $11.20 per rentable square foot
+    Calendar Year 2020:  $11.55 per rentable square foot
+    Calendar Year 2021:  $12.05 per rentable square foot (Amended Base)
+    Calendar Year 2022:  $12.70 per rentable square foot
+    Calendar Year 2023:  $13.10 per rentable square foot
+    Calendar Year 2024:  $13.40 per rentable square foot (Current)
+
+Section 4.2  Tenant's Pro-Rata Share.  Tenant's pro-rata share
+of Operating Expense increases above the Base Year shall be
+computed as follows:
+
+  Tenant's Share = Tenant RSF / Building Total RSF
+                 = 8,200 / 50,000
+                 = 16.40%
+
+  The pro-rata denominator shall be the total rentable area of
+  the Building (50,000 RSF), regardless of occupancy.
+
+Section 4.3  Monthly CAM Charge Calculation.
+
+  Monthly CAM = (Current OpEx/SF - Base Year OpEx/SF)
+                × Tenant RSF ÷ 12
+
+  Using Amended Base Year 2021 ($12.05/SF) and current year
+  2024 ($13.40/SF):
+
+    Expense Increase = $13.40 - $12.05 = $1.35/SF
+    Annual CAM = $1.35 × 8,200 = $11,070.00
+    Monthly CAM = $11,070.00 ÷ 12 = $922.50
+
+  IMPORTANT: If the Original Base Year 2019 ($11.20/SF) were
+  used instead (erroneously):
+
+    Expense Increase = $13.40 - $11.20 = $2.20/SF
+    Annual CAM = $2.20 × 8,200 = $18,040.00
+    Monthly CAM = $18,040.00 ÷ 12 = $1,503.33
+
+  Overcharge per month = $1,503.33 - $922.50 = $580.83
+  Overcharge per year  = $580.83 × 12 = $6,969.96
+  (Rounded: $6,970.00 annual overcharge)
+
+Section 4.4  CAM Cap.  Tenant's annual share of Operating
+Expense increases shall be subject to a cumulative cap of five
+percent (5%) per annum compounded from the Amended Base Year.
+The cumulative cap operates as follows:
+
+  Year 1 (2022): Max increase = $12.05 × 1.05 = $12.6525
+  Year 2 (2023): Max increase = $12.05 × 1.05² = $13.2851
+  Year 3 (2024): Max increase = $12.05 × 1.05³ = $13.9494
+
+  Since the actual 2024 expense ($13.40) is below the
+  cumulative cap ($13.9494), the cap does not apply in 2024.
+
+                    ARTICLE V — LEASE TYPE
+
+Section 5.1  Modified Gross Lease.  This Lease is a modified
+gross lease. Tenant is responsible for its pro-rata share of
+Operating Expense increases above the Base Year, as set forth
+in Article IV.
+
+                  ARTICLE VI — MISCELLANEOUS
+
+Section 6.1  Audit Rights.  Tenant shall have the right to
+audit Landlord's Operating Expense records within one hundred
+twenty (120) days following delivery of the annual reconciliation
+statement.
+
+Section 6.2  Dispute Resolution.  Any disputes arising under
+this Lease shall be resolved through binding arbitration in
+Cook County, Illinois.
+
+============================================================================
+                        SIGNATURES
+
+LANDLORD:  Cascade Property Holdings LLC
+By:        ________________________________
+Name:      Thomas R. Whitfield
+Title:     Managing Director
+Date:      June 15, 2023
+
+TENANT:    Northwind Retail Corp
+By:        ________________________________
+Name:      Janet M. Kowalski
+Title:     Vice President, Real Estate
+Date:      June 15, 2023
+============================================================================

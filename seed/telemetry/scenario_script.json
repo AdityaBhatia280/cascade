@@ -1,0 +1,47 @@
+{
+  "name": "Cascade Data Center Cooling Failure Scenario",
+  "description": "Scripted telemetry scenario demonstrating k-of-n redundancy absorption followed by secondary cascade failure.",
+  "duration_seconds": 180,
+  "events": [
+    {
+      "time_seconds": 0,
+      "type": "NORMAL_OPERATION",
+      "description": "All 3 chillers operational, loop flow 350 L/min, hall temp 21.5°C, UPS panels 55% balanced."
+    },
+    {
+      "time_seconds": 40,
+      "type": "CHILLER_TRIP",
+      "target_node": "CH-2",
+      "description": "Chiller CH-2 trips offline. Redundancy check: 2 of 3 chillers (CH-1, CH-3) remain operational (k_required=2). System state: DEGRADED. No cascade triggered.",
+      "readings_override": {
+        "PT-CH2-TEMP": 28.5,
+        "PT-LOOP-FLOW": 310.0,
+        "PT-HALL-TEMP": 22.8
+      }
+    },
+    {
+      "time_seconds": 90,
+      "type": "POWER_ANOMALY_SECONDARY_TRIP",
+      "target_node": "UPS-B",
+      "secondary_node": "CH-1",
+      "description": "Power transient on UPS Panel B trips CH-1 (dependent per D6). Only 1 chiller (CH-3) remains where 2 required. K-of-N breached! Thermal runaway begins.",
+      "readings_override": {
+        "PT-UPSB-LOAD": 98.4,
+        "PT-CH1-TEMP": 27.0,
+        "PT-LOOP-FLOW": 140.0,
+        "PT-HALL-TEMP": 28.6
+      }
+    },
+    {
+      "time_seconds": 96,
+      "type": "ANOMALY_TRIGGERED",
+      "description": "EWMA z-score exceeds 3.0 on PT-LOOP-FLOW and PT-HALL-TEMP for 3 consecutive samples. Incident created. Nemotron agent triggered unprompted."
+    },
+    {
+      "time_seconds": 120,
+      "type": "HALL_OVERHEAT_SLA_BREACH",
+      "description": "Hall 200 inlet temperature reaches 32.5°C (> critical limit 32°C). Acme Cloud Services SLA breached (D9). SLA credit counter begins ($4,500/hr credit tier)."
+    }
+  ]
+}
+

@@ -1,0 +1,3 @@
+### Prompt 2 — Operations screens (Equipment, Incidents, Actions & Audit Log, Voice Agent)
+> **"Step 2: Using the same `src/lib/api.ts` contract and design tokens from `LOVABLE_SPEC.md`, implement Screen 5.3 (`/equipment` Equipment table with search/filter and click-through to `/intelligence`), Screen 5.4 (`/incidents` and `/incidents/:id` with predicted timeline, per-tenant SLA impact table, and live Agent Trace), Screen 5.5 (`/actions` Actions & immutable compliance audit log with expandable payload rows), and Screen 5.6 (`/voice` Voice agent screen with Retell web call integration and clearly labeled simulated call fallback)."**
+

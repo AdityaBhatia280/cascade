@@ -1,0 +1,144 @@
+============================================================================
+                     DATA CENTER LEASE AGREEMENT
+                           EXCERPT
+
+                  CASCADE TOWER — DATA CENTER HALL 200
+
+LANDLORD:    Cascade Property Holdings LLC
+TENANT:      Acme Cloud Services LLC ("Tenant")
+LEASE ID:    LS-ACME-DC
+============================================================================
+
+                        ARTICLE I — PREMISES
+
+Section 1.1  Premises.  Landlord leases to Tenant approximately
+twelve thousand five hundred (12,500) rentable square feet
+comprising the entirety of Data Center Hall 200, Floor 2, Cascade
+Tower, 500 Commerce Drive, Chicago, IL 60601 (the "Premises").
+
+Section 1.2  Data Center Classification.  The Premises are
+designated as a Tier III data center environment with the
+following committed infrastructure:
+
+  (a) N+1 cooling redundancy (minimum 2 of 3 chillers operational)
+  (b) 2N power distribution via UPS-A and UPS-B panels
+  (c) Dedicated CRAH units (CRAH-1 through CRAH-4)
+  (d) Mantrap physical access control with biometric readers
+  (e) Environmental monitoring (temperature, humidity)
+
+                     ARTICLE II — LEASE TERM
+
+Section 2.1  Term.  The Lease commences on January 1, 2020 and
+expires on December 31, 2030 (the "Term").
+
+                      ARTICLE III — RENT
+
+Section 3.1  Monthly Fee.  Tenant shall pay a monthly fee of
+Forty-Five Thousand Dollars ($45,000.00) per month (the "Monthly
+Fee"), inclusive of base rent, power, and cooling allocations.
+
+Section 3.2  No Escalation.  The Monthly Fee is fixed for the
+Term and is not subject to annual escalation.
+
+                ARTICLE IV — OPERATING EXPENSES
+
+Section 4.1  Triple Net.  This is a triple net lease (NNN).
+Tenant is responsible for its pro-rata share of Operating
+Expenses computed using the total building area (50,000 RSF)
+as the denominator.
+
+Section 4.2  Base Year.  Calendar year 2020. Base operating
+expense: $18.50 per rentable square foot.
+
+Section 4.3  Current Year.  Current operating expense:
+$22.10 per rentable square foot (2024).
+
+             ARTICLE V — SERVICE LEVEL AGREEMENT
+
+Section 5.1  Cooling SLA.  Landlord guarantees cooling system
+availability of ninety-nine and ninety-nine hundredths percent
+(99.99%) measured on a monthly basis (the "Cooling SLA"). The
+Cooling SLA is measured based on the availability of sufficient
+chiller capacity to maintain data center environmental conditions
+within ASHRAE A1 guidelines (inlet temperature 18°C–27°C).
+
+Section 5.2  Cooling SLA Measurement.  A "Cooling Failure Event"
+occurs when fewer than two (2) of the three (3) building chillers
+(CH-1, CH-2, CH-3) are operational simultaneously, as reported
+by the Building Management System (BMS). The BMS shall export
+a daily status file (COOLFLAG.DAT) indicating cooling status
+for each monitored unit.
+
+Section 5.3  SLA Credit Schedule.  In the event of a Cooling
+Failure Event, Tenant shall receive a credit against the Monthly
+Fee according to the following schedule:
+
+  Duration of Outage          Credit (% of Monthly Fee)
+  ─────────────────────────   ─────────────────────────
+  Up to 1 hour (0-60 min)     5%  ($2,250.00)
+  1-4 hours (61-240 min)     10%  ($4,500.00)
+  4-8 hours (241-480 min)    20%  ($9,000.00)
+  Over 8 hours (480+ min)    30%  ($13,500.00)
+
+  Credits are non-cumulative within a single calendar month;
+  the maximum credit in any month shall be thirty percent (30%)
+  of the Monthly Fee.
+
+Section 5.4  SLA Credit Processing.  SLA credits shall be
+computed automatically by Landlord's billing system using
+cooling status data from the BMS. Credits shall be applied
+to the following month's invoice.
+
+Section 5.5  Exclusions.  The Cooling SLA does not apply during:
+  (a) Scheduled maintenance windows (with 72 hours prior notice)
+  (b) Force majeure events
+  (c) Tenant-caused incidents
+
+                ARTICLE VI — PHYSICAL SECURITY
+
+Section 6.1  Access Control.  The Premises shall be secured by
+mantrap access control with dual-factor authentication (badge +
+biometric). Access is restricted to Tenant-authorized personnel
+and pre-approved Landlord maintenance staff.
+
+Section 6.2  Vendor Access.  Vendor access to the Premises
+requires written Tenant approval and shall be limited to the
+scope and duration of the applicable work order.
+
+                  ARTICLE VII — ENVIRONMENTAL
+
+Section 7.1  Temperature.  Landlord shall maintain cold-aisle
+inlet temperatures between 18°C and 27°C per ASHRAE A1 guidelines.
+
+Section 7.2  Humidity.  Landlord shall maintain relative humidity
+between 30% and 70% per ASHRAE A1 guidelines.
+
+                 ARTICLE VIII — MISCELLANEOUS
+
+Section 8.1  Infrastructure Dependencies.  Tenant acknowledges
+that the data center cooling infrastructure has the following
+power dependencies:
+
+  - Chillers CH-1, CH-2, CH-3 are powered via building UPS panels
+  - CRAH units CRAH-1 through CRAH-4 are powered via building UPS panels
+  - BMS monitoring and access control systems share network infrastructure
+
+Section 8.2  Reporting.  Landlord shall provide monthly uptime
+reports including chiller availability, temperature excursions,
+and any SLA credit calculations.
+
+============================================================================
+                        SIGNATURES
+
+LANDLORD:  Cascade Property Holdings LLC
+By:        ________________________________
+Name:      Thomas R. Whitfield
+Title:     Managing Director
+Date:      January 1, 2020
+
+TENANT:    Acme Cloud Services LLC
+By:        ________________________________
+Name:      Marcus L. Chen
+Title:     Chief Operating Officer
+Date:      January 1, 2020
+============================================================================

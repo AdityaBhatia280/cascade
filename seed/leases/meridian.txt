@@ -1,0 +1,90 @@
+============================================================================
+                     COMMERCIAL LEASE AGREEMENT
+                           EXCERPT
+
+                    CASCADE TOWER — SUITE 305
+
+LANDLORD:    Cascade Property Holdings LLC
+TENANT:      Meridian Analytics Group ("Tenant")
+LEASE ID:    LS-MRD-2022
+============================================================================
+
+                        ARTICLE I — PREMISES
+
+Section 1.1  Premises.  Landlord leases to Tenant approximately
+four thousand eight hundred (4,800) rentable square feet located
+at Suite 305, Floor 3, Cascade Tower, 500 Commerce Drive,
+Chicago, IL 60601 (the "Premises").
+
+Section 1.2  Building.  The Building contains approximately
+fifty thousand (50,000) rentable square feet.
+
+                     ARTICLE II — LEASE TERM
+
+Section 2.1  Term.  The Lease commences on July 1, 2022 and
+expires on June 30, 2027 (the "Term").
+
+                      ARTICLE III — BASE RENT
+
+Section 3.1  Monthly Base Rent.  Tenant shall pay monthly base
+rent of Eight Thousand Nine Hundred Dollars ($8,900.00) per
+month, subject to annual escalation.
+
+Section 3.2  Annual Escalation.  Base Rent shall increase by
+two and one-half percent (2.5%) per annum on each anniversary
+of the Commencement Date.
+
+                 ARTICLE IV — OPERATING EXPENSES
+
+Section 4.1  Base Year.  Calendar year 2022. Base operating
+expense: $12.80 per rentable square foot.
+
+Section 4.2  Current Year Operating Expense.  Calendar year
+2024: $13.40 per rentable square foot.
+
+Section 4.3  Tenant's Pro-Rata Share.
+
+  Tenant's Share = 4,800 / 50,000 = 9.60%
+
+  Pro-rata denominator is the total building area (50,000 RSF).
+
+Section 4.4  Monthly CAM Charge Calculation.
+
+  Expense Increase = $13.40 - $12.80 = $0.60/SF
+  Annual CAM = $0.60 × 4,800 = $2,880.00
+  Monthly CAM = $2,880.00 ÷ 12 = $240.00
+
+Section 4.5  CAM Cap.  Non-cumulative cap of four percent (4%)
+per annum. The year-over-year increase in operating expenses
+shall not exceed 4% of the prior year's operating expense level
+for purposes of computing Tenant's share.
+
+  2023 cap: $12.80 × 1.04 = $13.312 (actual $13.10 — under cap)
+  2024 cap: $13.10 × 1.04 = $13.624 (actual $13.40 — under cap)
+
+                    ARTICLE V — LEASE TYPE
+
+Section 5.1  Modified Gross Lease.  This Lease is a modified
+gross lease.
+
+                 ARTICLE VI — MISCELLANEOUS
+
+Section 6.1  Audit Rights.  Tenant shall have the right to
+audit Landlord's Operating Expense records within ninety (90)
+days following delivery of the annual statement.
+
+Section 6.2  HVAC Hours.  Standard HVAC service: Monday through
+Friday, 7:00 AM to 7:00 PM; Saturday, 8:00 AM to 1:00 PM.
+After-hours HVAC available at $75.00 per hour.
+
+============================================================================
+                        SIGNATURES
+
+LANDLORD:  Cascade Property Holdings LLC
+By:        Thomas R. Whitfield, Managing Director
+Date:      July 1, 2022
+
+TENANT:    Meridian Analytics Group
+By:        Sarah A. Patel, Managing Partner
+Date:      July 1, 2022
+============================================================================

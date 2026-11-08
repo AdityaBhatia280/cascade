@@ -1,0 +1,66 @@
+[
+  {
+    "id": "SF-01",
+    "filename": "seed/cobol/LEASEBIL.cbl",
+    "language": "COBOL",
+    "line_count": 363,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-02",
+    "filename": "seed/cobol/LEASECPY.cpy",
+    "language": "COBOL Copybook",
+    "line_count": 72,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-03",
+    "filename": "seed/cobol/CAMCALC.cbl",
+    "language": "COBOL",
+    "line_count": 140,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-04",
+    "filename": "seed/jcl/INVBATCH.jcl",
+    "language": "JCL",
+    "line_count": 92,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-05",
+    "filename": "seed/sql/schema.sql",
+    "language": "SQL",
+    "line_count": 310,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-06",
+    "filename": "seed/bms/bms_config.json",
+    "language": "JSON / BACnet",
+    "line_count": 450,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-07",
+    "filename": "seed/access/access_export.csv",
+    "language": "CSV",
+    "line_count": 26,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-08",
+    "filename": "seed/leases/northwind.txt",
+    "language": "Legal Text",
+    "line_count": 128,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  },
+  {
+    "id": "SF-09",
+    "filename": "seed/leases/acme.txt",
+    "language": "Legal Text",
+    "line_count": 135,
+    "ingested_at": "2026-11-07T12:00:00Z"
+  }
+]
+

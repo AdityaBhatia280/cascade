@@ -1,0 +1,56 @@
+[
+  {
+    "id": "PT-CH1-TEMP",
+    "node_id": "CH-1",
+    "name": "CH-1 supply temp",
+    "unit": "°C",
+    "expected_min": 6.0,
+    "expected_max": 10.0,
+    "baseline": 7.2
+  },
+  {
+    "id": "PT-CH2-TEMP",
+    "node_id": "CH-2",
+    "name": "CH-2 supply temp",
+    "unit": "°C",
+    "expected_min": 6.0,
+    "expected_max": 10.0,
+    "baseline": 7.4
+  },
+  {
+    "id": "PT-CH3-TEMP",
+    "node_id": "CH-3",
+    "name": "CH-3 supply temp",
+    "unit": "°C",
+    "expected_min": 6.0,
+    "expected_max": 10.0,
+    "baseline": 7.1
+  },
+  {
+    "id": "PT-LOOP-FLOW",
+    "node_id": "cooling_loop",
+    "name": "Loop flow",
+    "unit": "L/min",
+    "expected_min": 250.0,
+    "expected_max": 400.0,
+    "baseline": 350.0
+  },
+  {
+    "id": "PT-HALL-TEMP",
+    "node_id": "hall_200",
+    "name": "Hall 200 inlet temp",
+    "unit": "°C",
+    "expected_min": 20.0,
+    "expected_max": 24.0,
+    "baseline": 21.5
+  },
+  {
+    "id": "PT-UPSB-LOAD",
+    "node_id": "UPS-B",
+    "name": "UPS-B load",
+    "unit": "%",
+    "expected_min": 35.0,
+    "expected_max": 75.0,
+    "baseline": 54.0
+  }
+]

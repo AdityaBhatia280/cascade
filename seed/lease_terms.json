@@ -1,0 +1,58 @@
+[
+  {
+    "id": "LT-ACME-01",
+    "tenant_node_id": "hall_200",
+    "clause_key": "SLA-99.99",
+    "clause_text": "Section 5.1 Cooling SLA. Landlord guarantees cooling availability of 99.99%. Tier 1 penalty 5%, Tier 2 10%, Tier 3 20%, Tier 4 30% of monthly fee.",
+    "monthly_amount_usd": 45000,
+    "sla_pct": 99.99,
+    "penalty_pct": 0.30,
+    "source_file": "seed/leases/acme.txt",
+    "source_line": 58
+  },
+  {
+    "id": "LT-NORTHWIND-01",
+    "tenant_node_id": "northwind_retail",
+    "clause_key": "CAM-BASE-YEAR",
+    "clause_text": "First Amendment Section 2: Base Year amended from 2019 ($11.20/SF) to 2021 ($12.05/SF). Current year OpEx $13.40/SF.",
+    "monthly_amount_usd": 15200,
+    "sla_pct": 99.0,
+    "penalty_pct": 0.0,
+    "source_file": "seed/leases/northwind.txt",
+    "source_line": 51
+  },
+  {
+    "id": "LT-MERIDIAN-01",
+    "tenant_node_id": "meridian_analytics",
+    "clause_key": "CAM-PRO-RATA",
+    "clause_text": "Section 4.3 Tenant Pro-Rata Share: 4,800 / 50,000 RSF = 9.60%. Base year 2022 ($12.80/SF).",
+    "monthly_amount_usd": 8900,
+    "sla_pct": 99.0,
+    "penalty_pct": 0.0,
+    "source_file": "seed/leases/meridian.txt",
+    "source_line": 45
+  },
+  {
+    "id": "LT-PINNACLE-01",
+    "tenant_node_id": "pinnacle_financial",
+    "clause_key": "CAM-CAPPED",
+    "clause_text": "Section 4.4 Operating Expense Cap: Controllable expenses capped at 6% per annum cumulative.",
+    "monthly_amount_usd": 11500,
+    "sla_pct": 99.0,
+    "penalty_pct": 0.0,
+    "source_file": "seed/leases/pinnacle.txt",
+    "source_line": 40
+  },
+  {
+    "id": "LT-COASTAL-01",
+    "tenant_node_id": "coastal_logistics",
+    "clause_key": "NNN-SHARE",
+    "clause_text": "Section 4.3 Triple Net Lease: 10,500 / 40,000 RSF = 26.25% share of all property expenses.",
+    "monthly_amount_usd": 14000,
+    "sla_pct": 99.0,
+    "penalty_pct": 0.0,
+    "source_file": "seed/leases/coastal.txt",
+    "source_line": 34
+  }
+]
+

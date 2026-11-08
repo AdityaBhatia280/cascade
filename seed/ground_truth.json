@@ -1,0 +1,169 @@
+{
+  "dependencies": [
+    {
+      "id": "D1",
+      "from": "COOLFLAG.DAT",
+      "to": "LEASEBIL",
+      "kind": "reads",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/cobol/LEASEBIL.cbl",
+      "evidence_line": 278,
+      "snippet": "READ COOL-STATUS-FILE INTO COOL-STATUS-REC",
+      "description": "LEASEBIL reads COOLFLAG.DAT to determine chiller outage status for SLA billing penalty calculation.",
+      "is_real": true
+    },
+    {
+      "id": "D2",
+      "from": "cooling_loop",
+      "to": "COOLFLAG.DAT",
+      "kind": "writes",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/bms/bms_config.json",
+      "evidence_line": 12,
+      "snippet": "\"output_file\": \"COOLFLAG.DAT\"",
+      "description": "BMS export job exports chiller cooling status flags to COOLFLAG.DAT.",
+      "is_real": true
+    },
+    {
+      "id": "D3",
+      "from": "LEASECPY",
+      "to": "CAMCALC",
+      "kind": "shares",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/cobol/CAMCALC.cbl",
+      "evidence_line": 39,
+      "snippet": "COPY LEASECPY.",
+      "description": "CAMCALC shares lease record layout copybook with LEASEBIL.",
+      "is_real": true
+    },
+    {
+      "id": "D4",
+      "from": "LEASEBIL",
+      "to": "northwind_retail",
+      "kind": "bills",
+      "delay_min": 0,
+      "confidence": 0.95,
+      "evidence_file": "seed/cobol/LEASEBIL.cbl",
+      "evidence_line": 91,
+      "snippet": "05  WS-BASE-YEAR            PIC 9(4)    VALUE 2019.",
+      "description": "LEASEBIL hardcodes base year 2019 whereas Northwind Lease Amendment (line 51) set base year to 2021, overcharging $580.83/mo ($6,970/yr).",
+      "is_real": true
+    },
+    {
+      "id": "D5",
+      "from": "work_orders",
+      "to": "badge_access",
+      "kind": "grants",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/sql/schema.sql",
+      "evidence_line": 279,
+      "snippet": "CREATE TRIGGER trg_work_order_badge",
+      "description": "SQL trigger trg_work_order_badge automatically grants physical badge access when a work order is assigned to a vendor.",
+      "is_real": true
+    },
+    {
+      "id": "D6",
+      "from": "UPS-B",
+      "to": "CH-1",
+      "kind": "powers",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/bms/bms_config.json",
+      "evidence_line": 35,
+      "snippet": "\"ups_panel\": \"UPS-B\"",
+      "description": "Chiller 1 (CH-1) controls are powered by UPS Panel B, creating a hidden single point of failure with CRAH-4.",
+      "is_real": true
+    },
+    {
+      "id": "D7",
+      "from": "UPS-B",
+      "to": "CRAH-4",
+      "kind": "powers",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/bms/bms_config.json",
+      "evidence_line": 320,
+      "snippet": "\"ups_panel\": \"UPS-B\"",
+      "description": "Computer Room Air Handler 4 (CRAH-4) is powered by UPS Panel B, sharing power with CH-1.",
+      "is_real": true
+    },
+    {
+      "id": "D8",
+      "from": "SW-03",
+      "to": "CTL-04",
+      "kind": "network",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/access/access_export.csv",
+      "evidence_line": 8,
+      "snippet": "RDR-0301,DC Hall 200 Main,CTL-04,Data Center Hall Controller,SW-03,ACME-DC,Floor 2 - DC Hall 200",
+      "description": "Data center hall door controller CTL-04 runs through network switch SW-03, the same switch serving the BMS system.",
+      "is_real": true
+    },
+    {
+      "id": "D9",
+      "from": "hall_200",
+      "to": "acme_sla",
+      "kind": "contractual",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/leases/acme.txt",
+      "evidence_line": 58,
+      "snippet": "Section 5.1  Cooling SLA.  Landlord guarantees cooling system availability of ninety-nine and ninety-nine hundredths percent (99.99%)",
+      "description": "Acme Cloud Services lease contractually mandates 99.99% cooling availability with escalating SLA credit penalty tiers.",
+      "is_real": true
+    },
+    {
+      "id": "D10",
+      "from": "INVBATCH",
+      "to": "LEASEBIL",
+      "kind": "schedules",
+      "delay_min": 0,
+      "confidence": 1.0,
+      "evidence_file": "seed/jcl/INVBATCH.jcl",
+      "evidence_line": 36,
+      "snippet": "//STEP010  EXEC PGM=LEASEBIL,REGION=0M",
+      "description": "Nightly batch job executes LEASEBIL (STEP010) before BMSEXPORT (STEP020, line 66), causing billing to read yesterday's stale cooling flags.",
+      "is_real": true
+    }
+  ],
+  "decoys": [
+    {
+      "id": "X1",
+      "from": "LEASEBIL",
+      "to": "METERREAD",
+      "kind": "reads",
+      "evidence_file": "seed/cobol/LEASEBIL.cbl",
+      "evidence_line": 15,
+      "snippet": "* NOTE: METERREAD SUBPROGRAM INTEGRATION PLANNED FOR Q3 2019",
+      "description": "Comment in LEASEBIL mentions planned METERREAD integration, but no active CALL or file dependency exists.",
+      "is_real": false
+    },
+    {
+      "id": "X2",
+      "from": "CTL-01",
+      "to": "SW-01",
+      "kind": "network",
+      "evidence_file": "seed/access/access_export.csv",
+      "evidence_line": 2,
+      "snippet": "RDR-0101,Main Lobby Entrance,CTL-01,Lobby Access Controller,SW-01,ALL_TENANTS",
+      "description": "Standard corporate office network switch SW-01, has no connection to critical BMS or cooling controls.",
+      "is_real": false
+    },
+    {
+      "id": "X3",
+      "from": "coastal_logistics",
+      "to": "bms_meters",
+      "kind": "reads",
+      "evidence_file": "seed/leases/coastal.txt",
+      "evidence_line": 36,
+      "snippet": "Tenant pays pro-rata share of all operating costs, taxes, and insurance without cap.",
+      "description": "Coastal lease has standard NNN utility language with no sub-metering or telemetry links.",
+      "is_real": false
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "id": "F-1",
+    "kind": "billing_discrepancy",
+    "severity": "high",
+    "title": "Northwind base year billing discrepancy",
+    "description": "LEASEBIL hardcodes base year 2019 ($11.20/sf). The 2021 amendment sets the base to $12.05/sf. Northwind (8,200 sf) is overcharged $580.83/month.",
+    "node_ids": ["LEASEBIL", "northwind_retail"],
+    "usd_per_year": 6970,
+    "code_file": "seed/cobol/LEASEBIL.cbl",
+    "code_line": 91,
+    "contract_file": "seed/leases/northwind.txt",
+    "contract_line": 51,
+    "monthly_billed_usd": 1503.33,
+    "monthly_correct_usd": 922.50
+  },
+  {
+    "id": "F-2",
+    "kind": "hidden_dependency",
+    "severity": "critical",
+    "title": "Chiller 1 and CRAH 4 share UPS panel B",
+    "description": "One power event on UPS-B takes out a chiller and an air handler at once, defeating the 2-of-3 chiller redundancy.",
+    "node_ids": ["UPS-B", "CH-1", "CRAH-4"],
+    "usd_per_year": 0,
+    "code_file": "seed/bms/bms_config.json",
+    "code_line": 35
+  },
+  {
+    "id": "F-3",
+    "kind": "hidden_dependency",
+    "severity": "high",
+    "title": "Billing reads physical cooling status",
+    "description": "LEASEBIL reads COOLFLAG.DAT written by the BMS export; a cooling outage changes invoices.",
+    "node_ids": ["cooling_loop", "COOLFLAG.DAT", "LEASEBIL"],
+    "usd_per_year": 0,
+    "code_file": "seed/cobol/LEASEBIL.cbl",
+    "code_line": 278
+  },
+  {
+    "id": "F-4",
+    "kind": "hidden_dependency",
+    "severity": "medium",
+    "title": "Nightly batch reads stale cooling flags",
+    "description": "INVBATCH runs LEASEBIL (step 010) before the BMS export (step 020).",
+    "node_ids": ["INVBATCH", "LEASEBIL"],
+    "usd_per_year": 0,
+    "code_file": "seed/jcl/INVBATCH.jcl",
+    "code_line": 36
+  },
+  {
+    "id": "F-5",
+    "kind": "security",
+    "severity": "high",
+    "title": "Work orders auto-grant badge access",
+    "description": "Trigger trg_work_order_badge at seed/sql/schema.sql:279 grants physical access with no review.",
+    "node_ids": ["work_orders", "badge_access"],
+    "usd_per_year": 0,
+    "code_file": "seed/sql/schema.sql",
+    "code_line": 279
+  }
+]

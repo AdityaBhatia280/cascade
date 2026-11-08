@@ -1,0 +1,166 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import "@xyflow/react/dist/style.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --font-sans: "Inter", Arial, Helvetica, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-critical: var(--critical);
+  --color-critical-soft: var(--critical-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-surface: var(--card);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 12px;
+  /* Cascade tokens */
+  --background: oklch(0.985 0 0); /* #fafafa */
+  --foreground: oklch(0.178 0 0); /* #111111 */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.178 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.178 0 0);
+  --primary: oklch(0.68 0.215 41.5); /* #ff5900 */
+  --primary-foreground: oklch(1 0 0);
+  --primary-soft: oklch(0.96 0.035 50);
+  --secondary: oklch(0.967 0.003 264.5); /* #f3f4f6 */
+  --secondary-foreground: oklch(0.178 0 0);
+  --muted: oklch(0.967 0.003 264.5);
+  --muted-foreground: oklch(0.551 0.023 264.4); /* #6b7280 */
+  --accent: oklch(0.967 0.003 264.5);
+  --accent-foreground: oklch(0.178 0 0);
+  --destructive: oklch(0.577 0.215 27.3); /* #dc2626 */
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.527 0.137 150); /* #15803d */
+  --success-soft: oklch(0.962 0.04 150);
+  --warning: oklch(0.555 0.134 58); /* #b45309 */
+  --warning-soft: oklch(0.962 0.05 85);
+  --critical: oklch(0.577 0.215 27.3);
+  --critical-soft: oklch(0.958 0.025 17);
+  --info: oklch(0.546 0.215 262.9); /* #2563eb */
+  --info-soft: oklch(0.955 0.025 255);
+  --border: oklch(0.928 0.006 264.5); /* #e5e7eb */
+  --input: oklch(0.928 0.006 264.5);
+  --ring: oklch(0.68 0.215 41.5);
+  --chart-1: oklch(0.68 0.215 41.5);
+  --chart-2: oklch(0.707 0.012 264);
+  --chart-3: oklch(0.551 0.023 264.4);
+  --chart-4: oklch(0.85 0.006 264);
+  --chart-5: oklch(0.4 0.01 264);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.178 0 0);
+  --sidebar-primary: oklch(0.68 0.215 41.5);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.967 0.003 264.5);
+  --sidebar-accent-foreground: oklch(0.178 0 0);
+  --sidebar-border: oklch(0.928 0.006 264.5);
+  --sidebar-ring: oklch(0.68 0.215 41.5);
+  --sidebar-width: 240px;
+  --header-height: 64px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 14px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0ms !important;
+      animation-duration: 0ms !important;
+    }
+  }
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+@utility page-title {
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 680;
+  letter-spacing: -0.025em;
+}
+@utility section-title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+@utility card-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility metric-value {
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: 680;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+@utility label-text {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+}
+
+/* React Flow restyle */
+.react-flow__edge-path { stroke: var(--color-chart-2); stroke-width: 1.25; }
+.react-flow__edge.unverified .react-flow__edge-path { stroke-dasharray: 5 4; }
+.react-flow__edge.selected .react-flow__edge-path { stroke: var(--color-primary); }
+.react-flow__controls { box-shadow: none; border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; }
+.react-flow__minimap { border: 1px solid var(--color-border); border-radius: 8px; }

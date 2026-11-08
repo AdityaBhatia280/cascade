@@ -1,0 +1,584 @@
+{
+  "bms_system": {
+    "system_id": "CASCADE-BMS-01",
+    "protocol": "BACnet/IP",
+    "site_name": "Cascade Tower",
+    "firmware_version": "4.2.1",
+    "last_calibration": "2024-01-15",
+    "network_switch": "SW-03",
+    "polling_interval_sec": 15,
+    "export": {
+      "enabled": true,
+      "output_file": "COOLFLAG.DAT",
+      "format": "FIXED_80",
+      "schedule": "DAILY_0200",
+      "description": "Exports cooling system status flags for lease billing SLA credit processing. Each record contains unit ID, cooling OK/FAIL status, timestamp, and outage duration in minutes.",
+      "record_layout": {
+        "unit_id": { "start": 1, "length": 8 },
+        "status": { "start": 9, "length": 1, "values": ["Y", "N"] },
+        "timestamp": { "start": 10, "length": 19, "format": "YYYY-MM-DD HH:MM:SS" },
+        "duration_min": { "start": 29, "length": 4, "format": "9999" },
+        "detail": { "start": 33, "length": 48 }
+      }
+    }
+  },
+
+  "chillers": {
+    "description": "Central chilled water plant — 3x chillers, 2 required for N+1 redundancy",
+    "k_required": 2,
+    "units": [
+      {
+        "object_id": "AV:1001",
+        "name": "CH-1",
+        "description": "Chiller 1 — York YVAA 350-ton",
+        "location": "Mechanical Room B2",
+        "ups_panel": "UPS-B",
+        "network_switch": "SW-03",
+        "points": [
+          {
+            "object_id": "AI:1010",
+            "name": "CH-1.SupplyTemp",
+            "description": "Chiller 1 supply water temperature",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 6.0,
+            "expected_max": 12.0,
+            "alarm_high": 14.0,
+            "alarm_low": 4.0
+          },
+          {
+            "object_id": "AI:1011",
+            "name": "CH-1.ReturnTemp",
+            "description": "Chiller 1 return water temperature",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 10.0,
+            "expected_max": 18.0
+          },
+          {
+            "object_id": "AI:1012",
+            "name": "CH-1.Power",
+            "description": "Chiller 1 power draw",
+            "units": "kW",
+            "scale_factor": 1,
+            "expected_min": 0,
+            "expected_max": 280
+          },
+          {
+            "object_id": "BI:1013",
+            "name": "CH-1.RunStatus",
+            "description": "Chiller 1 running status",
+            "units": "boolean",
+            "values": { "0": "STOPPED", "1": "RUNNING" }
+          },
+          {
+            "object_id": "BI:1014",
+            "name": "CH-1.FaultStatus",
+            "description": "Chiller 1 fault alarm",
+            "units": "boolean",
+            "values": { "0": "NORMAL", "1": "FAULT" }
+          }
+        ]
+      },
+      {
+        "object_id": "AV:1002",
+        "name": "CH-2",
+        "description": "Chiller 2 — York YVAA 350-ton",
+        "location": "Mechanical Room B2",
+        "ups_panel": "UPS-A",
+        "network_switch": "SW-03",
+        "points": [
+          {
+            "object_id": "AI:1020",
+            "name": "CH-2.SupplyTemp",
+            "description": "Chiller 2 supply water temperature",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 6.0,
+            "expected_max": 12.0,
+            "alarm_high": 14.0,
+            "alarm_low": 4.0
+          },
+          {
+            "object_id": "AI:1021",
+            "name": "CH-2.ReturnTemp",
+            "description": "Chiller 2 return water temperature",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 10.0,
+            "expected_max": 18.0
+          },
+          {
+            "object_id": "AI:1022",
+            "name": "CH-2.Power",
+            "description": "Chiller 2 power draw",
+            "units": "kW",
+            "scale_factor": 1,
+            "expected_min": 0,
+            "expected_max": 280
+          },
+          {
+            "object_id": "BI:1023",
+            "name": "CH-2.RunStatus",
+            "description": "Chiller 2 running status",
+            "units": "boolean",
+            "values": { "0": "STOPPED", "1": "RUNNING" }
+          },
+          {
+            "object_id": "BI:1024",
+            "name": "CH-2.FaultStatus",
+            "description": "Chiller 2 fault alarm",
+            "units": "boolean",
+            "values": { "0": "NORMAL", "1": "FAULT" }
+          }
+        ]
+      },
+      {
+        "object_id": "AV:1003",
+        "name": "CH-3",
+        "description": "Chiller 3 — York YVAA 350-ton",
+        "location": "Mechanical Room B2",
+        "ups_panel": "UPS-A",
+        "network_switch": "SW-03",
+        "points": [
+          {
+            "object_id": "AI:1030",
+            "name": "CH-3.SupplyTemp",
+            "description": "Chiller 3 supply water temperature",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 6.0,
+            "expected_max": 12.0,
+            "alarm_high": 14.0,
+            "alarm_low": 4.0
+          },
+          {
+            "object_id": "AI:1031",
+            "name": "CH-3.ReturnTemp",
+            "description": "Chiller 3 return water temperature",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 10.0,
+            "expected_max": 18.0
+          },
+          {
+            "object_id": "AI:1032",
+            "name": "CH-3.Power",
+            "description": "Chiller 3 power draw",
+            "units": "kW",
+            "scale_factor": 1,
+            "expected_min": 0,
+            "expected_max": 280
+          },
+          {
+            "object_id": "BI:1033",
+            "name": "CH-3.RunStatus",
+            "description": "Chiller 3 running status",
+            "units": "boolean",
+            "values": { "0": "STOPPED", "1": "RUNNING" }
+          },
+          {
+            "object_id": "BI:1034",
+            "name": "CH-3.FaultStatus",
+            "description": "Chiller 3 fault alarm",
+            "units": "boolean",
+            "values": { "0": "NORMAL", "1": "FAULT" }
+          }
+        ]
+      }
+    ]
+  },
+
+  "crah_units": {
+    "description": "Computer Room Air Handlers for data center cooling",
+    "units": [
+      {
+        "object_id": "AV:2001",
+        "name": "CRAH-1",
+        "description": "CRAH Unit 1 — Liebert CW 60kW",
+        "location": "Data Center Hall 200 - North",
+        "ups_panel": "UPS-A",
+        "network_switch": "SW-03",
+        "points": [
+          {
+            "object_id": "AI:2010",
+            "name": "CRAH-1.SupplyTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 16.0,
+            "expected_max": 22.0
+          },
+          {
+            "object_id": "AI:2011",
+            "name": "CRAH-1.ReturnTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 28.0,
+            "expected_max": 38.0
+          },
+          {
+            "object_id": "AI:2012",
+            "name": "CRAH-1.FanSpeed",
+            "units": "%",
+            "scale_factor": 1,
+            "expected_min": 30,
+            "expected_max": 100
+          },
+          {
+            "object_id": "BI:2013",
+            "name": "CRAH-1.RunStatus",
+            "units": "boolean",
+            "values": { "0": "STOPPED", "1": "RUNNING" }
+          }
+        ]
+      },
+      {
+        "object_id": "AV:2002",
+        "name": "CRAH-2",
+        "description": "CRAH Unit 2 — Liebert CW 60kW",
+        "location": "Data Center Hall 200 - East",
+        "ups_panel": "UPS-A",
+        "network_switch": "SW-03",
+        "points": [
+          {
+            "object_id": "AI:2020",
+            "name": "CRAH-2.SupplyTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 16.0,
+            "expected_max": 22.0
+          },
+          {
+            "object_id": "AI:2021",
+            "name": "CRAH-2.ReturnTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 28.0,
+            "expected_max": 38.0
+          },
+          {
+            "object_id": "AI:2022",
+            "name": "CRAH-2.FanSpeed",
+            "units": "%",
+            "scale_factor": 1,
+            "expected_min": 30,
+            "expected_max": 100
+          },
+          {
+            "object_id": "BI:2023",
+            "name": "CRAH-2.RunStatus",
+            "units": "boolean",
+            "values": { "0": "STOPPED", "1": "RUNNING" }
+          }
+        ]
+      },
+      {
+        "object_id": "AV:2003",
+        "name": "CRAH-3",
+        "description": "CRAH Unit 3 — Liebert CW 60kW",
+        "location": "Data Center Hall 200 - South",
+        "ups_panel": "UPS-A",
+        "network_switch": "SW-03",
+        "points": [
+          {
+            "object_id": "AI:2030",
+            "name": "CRAH-3.SupplyTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 16.0,
+            "expected_max": 22.0
+          },
+          {
+            "object_id": "AI:2031",
+            "name": "CRAH-3.ReturnTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 28.0,
+            "expected_max": 38.0
+          },
+          {
+            "object_id": "AI:2032",
+            "name": "CRAH-3.FanSpeed",
+            "units": "%",
+            "scale_factor": 1,
+            "expected_min": 30,
+            "expected_max": 100
+          },
+          {
+            "object_id": "BI:2033",
+            "name": "CRAH-3.RunStatus",
+            "units": "boolean",
+            "values": { "0": "STOPPED", "1": "RUNNING" }
+          }
+        ]
+      },
+      {
+        "object_id": "AV:2004",
+        "name": "CRAH-4",
+        "description": "CRAH Unit 4 — Liebert CW 60kW",
+        "location": "Data Center Hall 200 - West",
+        "ups_panel": "UPS-B",
+        "network_switch": "SW-03",
+        "points": [
+          {
+            "object_id": "AI:2040",
+            "name": "CRAH-4.SupplyTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 16.0,
+            "expected_max": 22.0
+          },
+          {
+            "object_id": "AI:2041",
+            "name": "CRAH-4.ReturnTemp",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 28.0,
+            "expected_max": 38.0
+          },
+          {
+            "object_id": "AI:2042",
+            "name": "CRAH-4.FanSpeed",
+            "units": "%",
+            "scale_factor": 1,
+            "expected_min": 30,
+            "expected_max": 100
+          },
+          {
+            "object_id": "BI:2043",
+            "name": "CRAH-4.RunStatus",
+            "units": "boolean",
+            "values": { "0": "STOPPED", "1": "RUNNING" }
+          }
+        ]
+      }
+    ]
+  },
+
+  "ups_panels": {
+    "description": "Uninterruptible Power Supply panels",
+    "units": [
+      {
+        "object_id": "AV:3001",
+        "name": "UPS-A",
+        "description": "UPS Panel A — Eaton 9395 275kVA (Main building + CH-2, CH-3, CRAH-1/2/3)",
+        "location": "Electrical Room B1",
+        "points": [
+          {
+            "object_id": "AI:3010",
+            "name": "UPS-A.LoadPct",
+            "description": "UPS A load percentage",
+            "units": "%",
+            "scale_factor": 10,
+            "expected_min": 20,
+            "expected_max": 80,
+            "alarm_high": 90
+          },
+          {
+            "object_id": "AI:3011",
+            "name": "UPS-A.InputVoltage",
+            "description": "UPS A input voltage",
+            "units": "V",
+            "scale_factor": 1,
+            "expected_min": 220,
+            "expected_max": 240
+          },
+          {
+            "object_id": "AI:3012",
+            "name": "UPS-A.BatteryPct",
+            "description": "UPS A battery charge",
+            "units": "%",
+            "scale_factor": 1,
+            "expected_min": 80,
+            "expected_max": 100
+          },
+          {
+            "object_id": "BI:3013",
+            "name": "UPS-A.OnBattery",
+            "units": "boolean",
+            "values": { "0": "MAINS", "1": "BATTERY" }
+          }
+        ]
+      },
+      {
+        "object_id": "AV:3002",
+        "name": "UPS-B",
+        "description": "UPS Panel B — Eaton 9395 150kVA (DC hall + CH-1, CRAH-4)",
+        "location": "Electrical Room B1",
+        "points": [
+          {
+            "object_id": "AI:3020",
+            "name": "UPS-B.LoadPct",
+            "description": "UPS B load percentage",
+            "units": "%",
+            "scale_factor": 10,
+            "expected_min": 20,
+            "expected_max": 80,
+            "alarm_high": 90
+          },
+          {
+            "object_id": "AI:3021",
+            "name": "UPS-B.InputVoltage",
+            "description": "UPS B input voltage",
+            "units": "V",
+            "scale_factor": 1,
+            "expected_min": 220,
+            "expected_max": 240
+          },
+          {
+            "object_id": "AI:3022",
+            "name": "UPS-B.BatteryPct",
+            "description": "UPS B battery charge",
+            "units": "%",
+            "scale_factor": 1,
+            "expected_min": 80,
+            "expected_max": 100
+          },
+          {
+            "object_id": "BI:3023",
+            "name": "UPS-B.OnBattery",
+            "units": "boolean",
+            "values": { "0": "MAINS", "1": "BATTERY" }
+          }
+        ]
+      }
+    ]
+  },
+
+  "power_meters": {
+    "description": "Building power metering",
+    "units": [
+      {
+        "object_id": "AV:4001",
+        "name": "PWR-MAIN",
+        "description": "Main building power meter",
+        "location": "Main Electrical Room",
+        "points": [
+          {
+            "object_id": "AI:4010",
+            "name": "PWR-MAIN.TotalKW",
+            "description": "Total building power consumption",
+            "units": "kW",
+            "scale_factor": 1,
+            "expected_min": 200,
+            "expected_max": 800
+          },
+          {
+            "object_id": "AI:4011",
+            "name": "PWR-MAIN.PowerFactor",
+            "units": "ratio",
+            "scale_factor": 1,
+            "expected_min": 0.85,
+            "expected_max": 1.00
+          }
+        ]
+      },
+      {
+        "object_id": "AV:4002",
+        "name": "PWR-DC",
+        "description": "Data center sub-meter",
+        "location": "Data Center Hall 200",
+        "points": [
+          {
+            "object_id": "AI:4020",
+            "name": "PWR-DC.TotalKW",
+            "description": "Data center power consumption",
+            "units": "kW",
+            "scale_factor": 1,
+            "expected_min": 100,
+            "expected_max": 400
+          }
+        ]
+      }
+    ]
+  },
+
+  "hall_sensors": {
+    "description": "Data center hall environmental sensors",
+    "units": [
+      {
+        "object_id": "AV:5001",
+        "name": "ENV-DC-N",
+        "description": "North aisle inlet sensor",
+        "location": "Data Center Hall 200 - Row A Inlet",
+        "points": [
+          {
+            "object_id": "AI:5010",
+            "name": "ENV-DC-N.InletTemp",
+            "description": "North aisle cold-aisle inlet temperature",
+            "units": "°F",
+            "scale_factor": 1,
+            "expected_min": 64.4,
+            "expected_max": 80.6,
+            "note": "CAUTION: This sensor reports in Fahrenheit; all others report Celsius"
+          },
+          {
+            "object_id": "AI:5011",
+            "name": "ENV-DC-N.Humidity",
+            "units": "%RH",
+            "scale_factor": 1,
+            "expected_min": 30,
+            "expected_max": 70
+          }
+        ]
+      },
+      {
+        "object_id": "AV:5002",
+        "name": "ENV-DC-S",
+        "description": "South aisle inlet sensor",
+        "location": "Data Center Hall 200 - Row D Inlet",
+        "points": [
+          {
+            "object_id": "AI:5020",
+            "name": "ENV-DC-S.InletTemp",
+            "description": "South aisle cold-aisle inlet temperature",
+            "units": "°C",
+            "scale_factor": 1,
+            "expected_min": 18.0,
+            "expected_max": 27.0
+          },
+          {
+            "object_id": "AI:5021",
+            "name": "ENV-DC-S.Humidity",
+            "units": "%RH",
+            "scale_factor": 1,
+            "expected_min": 30,
+            "expected_max": 70
+          }
+        ]
+      }
+    ]
+  },
+
+  "loop_sensors": {
+    "description": "Chilled water loop instrumentation",
+    "units": [
+      {
+        "object_id": "AV:6001",
+        "name": "LOOP-PRIMARY",
+        "description": "Primary chilled water loop",
+        "location": "Mechanical Room B2",
+        "points": [
+          {
+            "object_id": "AI:6010",
+            "name": "LOOP.FlowRate",
+            "description": "Primary loop flow rate",
+            "units": "L/min",
+            "scale_factor": 1,
+            "expected_min": 200,
+            "expected_max": 400
+          },
+          {
+            "object_id": "AI:6011",
+            "name": "LOOP.DeltaP",
+            "description": "Loop differential pressure",
+            "units": "kPa",
+            "scale_factor": 1,
+            "expected_min": 50,
+            "expected_max": 150
+          }
+        ]
+      }
+    ]
+  }
+}
