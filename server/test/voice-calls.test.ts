@@ -315,3 +315,39 @@ test('a restart keeps reported units failed and their tickets open, so a graph r
   assert.equal(store.incidents.find((i) => i.id === inc!.id)!.status, 'open', 'the voice ticket stays open');
   assert.equal(store.incidents.filter((i) => i.root_node === 'UPS-B' && i.status !== 'resolved').length, 1, 'no duplicate ticket');
 });
+
+const PREVIOUS_TICKET_GREETING: Line = {
+  role: 'agent',
+  content:
+    'Hello, this is Cascade AI for Cascade Tower (Chicago, IL). Active status for INC-1008: [Voice Intake] BMS network switch SW-03 fault reported. Are you calling to review and approve pending mitigations, or to report a new facility incident?',
+};
+
+async function reportedUnit(callId: string, callerSays: string, agentSays = 'I am opening a new incident ticket and work order.'): Promise<string | null> {
+  await handleRetellWebhook({
+    event: 'call_ended',
+    call: call(callId, [PREVIOUS_TICKET_GREETING, { role: 'user', content: callerSays }, { role: 'agent', content: agentSays }]),
+  });
+  return store.voiceCalls.get(callId)!.ticket?.node_id ?? null;
+}
+
+test('a component outside the hand-written list is found from its spoken name, not from the greeting', async () => {
+  assert.equal(
+    await reportedUnit('call_leasecpy', "I'm here for a new facility incident Lease c p y dot c p y is down. Can you make a ticket for that, please?"),
+    'LEASECPY',
+  );
+});
+
+test('every graph component can be reported by name', async () => {
+  const cases: Array<[string, string]> = [
+    ['COOLFLAG dot DAT is corrupted, please open a ticket.', 'COOLFLAG.DAT'],
+    ['The data hall door controller is offline.', 'CTL-04'],
+    ['LEASEBIL dot CBL failed in the overnight batch.', 'LEASEBIL'],
+    ['The badge access table is down.', 'badge_access'],
+    ['Chiller three tripped.', 'CH-3'],
+  ];
+  for (const [i, [says, unit]] of cases.entries()) assert.equal(await reportedUnit(`call_name_${i}`, says), unit, says);
+});
+
+test("the greeting's previous ticket never names the reported unit", async () => {
+  assert.equal(await reportedUnit('call_vague', 'Something is down on the floor, please open a ticket.'), null);
+});

@@ -620,13 +620,43 @@ function isStatement(sentence: string): boolean {
   return !sentence.endsWith('?') && !QUESTION_START_REGEX.test(sentence);
 }
 
-function firstUnitIn(text: string): string | null {
-  let best: { id: string; at: number } | null = null;
-  for (const [id, re] of UNIT_PATTERNS) {
-    const at = text.search(re);
-    if (at >= 0 && (!best || at < best.at)) best = { id, at };
+const SPOKEN_DIGITS: Record<string, string> = { zero: '0', oh: '0', one: '1', two: '2', three: '3', four: '4', five: '5', six: '6', seven: '7', eight: '8', nine: '9' };
+
+/** Lowercase letters and digits only, with spoken digits and "dot" folded, so "Lease c p y dot c p y" reads as "leasecpycpy". */
+function compact(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\b(zero|oh|one|two|three|four|five|six|seven|eight|nine)\b/g, (w) => SPOKEN_DIGITS[w]!)
+    .replace(/\bdot\b/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+/** Spoken and written names for every component in the graph: its id, its label, and the label without a file extension. */
+function nodeAliases(): Array<[string, string]> {
+  const out: Array<[string, string]> = [];
+  for (const node of store.nodes) {
+    const names = new Set([node.id, node.label, node.label.replace(/\.[a-z]+$/i, ''), node.id.replace(/\.[a-z]+$/i, '')]);
+    for (const name of names) {
+      const c = compact(name);
+      if (c.length >= 4) out.push([node.id, c]);
+    }
   }
-  return best && store.getNode(best.id) ? best.id : null;
+  return out.sort((a, b) => b[1].length - a[1].length);
+}
+
+function firstUnitIn(text: string): string | null {
+  let best: { id: string; at: number; len: number } | null = null;
+  const consider = (id: string, at: number, len: number) => {
+    if (at < 0 || !store.getNode(id)) return;
+    if (!best || at < best.at || (at === best.at && len > best.len)) best = { id, at, len };
+  };
+  for (const [id, re] of UNIT_PATTERNS) {
+    const m = re.exec(text);
+    if (m) consider(id, compact(text.slice(0, m.index)).length, compact(m[0]).length);
+  }
+  const flat = compact(text);
+  for (const [id, alias] of nodeAliases()) consider(id, flat.indexOf(alias), alias.length);
+  return best ? (best as { id: string }).id : null;
 }
 
 interface CallIntent {
@@ -646,6 +676,12 @@ function readCallIntent(lines: Utterance[]): CallIntent {
   const callerStatements = lines.filter(isCaller).flatMap((l) => sentences(l.content)).filter(isStatement);
   const callerText = lines.filter(isCaller).map((l) => l.content).join(' ');
   const agentStatements = lines
+    .filter((l) => !isCaller(l))
+    .flatMap((l) => sentences(l.content))
+    .filter(isStatement);
+  const firstCaller = lines.findIndex(isCaller);
+  const agentReplies = lines
+    .slice(firstCaller < 0 ? lines.length : firstCaller + 1)
     .filter((l) => !isCaller(l))
     .flatMap((l) => sentences(l.content))
     .filter(isStatement);
@@ -671,7 +707,7 @@ function readCallIntent(lines: Utterance[]): CallIntent {
 
   const nodeId =
     firstUnitIn(callerStatements.join(' ')) ??
-    firstUnitIn(agentStatements.filter((x) => AGENT_CONFIRMATION_REGEX.test(x)).join(' '));
+    firstUnitIn(agentReplies.filter((x) => AGENT_CONFIRMATION_REGEX.test(x)).join(' '));
 
   return { callerText, reported, approved, nodeId };
 }
