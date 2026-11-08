@@ -78,6 +78,23 @@ export interface Simulation {
   assumptions_version: number;
 }
 
+export interface VoiceCallOutcome {
+  call_id: string;
+  processed_at: string;
+  ticket: { incident_id: string; action_id: string; node_id: string | null } | null;
+  approved_action_ids: string[];
+}
+
+export interface VoiceCallView {
+  call_id: string;
+  call_status: string;
+  transcript: Array<{ role: string; content: string }>;
+  call_summary?: string;
+  user_sentiment?: string;
+  call_successful?: boolean;
+  outcome: VoiceCallOutcome | null;
+}
+
 export interface Incident {
   id: string;
   title: string;

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { Check, CheckCircle2, Mail, Mic, Phone, PhoneCall, PhoneIncoming, PhoneOff, Volume2, X } from 'lucide-react';
+import { AlertTriangle, Check, CheckCircle2, Mail, Mic, Phone, PhoneCall, PhoneIncoming, PhoneOff, Volume2, X } from 'lucide-react';
 import { api, isUsingFixtures } from '@/lib/api';
+import type { VoiceCallView } from '@/lib/types';
 import { useCascade } from '@/lib/store';
 import { pageHead } from '@/lib/seo';
 import { usd } from '@/lib/format';
@@ -20,11 +21,11 @@ export const Route = createFileRoute('/voice')({
 type CallState = 'idle' | 'connecting' | 'live' | 'phone_ringing' | 'phone_live' | 'ended' | 'simulated';
 type Line = { role: string; content: string };
 
-const VOICE_APPROVAL_REGEX = /\b(approve|confirm|yes dispatch|dispatch now|execute|send the email|go ahead|authorize)\b/i;
+const ENDED_CALL_STATUSES = new Set(['ended', 'error', 'not_connected']);
 
 function Voice() {
   const { incident: searchIncId } = Route.useSearch();
-  const { incident: sseIncident, simulation: sseSim, steps: sseSteps, approve, reject, runScenario, scenarioRunning } = useCascade();
+  const { incident: sseIncident, simulation: sseSim, steps: sseSteps, approve, reject, runScenario, scenarioRunning, voiceCall } = useCascade();
 
   const incidentsQ = useQuery({ queryKey: ['incidents'], queryFn: api.incidents, refetchInterval: 3000 });
   const actionsQ = useQuery({ queryKey: ['actions', 'all'], queryFn: () => api.actions(), refetchInterval: 3000 });
@@ -53,7 +54,7 @@ function Voice() {
     refetchInterval: 3000,
   });
 
-  const activeSim = incDetailQ.data?.simulation ?? sseSim;
+  const activeSim = incDetailQ.data ? incDetailQ.data.simulation : sseSim;
   const activeSteps = incDetailQ.data?.steps?.length ? incDetailQ.data.steps : sseSteps;
 
   const label = (id: string) => graph.data?.nodes.find((n) => n.id === id)?.label ?? id;
@@ -76,11 +77,10 @@ function Voice() {
   });
   const [activePhoneCallId, setActivePhoneCallId] = useState<string | null>(null);
   const [phoneCallMeta, setPhoneCallMeta] = useState<{ from: string; to: string; summary?: string } | null>(null);
-  const [voiceCreatedTicket, setVoiceCreatedTicket] = useState<{ incidentId: string; actionId: string; nodeId: string } | null>(null);
+  const [callOutcome, setCallOutcome] = useState<VoiceCallView['outcome']>(null);
   const lastAutoCalledIncidentRef = useRef<string | null>(null);
 
   const clientRef = useRef<{ stopCall: () => void } | null>(null);
-  const autoApproveTriggeredRef = useRef(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -134,7 +134,7 @@ function Voice() {
     try {
       await api.clearIncidents(false);
       await api.clearActions(false);
-      setVoiceCreatedTicket(null);
+      setCallOutcome(null);
       setVoiceAutoApproved(false);
       setSelectedIncId(null);
       setTranscript([]);
@@ -193,28 +193,18 @@ function Voice() {
     window.speechSynthesis.speak(utter);
   };
 
-  // Detect verbal approval in live Retell transcript (both Phone Calls and Browser Web Calls)
-  useEffect(() => {
-    if (
-      (state !== 'live' && state !== 'phone_live' && state !== 'phone_ringing') ||
-      needs.length === 0 ||
-      autoApproveTriggeredRef.current
-    ) {
-      return;
+  // The server acts on a call once it ends; the page only shows what it decided.
+  const showCallView = (res: VoiceCallView) => {
+    if (res.transcript.length > 0) setTranscript(res.transcript);
+    const summary = res.call_summary;
+    if (summary) setPhoneCallMeta((prev) => (prev ? { ...prev, summary } : prev));
+    setCallOutcome(res.outcome);
+    if (res.outcome) {
+      if (res.outcome.ticket) setSelectedIncId(res.outcome.ticket.incident_id);
+      void incidentsQ.refetch();
+      void actionsQ.refetch();
     }
-    const userLines = transcript.filter((l) => l.role.toLowerCase() === 'user');
-    const latestUserText = userLines.map((l) => l.content).join(' ');
-    if (VOICE_APPROVAL_REGEX.test(latestUserText)) {
-      autoApproveTriggeredRef.current = true;
-      setVoiceAutoApproved(true);
-      void (async () => {
-        for (const act of needs) {
-          await approve(act.id);
-        }
-        await actionsQ.refetch();
-      })();
-    }
-  }, [transcript, state, needs, approve, actionsQ]);
+  };
 
   // Poll Retell call status + live transcript while an outbound phone call is active
   useEffect(() => {
@@ -224,26 +214,10 @@ function Voice() {
       try {
         const res = await api.voiceCallStatus(activePhoneCallId);
         if (!active) return;
-        if (res.transcript.length > 0) {
-          setTranscript(res.transcript);
-        }
-        if ((res as { auto_dispatched?: boolean }).auto_dispatched) {
-          setVoiceAutoApproved(true);
-          void actionsQ.refetch();
-        }
-        const created = (res as { created_ticket?: { incidentId: string; actionId: string; nodeId: string } }).created_ticket;
-        if (created) {
-          setVoiceCreatedTicket(created);
-          setSelectedIncId(created.incidentId);
-          void incidentsQ.refetch();
-          void actionsQ.refetch();
-        }
-        if (res.call_summary) {
-          setPhoneCallMeta((prev) => (prev ? { ...prev, summary: res.call_summary } : null));
-        }
+        showCallView(res);
         if (res.call_status === 'ongoing') {
           setState('phone_live');
-        } else if (res.call_status === 'ended' || res.call_status === 'error') {
+        } else if (ENDED_CALL_STATUSES.has(res.call_status)) {
           setState('ended');
           setActivePhoneCallId(null);
         }
@@ -258,49 +232,23 @@ function Voice() {
     };
   }, [activePhoneCallId, actionsQ, incidentsQ]);
 
-  // Also sync any inbound calls (+1 469-429-6682) or Retell Dashboard "Run Test" calls automatically
+  // Any call the server sees (this page's, API-placed, inbound, Retell dashboard) arrives over SSE.
   useEffect(() => {
-    if (isUsingFixtures() || activePhoneCallId || state === 'live') return;
-    const syncTimer = setInterval(async () => {
-      try {
-        const res = await fetch('/api/voice/latest-call');
-        if (!res.ok) return;
-        const data = (await res.json()) as {
-          call_id?: string | null;
-          call_status?: string;
-          transcript?: Line[];
-          call_summary?: string;
-          auto_dispatched?: boolean;
-          created_ticket?: { incidentId: string; actionId: string; nodeId: string };
-        };
-        if (data.call_id && Array.isArray(data.transcript) && data.transcript.length > 0) {
-          setTranscript(data.transcript);
-          if (data.call_status === 'ongoing') {
-            setState('phone_live');
-          }
-          if (data.auto_dispatched) {
-            setVoiceAutoApproved(true);
-            void actionsQ.refetch();
-          }
-          if (data.created_ticket) {
-            setVoiceCreatedTicket(data.created_ticket);
-            setSelectedIncId(data.created_ticket.incidentId);
-            void incidentsQ.refetch();
-            void actionsQ.refetch();
-          }
-        }
-      } catch {
-        // Ignore transient sync errors
-      }
-    }, 3000);
-    return () => clearInterval(syncTimer);
-  }, [activePhoneCallId, state, actionsQ, incidentsQ]);
+    if (!voiceCall) return;
+    showCallView(voiceCall);
+    if (voiceCall.call_status === 'ongoing') setState((cur) => (cur === 'live' ? cur : 'phone_live'));
+    else if (ENDED_CALL_STATUSES.has(voiceCall.call_status)) {
+      setState((cur) => (cur === 'idle' || cur === 'phone_live' || cur === 'phone_ringing' ? 'ended' : cur));
+      if (voiceCall.call_id === activePhoneCallId) setActivePhoneCallId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [voiceCall]);
 
   const startPhoneCall = async (targetPhone = phoneNumber, incId = activeIncident?.id) => {
     setError(null);
     setTranscript([]);
     setVoiceAutoApproved(false);
-    autoApproveTriggeredRef.current = false;
+    setCallOutcome(null);
     setState('phone_ringing');
     try {
       const res = await api.voicePhoneCall(targetPhone, incId);
@@ -318,6 +266,7 @@ function Voice() {
       autoCallOnIncident &&
       phoneNumber.trim().length >= 10 &&
       sseIncident &&
+      !sseIncident.agent_run_id?.startsWith('VOICE-') &&
       lastAutoCalledIncidentRef.current !== sseIncident.id
     ) {
       lastAutoCalledIncidentRef.current = sseIncident.id;
@@ -330,7 +279,7 @@ function Voice() {
     setError(null);
     setTranscript([]);
     setVoiceAutoApproved(false);
-    autoApproveTriggeredRef.current = false;
+    setCallOutcome(null);
     setState('connecting');
     try {
       const { access_token } = await api.voiceWebCall(activeIncident?.id);
@@ -485,15 +434,52 @@ function Voice() {
         </div>
       )}
 
-      {voiceCreatedTicket && (
-        <div className="flex items-center gap-2 rounded-md border border-primary/40 bg-primary/10 px-4 py-3 text-xs text-foreground">
-          <CheckCircle2 className="size-4 shrink-0 text-primary" />
-          <span>
-            <strong>Voice Incident Ticket &amp; Work Order Created:</strong> Logged incident{' '}
-            <Mono className="font-semibold">{voiceCreatedTicket.incidentId}</Mono> and work order{' '}
-            <Mono className="font-semibold">{voiceCreatedTicket.actionId}</Mono> for component{' '}
-            <Mono>{voiceCreatedTicket.nodeId}</Mono> into <Mono>server/data/cascade-db.json</Mono> and updated the live dependency graph.
-          </span>
+      {callOutcome && (
+        <div className="space-y-2">
+          {callOutcome.ticket ? (
+            callOutcome.ticket.node_id ? (
+              <div className="flex items-center gap-2 rounded-md border border-primary/40 bg-primary/10 px-4 py-3 text-xs text-foreground">
+                <CheckCircle2 className="size-4 shrink-0 text-primary" />
+                <span>
+                  <strong>Ticket created from the call:</strong> incident{' '}
+                  <Mono className="font-semibold">{callOutcome.ticket.incident_id}</Mono> and work order{' '}
+                  <Mono className="font-semibold">{callOutcome.ticket.action_id}</Mono> for{' '}
+                  {label(callOutcome.ticket.node_id)} (<Mono>{callOutcome.ticket.node_id}</Mono>). The fault is marked failed on the System Intelligence graph.
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 rounded-md border border-warning/50 bg-warning-soft px-4 py-3 text-xs text-foreground">
+                <AlertTriangle className="size-4 shrink-0 text-warning" />
+                <span>
+                  <strong>Ticket created, unit unidentified:</strong> incident{' '}
+                  <Mono className="font-semibold">{callOutcome.ticket.incident_id}</Mono> and work order{' '}
+                  <Mono className="font-semibold">{callOutcome.ticket.action_id}</Mono> were opened, but the caller did not name a unit Cascade recognizes, so nothing was marked failed on the graph.
+                </span>
+              </div>
+            )
+          ) : null}
+          {callOutcome.approved_action_ids.length > 0 ? (
+            <div className="flex items-center gap-2 rounded-md border border-chart-4/40 bg-chart-4/10 px-4 py-3 text-xs text-foreground">
+              <CheckCircle2 className="size-4 shrink-0 text-chart-4" />
+              <span>
+                <strong>Approved on the call:</strong>{' '}
+                {callOutcome.approved_action_ids.map((id) => <Mono key={id} className="mr-1 font-semibold">{id}</Mono>)}
+                executed and emailed.
+              </span>
+            </div>
+          ) : callOutcome.ticket ? (
+            <div className="flex items-center gap-2 rounded-md border border-border bg-secondary/40 px-4 py-3 text-xs text-foreground">
+              <Mail className="size-4 shrink-0 text-muted-foreground" />
+              <span>
+                Work order <Mono className="font-semibold">{callOutcome.ticket.action_id}</Mono> was emailed to facilities and is awaiting approval.
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 rounded-md border border-border bg-secondary/40 px-4 py-3 text-xs text-muted-foreground">
+              <PhoneOff className="size-4 shrink-0" />
+              <span>Call ended. No incident was reported and nothing was approved.</span>
+            </div>
+          )}
         </div>
       )}
 
@@ -602,7 +588,9 @@ function Voice() {
                       ? activeSim.impacts
                           .map((i) => `${i.tenant_label} (T+${i.minutes_to_impact} min · ${usd(i.sla_credit_usd ?? 0)} SLA)`)
                           .join(', ')
-                      : '$16,000 exposure at risk (Acme Cloud Services)'}
+                      : activeIncident.root_node === 'unidentified'
+                        ? 'Not simulated: the unit is unidentified'
+                        : '$16,000 exposure at risk (Acme Cloud Services)'}
                   </dd>
                 </div>
                 <div>
@@ -651,7 +639,7 @@ function Voice() {
               {state === 'connecting' && <StatusBadge status="connecting" />}
               {state === 'phone_ringing' && <StatusBadge status="connecting" label={`Dialing ${phoneCallMeta?.to || phoneNumber}…`} />}
               {state === 'phone_live' && <StatusBadge status="live" label="Live phone call · Streaming transcript" />}
-              {state === 'live' && <StatusBadge status="live" label="Live browser WebRTC · Listening for 'Approve'" />}
+              {state === 'live' && <StatusBadge status="live" label="Live browser WebRTC · Acts on the call when it ends" />}
               {state === 'ended' && <StatusBadge status="pending" label="Call ended" />}
               {state === 'simulated' && <StatusBadge status="degraded" label="Spoken TTS fallback" />}
             </div>

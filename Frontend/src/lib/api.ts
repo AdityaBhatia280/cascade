@@ -4,7 +4,7 @@ import { openSSE, type SSEHandle } from './sse';
 import type {
   Action, AgentStep, Anomaly, Assumptions, EvalReport, Finding, GraphEdge, GraphNode, Incident,
   ModernizationStage, NodeStatus, Overview, ParityResult, RealBenchmarks, RiskEntry, Simulation, SourceSnippet,
-  TelemetryPoint, TelemetryReading, TimelineEntry, WhatIfResult,
+  TelemetryPoint, TelemetryReading, TimelineEntry, VoiceCallView, WhatIfResult,
 } from './types';
 
 const env = import.meta.env as Record<string, string | undefined>;
@@ -336,16 +336,14 @@ export const api = {
     }
     return res.json();
   },
-  voiceCallStatus: async (callId: string): Promise<{
-    call_id: string;
-    call_status: string;
-    transcript: Array<{ role: string; content: string }>;
-    call_summary?: string;
-    user_sentiment?: string;
-    call_successful?: boolean;
-  }> => {
+  voiceCallStatus: async (callId: string): Promise<VoiceCallView> => {
     const res = await fetch(`${API_BASE}/voice/call/${encodeURIComponent(callId)}`);
     if (!res.ok) throw new Error(`Call status failed (${res.status})`);
+    return res.json();
+  },
+  voiceLatestCall: async (): Promise<VoiceCallView | { call_id: null }> => {
+    const res = await fetch(`${API_BASE}/voice/latest-call`);
+    if (!res.ok) throw new Error(`Latest call failed (${res.status})`);
     return res.json();
   },
 };

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { api, isUsingFixtures, subscribeAgent, subscribeFixtureFlag, subscribeTelemetry } from './api';
-import type { Action, AgentStep, Anomaly, Incident, NodeStatus, Simulation, TelemetryReading, WhatIfResult } from './types';
+import type { Action, AgentStep, Anomaly, Incident, NodeStatus, Simulation, TelemetryReading, VoiceCallView, WhatIfResult } from './types';
 
 const MAX_READINGS = 120;
 
@@ -32,6 +32,8 @@ interface CascadeState {
   approve: (id: string, content?: string) => Promise<void>;
   reject: (id: string) => Promise<void>;
   createWorkOrder: (nodeId: string, note: string) => Promise<Action>;
+  /** Most recent Retell call the server observed, whoever started it. */
+  voiceCall: VoiceCallView | null;
 }
 
 const Ctx = createContext<CascadeState | null>(null);
@@ -53,6 +55,7 @@ export function CascadeProvider({ children }: { children: ReactNode }) {
   const [approvalOpen, setApprovalOpen] = useState(false);
   const [scenarioRunning, setScenarioRunning] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [voiceCall, setVoiceCall] = useState<VoiceCallView | null>(null);
   const qcRef = useRef(qc);
   qcRef.current = qc;
 
@@ -139,6 +142,17 @@ export function CascadeProvider({ children }: { children: ReactNode }) {
           const a = d as Action;
           setPending((p) => (a.status === 'pending' ? p.map((x) => (x.id === a.id ? a : x)) : p.filter((x) => x.id !== a.id)));
           qcRef.current.invalidateQueries({ queryKey: ['actions'] });
+        },
+        voice_call: (d) => {
+          const v = d as VoiceCallView;
+          setVoiceCall((cur) =>
+            !cur || cur.call_id === v.call_id || v.call_status === 'ongoing' || cur.call_status !== 'ongoing' ? v : cur,
+          );
+        },
+        voice_call_outcome: () => {
+          qcRef.current.invalidateQueries({ queryKey: ['actions'] });
+          qcRef.current.invalidateQueries({ queryKey: ['incidents'] });
+          qcRef.current.invalidateQueries({ queryKey: ['overview'] });
         },
         run_complete: () => {
           setScenarioRunning(false);
@@ -240,8 +254,8 @@ export function CascadeProvider({ children }: { children: ReactNode }) {
     reconnecting: !usingFixtures && (!teleConnected || !agentConnected),
     readings, anomalies, nodeStatus, faults, whatIf, toggleFault, failNode, healNode, resetFaults,
     steps, incident, simulation, setSimulation, pending,
-    approvalOpen, setApprovalOpen, scenarioRunning, lastUpdated, runScenario, approve, reject, createWorkOrder,
-  }), [mode, usingFixtures, teleConnected, agentConnected, readings, anomalies, nodeStatus, faults, whatIf, toggleFault, failNode, healNode, resetFaults, steps, incident, simulation, pending, approvalOpen, scenarioRunning, lastUpdated, runScenario, approve, reject, createWorkOrder]);
+    approvalOpen, setApprovalOpen, scenarioRunning, lastUpdated, runScenario, approve, reject, createWorkOrder, voiceCall,
+  }), [mode, usingFixtures, teleConnected, agentConnected, readings, anomalies, nodeStatus, faults, whatIf, toggleFault, failNode, healNode, resetFaults, steps, incident, simulation, pending, approvalOpen, scenarioRunning, lastUpdated, runScenario, approve, reject, createWorkOrder, voiceCall]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
