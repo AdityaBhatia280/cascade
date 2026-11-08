@@ -58,7 +58,7 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   });
 }
 
-// Local by default; deploy-brev.sh sets HOST=0.0.0.0 so the one public port is reachable.
+// Local by default; set HOST=0.0.0.0 to serve other machines.
 const HOST = process.env['HOST'] ?? '127.0.0.1';
 app.listen(config.port, HOST, async () => {
   console.log(`[Cascade Server] Listening on http://${HOST}:${config.port}`);

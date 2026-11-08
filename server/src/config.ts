@@ -8,9 +8,10 @@ dotenv.config();
 
 export const config = {
   port: parseInt(process.env.PORT || '5001'),
+  // Nemotron through OpenRouter (LLM_API_KEY / LLM_BASE_URL, shared with the 3D app); NVIDIA's own API only when no OpenRouter key is set.
   nvidia: {
-    apiKey: process.env.NVIDIA_API_KEY || '',
-    baseUrl: 'https://integrate.api.nvidia.com/v1',
+    apiKey: process.env.LLM_API_KEY || process.env.NVIDIA_API_KEY || '',
+    baseUrl: process.env.LLM_API_KEY ? process.env.LLM_BASE_URL || 'https://openrouter.ai/api/v1' : 'https://integrate.api.nvidia.com/v1',
     modelPlanner: 'nvidia/nemotron-3-super-120b-a12b',
     modelFast: 'nvidia/nemotron-3-nano-30b-a3b',
     maxCallsPerIncident: 20,
