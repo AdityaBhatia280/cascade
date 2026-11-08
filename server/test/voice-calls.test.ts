@@ -52,7 +52,7 @@ beforeEach(async () => {
       const id = decodeURIComponent(url.split('/').pop()!);
       return json(retellCalls.find((c) => c.call_id === id));
     }
-    if (url === 'https://api.retellai.com/v2/list-calls') return json(retellCalls);
+    if (url === 'https://api.retellai.com/v3/list-calls') return json({ items: retellCalls.map(({ transcript_object: _t, transcript: _s, ...summary }) => summary), has_more: false });
     throw new Error(`unexpected fetch ${url}`);
   }) as typeof fetch;
 });

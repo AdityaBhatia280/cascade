@@ -848,40 +848,54 @@ const bootTimestampMs = Date.now() - 15 * 60_000;
  * Automatically poll Retell's /v2/list-calls endpoint so ANY call made on the Retell dashboard ("Run Test")
  * or inbound to +1(469)429-6682 automatically syncs to the Cascade backend & frontend in real time—even on localhost!
  */
+let lastSyncError = '';
+
+/** Log a sync failure once per distinct message, so a broken sync is visible without flooding the log. */
+function reportSyncError(message: string): void {
+  if (message === lastSyncError) return;
+  lastSyncError = message;
+  console.warn(`[Cascade Server] Retell call sync failed: ${message}`);
+}
+
+/**
+ * Find calls this server did not start (inbound calls, Retell dashboard tests, other clients) and observe them.
+ * v3/list-calls returns call summaries without transcripts, so each live or unprocessed ended call is read with get-call.
+ */
 export async function syncLatestRetellCalls(): Promise<VoiceCallView | null> {
   const { apiKey, agentId } = config.retell;
   if (!apiKey || !agentId) return latestSyncedCall;
 
   try {
-    const res = await fetch('https://api.retellai.com/v2/list-calls', {
+    const res = await fetch('https://api.retellai.com/v3/list-calls', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        filter_criteria: {
-          agent_id: [agentId],
-        },
+        filter_criteria: { agent: [{ agent_id: agentId }] },
         sort_order: 'descending',
-        limit: 3,
+        limit: 5,
       }),
     });
 
-    if (!res.ok) return latestSyncedCall;
-
-    const calls = (await res.json()) as RetellCall[];
-    if (!Array.isArray(calls) || calls.length === 0) return latestSyncedCall;
-
-    for (const c of calls) {
-      if (!c.call_id) continue;
-      const isRecent = !c.start_timestamp || c.start_timestamp >= bootTimestampMs;
-      if (!isRecent && c.call_status !== 'ongoing') continue;
-
-      await observeRetellCall({ ...c, call_id: c.call_id }, ENDED_CALL_STATUSES.has(c.call_status ?? ''));
+    if (!res.ok) {
+      reportSyncError(`list-calls HTTP ${res.status}: ${(await res.text()).slice(0, 160)}`);
+      return latestSyncedCall;
     }
-  } catch {
-    // Ignore transient network errors
+    lastSyncError = '';
+
+    const { items } = (await res.json()) as { items?: RetellCall[] };
+    for (const c of items ?? []) {
+      if (!c.call_id) continue;
+      const ongoing = !ENDED_CALL_STATUSES.has(c.call_status ?? '');
+      const isRecent = !c.start_timestamp || c.start_timestamp >= bootTimestampMs;
+      if (!isRecent && !ongoing) continue;
+      if (!ongoing && store.voiceCalls.has(c.call_id)) continue;
+      await getRetellCallStatus(c.call_id);
+    }
+  } catch (err) {
+    reportSyncError((err as Error).message);
   }
 
   return latestSyncedCall;
