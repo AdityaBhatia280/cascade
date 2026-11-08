@@ -803,9 +803,15 @@ function broadcastVoiceCall(view: VoiceCallView): void {
 
 async function observeRetellCall(call: RetellCall & { call_id: string }, ended: boolean): Promise<VoiceCallView> {
   const lines = parseRawTranscript(call);
+  const seenBefore = store.voiceCalls.has(call.call_id);
   const outcome = ended
     ? await finalizeVoiceCall(call.call_id, call, lines)
     : (store.voiceCalls.get(call.call_id) ?? null);
+  if (ended && !seenBefore && outcome) {
+    const did = outcome.ticket ? `ticket ${outcome.ticket.incident_id} / ${outcome.ticket.action_id} on ${outcome.ticket.node_id ?? 'unidentified unit'}` : 'no fault reported';
+    const approved = outcome.approved_action_ids?.length ? `, approved ${outcome.approved_action_ids.join(', ')}` : '';
+    console.log(`[Cascade Server] Call ${call.call_id} ended: ${did}${approved}`);
+  }
   const view: VoiceCallView = {
     call_id: call.call_id,
     call_status: call.call_status ?? 'ongoing',
