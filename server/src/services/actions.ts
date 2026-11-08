@@ -5,8 +5,6 @@ import type { Action, ActionTool, Incident } from '../db/schema.js';
 import { broadcastAgentEvent } from './agent.js';
 import { applyCustomFaults, nextIncidentId, simulateFailure } from './simulation.js';
 
-let actionSeq = 2001;
-
 /**
  * Create a new pending Action (requires human approval by default).
  * Deduplicates against existing pending actions with the same tool + content so repeated clicks/runs don't pile up duplicates.
@@ -35,7 +33,7 @@ export function createAction(params: {
   }
 
   const action: Action = {
-    id: `ACT-${actionSeq++}`,
+    id: store.nextId('ACT', 2001),
     run_id: params.run_id,
     tool: params.tool,
     recipient_display: params.recipient_display,

@@ -5,9 +5,8 @@ import { computeRiskScores } from '../engines/risk.js';
 import { emitNodeStatus, clearPointOverrides, broadcastTelemetryEvent } from './telemetry.js';
 import { broadcastAgentEvent } from './agent.js';
 
-let incidentSeq = 1001;
 export function nextIncidentId(): string {
-  return `INC-${incidentSeq++}`;
+  return store.nextId('INC', 1001);
 }
 
 const INCIDENT_TITLES: Record<string, string> = {

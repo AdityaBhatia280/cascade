@@ -144,6 +144,17 @@ class Store {
     return this.incidents.filter((i) => i.status !== 'resolved');
   }
 
+  /** Next `${prefix}-N` id, continuing past every id already in the store (including ones loaded from disk). */
+  nextId(prefix: 'INC' | 'ACT', floor: number): string {
+    const records: Array<{ id: string }> = prefix === 'INC' ? this.incidents : this.actions;
+    let max = floor - 1;
+    for (const r of records) {
+      const m = r.id.match(/^[A-Z]+-(\d+)$/);
+      if (m && r.id.startsWith(`${prefix}-`)) max = Math.max(max, Number(m[1]));
+    }
+    return `${prefix}-${max + 1}`;
+  }
+
   // ── Simulation helpers ──
 
   addSimulation(sim: Simulation): void {
