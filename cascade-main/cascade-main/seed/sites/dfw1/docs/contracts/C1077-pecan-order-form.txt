@@ -1,0 +1,24 @@
+ORDER FORM OF-1077-01
+Issued under Master Services Agreement No. DFW-MSA-1077
+Customer: Pecan Street Media Inc    Account: C1077    Cage: CG-102
+Order Date: 2023-01-09    Term: 36 months    Site: DFW1 / Data Hall DH-1
+
+1. PRICING
+1.1 Monthly Recurring Charge (MRC): $5,880.00
+1.2 Non-Recurring Charge (NRC): waived
+
+2. SPACE AND POWER
+2.1 Licensed Cabinets: B05-B10
+2.2 Power Redundancy: N - single power feed (non-redundant)
+2.3 Cooling: per Provider standard operating environment
+2.4 Committed Power per cabinet (kW, contracted maximum average draw):
+      Cabinet   Circuits (each feed)          Committed
+      B05       30A/208V/1ph A+B (courtesy)   3.5 kW
+      B06       30A/208V/1ph A+B (courtesy)   3.5 kW
+      B07       30A/208V/1ph A only           3.5 kW
+      B08       30A/208V/1ph A only           3.5 kW
+      B09       30A/208V/1ph A+B (courtesy)   3.5 kW
+      B10       30A/208V/1ph A+B (courtesy)   3.5 kW
+
+3. SPECIAL TERMS
+3.1 Customer acknowledges single-feed service; dual feeds, where present, are provided as a courtesy.

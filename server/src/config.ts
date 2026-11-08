@@ -1,5 +1,10 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config();
 
 export const config = {
   port: parseInt(process.env.PORT || '5001'),
@@ -12,11 +17,14 @@ export const config = {
   },
   resend: {
     apiKey: process.env.RESEND_API_KEY || '',
-    fromAddress: 'onboarding@resend.dev',
+    fromAddress: 'Cascade AI Operations <onboarding@resend.dev>',
     demoInbox: process.env.DEMO_INBOX || '',
   },
   retell: {
     apiKey: process.env.RETELL_API_KEY || '',
     agentId: process.env.RETELL_AGENT_ID || '',
+    llmId: process.env.RETELL_LLM_ID || '',
+    fromNumber: process.env.RETELL_FROM_NUMBER || '',
+    demoPhoneTo: process.env.DEMO_PHONE_TO || '',
   },
 };

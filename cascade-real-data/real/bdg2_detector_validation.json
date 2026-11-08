@@ -1,0 +1,301 @@
+{
+ "source": "Building Data Genome Project 2 (Miller et al., Scientific Data 2020), site Fox, chilled water kWh, hourly",
+ "buildings": [
+  {
+   "building": "Alice",
+   "hours": 17544,
+   "alerts": 7,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.29,
+   "first_alerts": [
+    {
+     "ts": "2016-02-01 11:00:00",
+     "kwh": 929.4,
+     "z": -3.3,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-03-29 11:00:00",
+     "kwh": 1864.6,
+     "z": -3.4,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-07-11 03:00:00",
+     "kwh": 2002.9,
+     "z": -4.8,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Carson",
+   "hours": 17544,
+   "alerts": 5,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.21,
+   "first_alerts": [
+    {
+     "ts": "2016-03-17 02:00:00",
+     "kwh": 400.9,
+     "z": 3.4,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-11-11 09:00:00",
+     "kwh": 61.8,
+     "z": -3.1,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2017-03-16 02:00:00",
+     "kwh": 400.9,
+     "z": 3.4,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Edythe",
+   "hours": 17544,
+   "alerts": 10,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.42,
+   "first_alerts": [
+    {
+     "ts": "2016-03-29 09:00:00",
+     "kwh": 232.0,
+     "z": -3.3,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-04-14 07:00:00",
+     "kwh": 0.0,
+     "z": -3.9,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-07-18 06:00:00",
+     "kwh": 1554.8,
+     "z": 4.5,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Essie",
+   "hours": 17531,
+   "alerts": 1,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.04,
+   "first_alerts": [
+    {
+     "ts": "2017-05-09 12:00:00",
+     "kwh": 0.0,
+     "z": -3.4,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Israel",
+   "hours": 17527,
+   "alerts": 14,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.58,
+   "first_alerts": [
+    {
+     "ts": "2016-03-21 12:00:00",
+     "kwh": 2043.2,
+     "z": 5.0,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-04-10 15:00:00",
+     "kwh": 822.7,
+     "z": -3.5,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-06-03 22:00:00",
+     "kwh": 29.4,
+     "z": -3.0,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Karima",
+   "hours": 17508,
+   "alerts": 3,
+   "sensor_faults": 13,
+   "alert_rate_per_month": 0.13,
+   "first_alerts": [
+    {
+     "ts": "2016-10-08 09:00:00",
+     "kwh": 1162.2,
+     "z": 3.2,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-10-08 13:00:00",
+     "kwh": 0.0,
+     "z": -3.4,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-11-11 08:00:00",
+     "kwh": 0.4,
+     "z": -3.1,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [
+    {
+     "start": "2016-01-04 00:00:00",
+     "value": 0.25
+    },
+    {
+     "start": "2016-03-12 06:00:00",
+     "value": 0.62
+    },
+    {
+     "start": "2016-04-18 01:00:00",
+     "value": 0.12
+    }
+   ],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Margarita",
+   "hours": 17544,
+   "alerts": 23,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.96,
+   "first_alerts": [
+    {
+     "ts": "2016-03-08 06:00:00",
+     "kwh": 24.0,
+     "z": -3.2,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-05-09 03:00:00",
+     "kwh": 33.3,
+     "z": -3.2,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-05-23 04:00:00",
+     "kwh": 34.3,
+     "z": -3.6,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": true
+  },
+  {
+   "building": "Rowena",
+   "hours": 17459,
+   "alerts": 13,
+   "sensor_faults": 1,
+   "alert_rate_per_month": 0.54,
+   "first_alerts": [
+    {
+     "ts": "2016-04-21 18:00:00",
+     "kwh": 18.3,
+     "z": 4.5,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-06-07 14:00:00",
+     "kwh": 51.5,
+     "z": 4.5,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-06-21 11:00:00",
+     "kwh": 50.5,
+     "z": 3.8,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [
+    {
+     "start": "2017-07-07 16:00:00",
+     "value": 322.81
+    }
+   ],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Sheila",
+   "hours": 17544,
+   "alerts": 8,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.33,
+   "first_alerts": [
+    {
+     "ts": "2016-03-17 23:00:00",
+     "kwh": 1.7,
+     "z": -4.3,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-03-22 15:00:00",
+     "kwh": 192.8,
+     "z": 3.4,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-04-09 07:00:00",
+     "kwh": 0.0,
+     "z": -3.4,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": false
+  },
+  {
+   "building": "Thelma",
+   "hours": 17364,
+   "alerts": 8,
+   "sensor_faults": 0,
+   "alert_rate_per_month": 0.34,
+   "first_alerts": [
+    {
+     "ts": "2016-03-07 10:00:00",
+     "kwh": 417.1,
+     "z": -3.2,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-03-29 10:00:00",
+     "kwh": 262.3,
+     "z": -3.3,
+     "rule": "sustained"
+    },
+    {
+     "ts": "2016-11-11 07:00:00",
+     "kwh": 88.2,
+     "z": -3.3,
+     "rule": "sustained"
+    }
+   ],
+   "faults": [],
+   "caught_labor_day_2017": false
+  }
+ ]
+}

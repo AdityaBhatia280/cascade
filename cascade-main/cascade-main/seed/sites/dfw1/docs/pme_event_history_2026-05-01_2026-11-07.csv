@@ -1,0 +1,243 @@
+ID,Source,Timestamp,Timestamp UTC,Event,Condition,Measurement,Value,Type,Priority
+40121,DFW1.GEN-1,5/9/2026 9:27:47.913 AM,5/9/2026 2:27:47.913 PM,General Event,Engine Running,Engine Speed,1797.344,Pick up,64
+40126,DFW1.ATS-A,5/9/2026 9:30:02.655 AM,5/9/2026 2:30:02.655 PM,ATS-A Transfer to Emergency,Test,Emergency Voltage A-B,478.662,Instantaneous,128
+40128,DFW1.UPS-A,5/9/2026 9:30:02.682 AM,5/9/2026 2:30:02.682 PM,On Battery,Input out of tolerance,Output Active Power,199.011,Pick up,192
+40133,DFW1.SWGR-A-MAIN,5/9/2026 9:30:02.763 AM,5/9/2026 2:30:02.763 PM,Interruption,Duration 0.160 s,Voltage A-B,2.059,Instantaneous,192
+40137,DFW1.GEN-1,5/9/2026 9:30:03.597 AM,5/9/2026 2:30:03.597 PM,Backup Power,Generator breaker closed,Active Power,242.297,Pick up,128
+40144,DFW1.SWGR-A-CB3,5/9/2026 9:30:07.943 AM,5/9/2026 2:30:07.943 PM,Under Current,Below 25 A for 5 s,Current A,14.974,Pick up,192
+40150,DFW1.UPS-A,5/9/2026 9:30:08.292 AM,5/9/2026 2:30:08.292 PM,Utility Power Restored,,Input Voltage A-B,480.866,Instantaneous,64
+40152,DFW1.UPS-A,5/9/2026 9:30:08.312 AM,5/9/2026 2:30:08.312 PM,On Battery,Input out of tolerance,Output Active Power,199.191,Drop out,192
+40155,DFW1.SWGR-A-CB3,5/9/2026 9:32:54.897 AM,5/9/2026 2:32:54.897 PM,Under Current,Below 25 A for 5 s,Current A,52.921,Drop out,192
+40160,DFW1.ATS-A,5/9/2026 10:04:53.325 AM,5/9/2026 3:04:53.325 PM,ATS-A Retransfer to Normal,Test,Normal Voltage A-B,481.367,Instantaneous,128
+40166,DFW1.UPS-A,5/9/2026 10:04:53.337 AM,5/9/2026 3:04:53.337 PM,On Battery,Input out of tolerance,Output Active Power,200.267,Pick up,192
+40173,DFW1.SWGR-A-MAIN,5/9/2026 10:04:53.373 AM,5/9/2026 3:04:53.373 PM,Interruption,Duration 0.254 s,Voltage A-B,8.143,Instantaneous,192
+40176,DFW1.GEN-1,5/9/2026 10:04:53.694 AM,5/9/2026 3:04:53.694 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40182,DFW1.SWGR-A-CB3,5/9/2026 10:04:59.283 AM,5/9/2026 3:04:59.283 PM,Under Current,Below 25 A for 5 s,Current A,15.377,Pick up,192
+40185,DFW1.UPS-A,5/9/2026 10:05:02.431 AM,5/9/2026 3:05:02.431 PM,Utility Power Restored,,Input Voltage A-B,480.983,Instantaneous,64
+40193,DFW1.UPS-A,5/9/2026 10:05:02.451 AM,5/9/2026 3:05:02.451 PM,On Battery,Input out of tolerance,Output Active Power,199.736,Drop out,192
+40202,DFW1.SWGR-A-CB3,5/9/2026 10:08:00.536 AM,5/9/2026 3:08:00.536 PM,Under Current,Below 25 A for 5 s,Current A,53.787,Drop out,192
+40207,DFW1.GEN-1,5/9/2026 10:10:03.409 AM,5/9/2026 3:10:03.409 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40211,DFW1.UPS-A,5/14/2026 10:26:52.346 PM,5/15/2026 3:26:52.346 AM,On Bypass,Transfer to static bypass,Output Active Power,197.106,Pick up,128
+40218,DFW1.UPS-A,5/14/2026 10:32:00.986 PM,5/15/2026 3:32:00.986 AM,On Maintenance Bypass,Maintenance bypass breaker closed,Output Active Power,196.346,Pick up,128
+40224,DFW1.UPS-A,5/15/2026 2:50:15.043 AM,5/15/2026 7:50:15.043 AM,On Maintenance Bypass,Maintenance bypass breaker open,Output Active Power,192.601,Drop out,128
+40231,DFW1.UPS-A,5/15/2026 2:56:21.625 AM,5/15/2026 7:56:21.625 AM,On Bypass,Transfer to inverter,Output Active Power,193.848,Drop out,128
+40233,DFW1.GEN-2,5/16/2026 9:46:07.080 AM,5/16/2026 2:46:07.080 PM,General Event,Engine Running,Engine Speed,1801.137,Pick up,64
+40237,DFW1.ATS-B,5/16/2026 9:47:45.134 AM,5/16/2026 2:47:45.134 PM,ATS-B Transfer to Emergency,Test,Emergency Voltage A-B,483.647,Instantaneous,128
+40245,DFW1.UPS-B,5/16/2026 9:47:45.160 AM,5/16/2026 2:47:45.160 PM,On Battery,Input out of tolerance,Output Active Power,134.263,Pick up,192
+40248,DFW1.SWGR-B-MAIN,5/16/2026 9:47:45.214 AM,5/16/2026 2:47:45.214 PM,Interruption,Duration 0.305 s,Voltage A-B,4.097,Instantaneous,192
+40251,DFW1.GEN-2,5/16/2026 9:47:46.132 AM,5/16/2026 2:47:46.132 PM,Backup Power,Generator breaker closed,Active Power,192.130,Pick up,128
+40254,DFW1.UPS-B,5/16/2026 9:47:49.941 AM,5/16/2026 2:47:49.941 PM,Utility Power Restored,,Input Voltage A-B,479.914,Instantaneous,64
+40256,DFW1.UPS-B,5/16/2026 9:47:49.961 AM,5/16/2026 2:47:49.961 PM,On Battery,Input out of tolerance,Output Active Power,134.551,Drop out,192
+40260,DFW1.SWGR-B-CB3,5/16/2026 9:47:50.665 AM,5/16/2026 2:47:50.665 PM,Under Current,Below 25 A for 5 s,Current A,15.978,Pick up,192
+40266,DFW1.SWGR-B-CB3,5/16/2026 9:51:00.506 AM,5/16/2026 2:51:00.506 PM,Under Current,Below 25 A for 5 s,Current A,47.900,Drop out,192
+40271,DFW1.ATS-B,5/16/2026 10:23:21.657 AM,5/16/2026 3:23:21.657 PM,ATS-B Retransfer to Normal,Test,Normal Voltage A-B,480.190,Instantaneous,128
+40277,DFW1.UPS-B,5/16/2026 10:23:21.674 AM,5/16/2026 3:23:21.674 PM,On Battery,Input out of tolerance,Output Active Power,134.922,Pick up,192
+40281,DFW1.SWGR-B-MAIN,5/16/2026 10:23:21.781 AM,5/16/2026 3:23:21.781 PM,Interruption,Duration 0.290 s,Voltage A-B,4.917,Instantaneous,192
+40289,DFW1.GEN-2,5/16/2026 10:23:21.966 AM,5/16/2026 3:23:21.966 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40292,DFW1.UPS-B,5/16/2026 10:23:27.377 AM,5/16/2026 3:23:27.377 PM,Utility Power Restored,,Input Voltage A-B,483.904,Instantaneous,64
+40300,DFW1.SWGR-B-CB3,5/16/2026 10:23:27.383 AM,5/16/2026 3:23:27.383 PM,Under Current,Below 25 A for 5 s,Current A,16.164,Pick up,192
+40304,DFW1.UPS-B,5/16/2026 10:23:27.397 AM,5/16/2026 3:23:27.397 PM,On Battery,Input out of tolerance,Output Active Power,134.709,Drop out,192
+40309,DFW1.SWGR-B-CB3,5/16/2026 10:26:06.895 AM,5/16/2026 3:26:06.895 PM,Under Current,Below 25 A for 5 s,Current A,48.314,Drop out,192
+40315,DFW1.GEN-2,5/16/2026 10:28:46.596 AM,5/16/2026 3:28:46.596 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40324,DFW1.UPS-B,6/11/2026 10:28:50.720 PM,6/12/2026 3:28:50.720 AM,On Bypass,Transfer to static bypass,Output Active Power,132.743,Pick up,128
+40329,DFW1.UPS-B,6/11/2026 10:36:55.032 PM,6/12/2026 3:36:55.032 AM,On Maintenance Bypass,Maintenance bypass breaker closed,Output Active Power,132.090,Pick up,128
+40333,DFW1.UPS-B,6/12/2026 2:48:14.431 AM,6/12/2026 7:48:14.431 AM,On Maintenance Bypass,Maintenance bypass breaker open,Output Active Power,130.945,Drop out,128
+40334,DFW1.UPS-B,6/12/2026 2:54:02.609 AM,6/12/2026 7:54:02.609 AM,On Bypass,Transfer to inverter,Output Active Power,130.672,Drop out,128
+40337,DFW1.GEN-1,6/12/2026 9:56:53.670 AM,6/12/2026 2:56:53.670 PM,General Event,Engine Running,Engine Speed,1801.283,Pick up,64
+40339,DFW1.ATS-A,6/12/2026 9:58:29.760 AM,6/12/2026 2:58:29.760 PM,ATS-A Transfer to Emergency,Test,Emergency Voltage A-B,483.554,Instantaneous,128
+40348,DFW1.UPS-A,6/12/2026 9:58:29.780 AM,6/12/2026 2:58:29.780 PM,On Battery,Input out of tolerance,Output Active Power,199.610,Pick up,192
+40357,DFW1.SWGR-A-MAIN,6/12/2026 9:58:29.819 AM,6/12/2026 2:58:29.819 PM,Interruption,Duration 0.263 s,Voltage A-B,8.880,Instantaneous,192
+40360,DFW1.GEN-1,6/12/2026 9:58:30.740 AM,6/12/2026 2:58:30.740 PM,Backup Power,Generator breaker closed,Active Power,244.100,Pick up,128
+40362,DFW1.SWGR-A-CB3,6/12/2026 9:58:35.277 AM,6/12/2026 2:58:35.277 PM,Under Current,Below 25 A for 5 s,Current A,15.678,Pick up,192
+40366,DFW1.UPS-A,6/12/2026 9:58:39.464 AM,6/12/2026 2:58:39.464 PM,Utility Power Restored,,Input Voltage A-B,481.305,Instantaneous,64
+40375,DFW1.UPS-A,6/12/2026 9:58:39.484 AM,6/12/2026 2:58:39.484 PM,On Battery,Input out of tolerance,Output Active Power,200.025,Drop out,192
+40378,DFW1.SWGR-A-CB3,6/12/2026 10:01:49.271 AM,6/12/2026 3:01:49.271 PM,Under Current,Below 25 A for 5 s,Current A,55.042,Drop out,192
+40383,DFW1.ATS-A,6/12/2026 10:33:09.904 AM,6/12/2026 3:33:09.904 PM,ATS-A Retransfer to Normal,Test,Normal Voltage A-B,478.985,Instantaneous,128
+40391,DFW1.UPS-A,6/12/2026 10:33:09.920 AM,6/12/2026 3:33:09.920 PM,On Battery,Input out of tolerance,Output Active Power,200.653,Pick up,192
+40396,DFW1.SWGR-A-MAIN,6/12/2026 10:33:09.966 AM,6/12/2026 3:33:09.966 PM,Interruption,Duration 0.297 s,Voltage A-B,7.241,Instantaneous,192
+40402,DFW1.GEN-1,6/12/2026 10:33:10.247 AM,6/12/2026 3:33:10.247 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40405,DFW1.SWGR-A-CB3,6/12/2026 10:33:15.826 AM,6/12/2026 3:33:15.826 PM,Under Current,Below 25 A for 5 s,Current A,15.703,Pick up,192
+40411,DFW1.UPS-A,6/12/2026 10:33:17.223 AM,6/12/2026 3:33:17.223 PM,Utility Power Restored,,Input Voltage A-B,478.157,Instantaneous,64
+40415,DFW1.UPS-A,6/12/2026 10:33:17.243 AM,6/12/2026 3:33:17.243 PM,On Battery,Input out of tolerance,Output Active Power,200.704,Drop out,192
+40416,DFW1.SWGR-A-CB3,6/12/2026 10:36:14.156 AM,6/12/2026 3:36:14.156 PM,Under Current,Below 25 A for 5 s,Current A,56.287,Drop out,192
+40418,DFW1.GEN-1,6/12/2026 10:38:12.485 AM,6/12/2026 3:38:12.485 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40419,DFW1.GEN-2,6/19/2026 9:49:15.956 AM,6/19/2026 2:49:15.956 PM,General Event,Engine Running,Engine Speed,1802.775,Pick up,64
+40420,DFW1.ATS-B,6/19/2026 9:50:53.506 AM,6/19/2026 2:50:53.506 PM,ATS-B Transfer to Emergency,Test,Emergency Voltage A-B,481.683,Instantaneous,128
+40421,DFW1.UPS-B,6/19/2026 9:50:53.524 AM,6/19/2026 2:50:53.524 PM,On Battery,Input out of tolerance,Output Active Power,134.673,Pick up,192
+40428,DFW1.SWGR-B-MAIN,6/19/2026 9:50:53.580 AM,6/19/2026 2:50:53.580 PM,Interruption,Duration 0.247 s,Voltage A-B,7.894,Instantaneous,192
+40434,DFW1.GEN-2,6/19/2026 9:50:54.442 AM,6/19/2026 2:50:54.442 PM,Backup Power,Generator breaker closed,Active Power,191.197,Pick up,128
+40435,DFW1.SWGR-B-CB3,6/19/2026 9:50:59.331 AM,6/19/2026 2:50:59.331 PM,Under Current,Below 25 A for 5 s,Current A,15.452,Pick up,192
+40441,DFW1.UPS-B,6/19/2026 9:51:02.891 AM,6/19/2026 2:51:02.891 PM,Utility Power Restored,,Input Voltage A-B,478.241,Instantaneous,64
+40447,DFW1.UPS-B,6/19/2026 9:51:02.911 AM,6/19/2026 2:51:02.911 PM,On Battery,Input out of tolerance,Output Active Power,134.892,Drop out,192
+40455,DFW1.SWGR-B-CB3,6/19/2026 9:53:26.943 AM,6/19/2026 2:53:26.943 PM,Under Current,Below 25 A for 5 s,Current A,41.471,Drop out,192
+40460,DFW1.ATS-B,6/19/2026 10:24:33.570 AM,6/19/2026 3:24:33.570 PM,ATS-B Retransfer to Normal,Test,Normal Voltage A-B,481.742,Instantaneous,128
+40461,DFW1.UPS-B,6/19/2026 10:24:33.591 AM,6/19/2026 3:24:33.591 PM,On Battery,Input out of tolerance,Output Active Power,134.717,Pick up,192
+40464,DFW1.SWGR-B-MAIN,6/19/2026 10:24:33.658 AM,6/19/2026 3:24:33.658 PM,Interruption,Duration 0.183 s,Voltage A-B,7.874,Instantaneous,192
+40472,DFW1.GEN-2,6/19/2026 10:24:33.876 AM,6/19/2026 3:24:33.876 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40478,DFW1.UPS-B,6/19/2026 10:24:38.414 AM,6/19/2026 3:24:38.414 PM,Utility Power Restored,,Input Voltage A-B,483.371,Instantaneous,64
+40479,DFW1.UPS-B,6/19/2026 10:24:38.434 AM,6/19/2026 3:24:38.434 PM,On Battery,Input out of tolerance,Output Active Power,134.606,Drop out,192
+40488,DFW1.SWGR-B-CB3,6/19/2026 10:24:38.664 AM,6/19/2026 3:24:38.664 PM,Under Current,Below 25 A for 5 s,Current A,16.148,Pick up,192
+40490,DFW1.SWGR-B-CB3,6/19/2026 10:27:48.957 AM,6/19/2026 3:27:48.957 PM,Under Current,Below 25 A for 5 s,Current A,43.572,Drop out,192
+40499,DFW1.GEN-2,6/19/2026 10:29:56.611 AM,6/19/2026 3:29:56.611 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40504,DFW1.SWGR-A-MAIN,6/23/2026 6:12:37.512 AM,6/23/2026 11:12:37.512 AM,Sag (Voltage),Duration 0.050 s,Voltage A-B,423.781,Instantaneous,128
+40506,DFW1.SWGR-B-MAIN,6/23/2026 6:12:37.514 AM,6/23/2026 11:12:37.514 AM,Sag (Voltage),Duration 0.050 s,Voltage A-B,425.017,Instantaneous,128
+40510,DFW1.GEN-1,7/10/2026 9:11:32.610 AM,7/10/2026 2:11:32.610 PM,General Event,Engine Running,Engine Speed,1799.575,Pick up,64
+40518,DFW1.ATS-A,7/10/2026 9:13:49.092 AM,7/10/2026 2:13:49.092 PM,ATS-A Transfer to Emergency,Test,Emergency Voltage A-B,482.468,Instantaneous,128
+40521,DFW1.UPS-A,7/10/2026 9:13:49.121 AM,7/10/2026 2:13:49.121 PM,On Battery,Input out of tolerance,Output Active Power,198.186,Pick up,192
+40530,DFW1.SWGR-A-MAIN,7/10/2026 9:13:49.214 AM,7/10/2026 2:13:49.214 PM,Interruption,Duration 0.295 s,Voltage A-B,3.334,Instantaneous,192
+40534,DFW1.GEN-1,7/10/2026 9:13:50.086 AM,7/10/2026 2:13:50.086 PM,Backup Power,Generator breaker closed,Active Power,242.929,Pick up,128
+40541,DFW1.SWGR-A-CB3,7/10/2026 9:13:54.378 AM,7/10/2026 2:13:54.378 PM,Under Current,Below 25 A for 5 s,Current A,15.482,Pick up,192
+40547,DFW1.UPS-A,7/10/2026 9:13:58.877 AM,7/10/2026 2:13:58.877 PM,Utility Power Restored,,Input Voltage A-B,478.699,Instantaneous,64
+40553,DFW1.UPS-A,7/10/2026 9:13:58.897 AM,7/10/2026 2:13:58.897 PM,On Battery,Input out of tolerance,Output Active Power,197.856,Drop out,192
+40562,DFW1.SWGR-A-CB3,7/10/2026 9:16:20.331 AM,7/10/2026 2:16:20.331 PM,Under Current,Below 25 A for 5 s,Current A,53.482,Drop out,192
+40566,DFW1.ATS-A,7/10/2026 9:46:45.231 AM,7/10/2026 2:46:45.231 PM,ATS-A Retransfer to Normal,Test,Normal Voltage A-B,482.202,Instantaneous,128
+40567,DFW1.UPS-A,7/10/2026 9:46:45.258 AM,7/10/2026 2:46:45.258 PM,On Battery,Input out of tolerance,Output Active Power,199.301,Pick up,192
+40573,DFW1.SWGR-A-MAIN,7/10/2026 9:46:45.359 AM,7/10/2026 2:46:45.359 PM,Interruption,Duration 0.275 s,Voltage A-B,4.167,Instantaneous,192
+40580,DFW1.GEN-1,7/10/2026 9:46:45.627 AM,7/10/2026 2:46:45.627 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40581,DFW1.UPS-A,7/10/2026 9:46:50.343 AM,7/10/2026 2:46:50.343 PM,Utility Power Restored,,Input Voltage A-B,480.207,Instantaneous,64
+40588,DFW1.UPS-A,7/10/2026 9:46:50.363 AM,7/10/2026 2:46:50.363 PM,On Battery,Input out of tolerance,Output Active Power,198.731,Drop out,192
+40597,DFW1.SWGR-A-CB3,7/10/2026 9:46:51.165 AM,7/10/2026 2:46:51.165 PM,Under Current,Below 25 A for 5 s,Current A,15.562,Pick up,192
+40600,DFW1.SWGR-A-CB3,7/10/2026 9:49:26.565 AM,7/10/2026 2:49:26.565 PM,Under Current,Below 25 A for 5 s,Current A,53.949,Drop out,192
+40608,DFW1.GEN-1,7/10/2026 9:52:10.278 AM,7/10/2026 2:52:10.278 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40617,DFW1.GEN-2,7/17/2026 9:07:11.012 AM,7/17/2026 2:07:11.012 PM,General Event,Engine Running,Engine Speed,1799.859,Pick up,64
+40623,DFW1.ATS-B,7/17/2026 9:09:29.390 AM,7/17/2026 2:09:29.390 PM,ATS-B Transfer to Emergency,Test,Emergency Voltage A-B,480.066,Instantaneous,128
+40629,DFW1.UPS-B,7/17/2026 9:09:29.413 AM,7/17/2026 2:09:29.413 PM,On Battery,Input out of tolerance,Output Active Power,134.385,Pick up,192
+40636,DFW1.SWGR-B-MAIN,7/17/2026 9:09:29.458 AM,7/17/2026 2:09:29.458 PM,Interruption,Duration 0.283 s,Voltage A-B,4.121,Instantaneous,192
+40644,DFW1.GEN-2,7/17/2026 9:09:30.311 AM,7/17/2026 2:09:30.311 PM,Backup Power,Generator breaker closed,Active Power,190.778,Pick up,128
+40647,DFW1.UPS-B,7/17/2026 9:09:34.175 AM,7/17/2026 2:09:34.175 PM,Utility Power Restored,,Input Voltage A-B,482.343,Instantaneous,64
+40656,DFW1.UPS-B,7/17/2026 9:09:34.195 AM,7/17/2026 2:09:34.195 PM,On Battery,Input out of tolerance,Output Active Power,133.824,Drop out,192
+40661,DFW1.SWGR-B-CB3,7/17/2026 9:09:34.555 AM,7/17/2026 2:09:34.555 PM,Under Current,Below 25 A for 5 s,Current A,15.622,Pick up,192
+40669,DFW1.SWGR-B-CB3,7/17/2026 9:12:20.665 AM,7/17/2026 2:12:20.665 PM,Under Current,Below 25 A for 5 s,Current A,46.020,Drop out,192
+40674,DFW1.ATS-B,7/17/2026 9:43:24.527 AM,7/17/2026 2:43:24.527 PM,ATS-B Retransfer to Normal,Test,Normal Voltage A-B,482.520,Instantaneous,128
+40677,DFW1.UPS-B,7/17/2026 9:43:24.551 AM,7/17/2026 2:43:24.551 PM,On Battery,Input out of tolerance,Output Active Power,134.759,Pick up,192
+40684,DFW1.SWGR-B-MAIN,7/17/2026 9:43:24.626 AM,7/17/2026 2:43:24.626 PM,Interruption,Duration 0.183 s,Voltage A-B,8.377,Instantaneous,192
+40685,DFW1.GEN-2,7/17/2026 9:43:24.833 AM,7/17/2026 2:43:24.833 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40687,DFW1.SWGR-B-CB3,7/17/2026 9:43:29.582 AM,7/17/2026 2:43:29.582 PM,Under Current,Below 25 A for 5 s,Current A,15.830,Pick up,192
+40688,DFW1.UPS-B,7/17/2026 9:43:31.444 AM,7/17/2026 2:43:31.444 PM,Utility Power Restored,,Input Voltage A-B,479.156,Instantaneous,64
+40689,DFW1.UPS-B,7/17/2026 9:43:31.464 AM,7/17/2026 2:43:31.464 PM,On Battery,Input out of tolerance,Output Active Power,134.399,Drop out,192
+40690,DFW1.SWGR-B-CB3,7/17/2026 9:46:03.958 AM,7/17/2026 2:46:03.958 PM,Under Current,Below 25 A for 5 s,Current A,46.554,Drop out,192
+40693,DFW1.GEN-2,7/17/2026 9:48:42.589 AM,7/17/2026 2:48:42.589 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40695,DFW1.SWGR-A-MAIN,7/22/2026 4:31:40.244 PM,7/22/2026 9:31:40.244 PM,Sag (Voltage),Duration 0.067 s,Voltage A-B,414.005,Instantaneous,128
+40702,DFW1.SWGR-B-MAIN,7/22/2026 4:31:40.246 PM,7/22/2026 9:31:40.246 PM,Sag (Voltage),Duration 0.067 s,Voltage A-B,412.557,Instantaneous,128
+40711,DFW1.GEN-1,8/14/2026 9:20:42.157 AM,8/14/2026 2:20:42.157 PM,General Event,Engine Running,Engine Speed,1797.674,Pick up,64
+40713,DFW1.ATS-A,8/14/2026 9:22:24.214 AM,8/14/2026 2:22:24.214 PM,ATS-A Transfer to Emergency,Test,Emergency Voltage A-B,478.629,Instantaneous,128
+40721,DFW1.UPS-A,8/14/2026 9:22:24.226 AM,8/14/2026 2:22:24.226 PM,On Battery,Input out of tolerance,Output Active Power,198.978,Pick up,192
+40727,DFW1.SWGR-A-MAIN,8/14/2026 9:22:24.292 AM,8/14/2026 2:22:24.292 PM,Interruption,Duration 0.166 s,Voltage A-B,8.470,Instantaneous,192
+40733,DFW1.GEN-1,8/14/2026 9:22:25.119 AM,8/14/2026 2:22:25.119 PM,Backup Power,Generator breaker closed,Active Power,242.474,Pick up,128
+40741,DFW1.SWGR-A-CB3,8/14/2026 9:22:29.950 AM,8/14/2026 2:22:29.950 PM,Under Current,Below 25 A for 5 s,Current A,15.097,Pick up,192
+40745,DFW1.UPS-A,8/14/2026 9:22:32.597 AM,8/14/2026 2:22:32.597 PM,Utility Power Restored,,Input Voltage A-B,478.509,Instantaneous,64
+40746,DFW1.UPS-A,8/14/2026 9:22:32.617 AM,8/14/2026 2:22:32.617 PM,On Battery,Input out of tolerance,Output Active Power,199.151,Drop out,192
+40747,DFW1.SWGR-A-CB3,8/14/2026 9:25:11.586 AM,8/14/2026 2:25:11.586 PM,Under Current,Below 25 A for 5 s,Current A,53.325,Drop out,192
+40756,DFW1.ATS-A,8/14/2026 9:56:48.228 AM,8/14/2026 2:56:48.228 PM,ATS-A Retransfer to Normal,Test,Normal Voltage A-B,481.070,Instantaneous,128
+40760,DFW1.UPS-A,8/14/2026 9:56:48.246 AM,8/14/2026 2:56:48.246 PM,On Battery,Input out of tolerance,Output Active Power,199.602,Pick up,192
+40762,DFW1.SWGR-A-MAIN,8/14/2026 9:56:48.280 AM,8/14/2026 2:56:48.280 PM,Interruption,Duration 0.280 s,Voltage A-B,4.876,Instantaneous,192
+40770,DFW1.GEN-1,8/14/2026 9:56:48.531 AM,8/14/2026 2:56:48.531 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40778,DFW1.SWGR-A-CB3,8/14/2026 9:56:53.292 AM,8/14/2026 2:56:53.292 PM,Under Current,Below 25 A for 5 s,Current A,15.639,Pick up,192
+40784,DFW1.UPS-A,8/14/2026 9:56:55.454 AM,8/14/2026 2:56:55.454 PM,Utility Power Restored,,Input Voltage A-B,482.886,Instantaneous,64
+40789,DFW1.UPS-A,8/14/2026 9:56:55.474 AM,8/14/2026 2:56:55.474 PM,On Battery,Input out of tolerance,Output Active Power,200.062,Drop out,192
+40791,DFW1.SWGR-A-CB3,8/14/2026 9:59:32.429 AM,8/14/2026 2:59:32.429 PM,Under Current,Below 25 A for 5 s,Current A,54.822,Drop out,192
+40792,DFW1.GEN-1,8/14/2026 10:02:10.566 AM,8/14/2026 3:02:10.566 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40798,DFW1.SWGR-A-MAIN,8/18/2026 5:36:19.229 PM,8/18/2026 10:36:19.229 PM,Sag (Voltage),Duration 0.083 s,Voltage A-B,341.597,Instantaneous,128
+40807,DFW1.SWGR-B-MAIN,8/18/2026 5:36:19.231 PM,8/18/2026 10:36:19.231 PM,Sag (Voltage),Duration 0.083 s,Voltage A-B,341.720,Instantaneous,128
+40813,DFW1.UPS-A,8/18/2026 5:36:19.251 PM,8/18/2026 10:36:19.251 PM,On Battery,Input out of tolerance,Output Active Power,202.664,Pick up,192
+40819,DFW1.UPS-B,8/18/2026 5:36:19.255 PM,8/18/2026 10:36:19.255 PM,On Battery,Input out of tolerance,Output Active Power,136.865,Pick up,192
+40824,DFW1.UPS-A,8/18/2026 5:36:23.294 PM,8/18/2026 10:36:23.294 PM,Utility Power Restored,,Input Voltage A-B,478.977,Instantaneous,64
+40829,DFW1.UPS-A,8/18/2026 5:36:23.314 PM,8/18/2026 10:36:23.314 PM,On Battery,Input out of tolerance,Output Active Power,202.744,Drop out,192
+40838,DFW1.UPS-B,8/18/2026 5:36:25.791 PM,8/18/2026 10:36:25.791 PM,Utility Power Restored,,Input Voltage A-B,480.964,Instantaneous,64
+40845,DFW1.UPS-B,8/18/2026 5:36:25.811 PM,8/18/2026 10:36:25.811 PM,On Battery,Input out of tolerance,Output Active Power,136.765,Drop out,192
+40846,DFW1.GEN-2,8/22/2026 9:32:04.734 AM,8/22/2026 2:32:04.734 PM,General Event,Engine Running,Engine Speed,1801.825,Pick up,64
+40854,DFW1.ATS-B,8/22/2026 9:34:24.282 AM,8/22/2026 2:34:24.282 PM,ATS-B Transfer to Emergency,Test,Emergency Voltage A-B,480.961,Instantaneous,128
+40856,DFW1.UPS-B,8/22/2026 9:34:24.298 AM,8/22/2026 2:34:24.298 PM,On Battery,Input out of tolerance,Output Active Power,134.201,Pick up,192
+40863,DFW1.SWGR-B-MAIN,8/22/2026 9:34:24.315 AM,8/22/2026 2:34:24.315 PM,Interruption,Duration 0.160 s,Voltage A-B,4.047,Instantaneous,192
+40866,DFW1.GEN-2,8/22/2026 9:34:25.237 AM,8/22/2026 2:34:25.237 PM,Backup Power,Generator breaker closed,Active Power,191.377,Pick up,128
+40869,DFW1.UPS-B,8/22/2026 9:34:30.042 AM,8/22/2026 2:34:30.042 PM,Utility Power Restored,,Input Voltage A-B,480.650,Instantaneous,64
+40875,DFW1.UPS-B,8/22/2026 9:34:30.062 AM,8/22/2026 2:34:30.062 PM,On Battery,Input out of tolerance,Output Active Power,134.908,Drop out,192
+40880,DFW1.SWGR-B-CB3,8/22/2026 9:34:30.263 AM,8/22/2026 2:34:30.263 PM,Under Current,Below 25 A for 5 s,Current A,15.456,Pick up,192
+40883,DFW1.SWGR-B-CB3,8/22/2026 9:37:29.782 AM,8/22/2026 2:37:29.782 PM,Under Current,Below 25 A for 5 s,Current A,51.967,Drop out,192
+40890,DFW1.ATS-B,8/22/2026 10:06:39.912 AM,8/22/2026 3:06:39.912 PM,ATS-B Retransfer to Normal,Test,Normal Voltage A-B,479.975,Instantaneous,128
+40895,DFW1.UPS-B,8/22/2026 10:06:39.925 AM,8/22/2026 3:06:39.925 PM,On Battery,Input out of tolerance,Output Active Power,135.168,Pick up,192
+40904,DFW1.SWGR-B-MAIN,8/22/2026 10:06:40.038 AM,8/22/2026 3:06:40.038 PM,Interruption,Duration 0.181 s,Voltage A-B,7.062,Instantaneous,192
+40908,DFW1.GEN-2,8/22/2026 10:06:40.287 AM,8/22/2026 3:06:40.287 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+40911,DFW1.SWGR-B-CB3,8/22/2026 10:06:45.626 AM,8/22/2026 3:06:45.626 PM,Under Current,Below 25 A for 5 s,Current A,16.488,Pick up,192
+40914,DFW1.UPS-B,8/22/2026 10:06:47.041 AM,8/22/2026 3:06:47.041 PM,Utility Power Restored,,Input Voltage A-B,481.158,Instantaneous,64
+40921,DFW1.UPS-B,8/22/2026 10:06:47.061 AM,8/22/2026 3:06:47.061 PM,On Battery,Input out of tolerance,Output Active Power,134.918,Drop out,192
+40924,DFW1.SWGR-B-CB3,8/22/2026 10:09:34.296 AM,8/22/2026 3:09:34.296 PM,Under Current,Below 25 A for 5 s,Current A,52.996,Drop out,192
+40931,DFW1.GEN-2,8/22/2026 10:12:09.130 AM,8/22/2026 3:12:09.130 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+40934,DFW1.SWGR-B-CB3,8/24/2026 4:04:18.855 PM,8/24/2026 9:04:18.855 PM,Under Current,Below 25 A for 5 s,Current A,16.036,Pick up,192
+40939,DFW1.SWGR-B-CB3,8/24/2026 4:06:51.403 PM,8/24/2026 9:06:51.403 PM,Under Current,Below 25 A for 5 s,Current A,66.314,Drop out,192
+40946,DFW1.SWGR-A-CB3,9/9/2026 7:15:25.309 AM,9/9/2026 12:15:25.309 PM,Under Current,Below 25 A for 5 s,Current A,14.414,Pick up,192
+40954,DFW1.SWGR-A-CB3,9/9/2026 2:13:52.426 PM,9/9/2026 7:13:52.426 PM,Under Current,Below 25 A for 5 s,Current A,36.668,Drop out,192
+40955,DFW1.GEN-1,9/11/2026 9:36:13.016 AM,9/11/2026 2:36:13.016 PM,General Event,Engine Running,Engine Speed,1798.249,Pick up,64
+40956,DFW1.ATS-A,9/11/2026 9:38:03.324 AM,9/11/2026 2:38:03.324 PM,ATS-A Transfer to Emergency,Test,Emergency Voltage A-B,483.388,Instantaneous,128
+40960,DFW1.UPS-A,9/11/2026 9:38:03.348 AM,9/11/2026 2:38:03.348 PM,On Battery,Input out of tolerance,Output Active Power,198.528,Pick up,192
+40961,DFW1.SWGR-A-MAIN,9/11/2026 9:38:03.378 AM,9/11/2026 2:38:03.378 PM,Interruption,Duration 0.223 s,Voltage A-B,2.509,Instantaneous,192
+40964,DFW1.GEN-1,9/11/2026 9:38:04.279 AM,9/11/2026 2:38:04.279 PM,Backup Power,Generator breaker closed,Active Power,242.793,Pick up,128
+40973,DFW1.SWGR-A-CB3,9/11/2026 9:38:09.013 AM,9/11/2026 2:38:09.013 PM,Under Current,Below 25 A for 5 s,Current A,14.718,Pick up,192
+40977,DFW1.UPS-A,9/11/2026 9:38:10.815 AM,9/11/2026 2:38:10.815 PM,Utility Power Restored,,Input Voltage A-B,483.293,Instantaneous,64
+40978,DFW1.UPS-A,9/11/2026 9:38:10.835 AM,9/11/2026 2:38:10.835 PM,On Battery,Input out of tolerance,Output Active Power,198.334,Drop out,192
+40987,DFW1.SWGR-A-CB3,9/11/2026 9:40:58.644 AM,9/11/2026 2:40:58.644 PM,Under Current,Below 25 A for 5 s,Current A,53.280,Drop out,192
+40991,DFW1.ATS-A,9/11/2026 10:12:26.912 AM,9/11/2026 3:12:26.912 PM,ATS-A Retransfer to Normal,Test,Normal Voltage A-B,480.044,Instantaneous,128
+41000,DFW1.UPS-A,9/11/2026 10:12:26.927 AM,9/11/2026 3:12:26.927 PM,On Battery,Input out of tolerance,Output Active Power,200.228,Pick up,192
+41003,DFW1.SWGR-A-MAIN,9/11/2026 10:12:27.041 AM,9/11/2026 3:12:27.041 PM,Interruption,Duration 0.179 s,Voltage A-B,6.983,Instantaneous,192
+41010,DFW1.GEN-1,9/11/2026 10:12:27.271 AM,9/11/2026 3:12:27.271 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+41019,DFW1.SWGR-A-CB3,9/11/2026 10:12:32.895 AM,9/11/2026 3:12:32.895 PM,Under Current,Below 25 A for 5 s,Current A,15.658,Pick up,192
+41022,DFW1.UPS-A,9/11/2026 10:12:33.994 AM,9/11/2026 3:12:33.994 PM,Utility Power Restored,,Input Voltage A-B,482.901,Instantaneous,64
+41031,DFW1.UPS-A,9/11/2026 10:12:34.014 AM,9/11/2026 3:12:34.014 PM,On Battery,Input out of tolerance,Output Active Power,199.740,Drop out,192
+41036,DFW1.SWGR-A-CB3,9/11/2026 10:15:46.348 AM,9/11/2026 3:15:46.348 PM,Under Current,Below 25 A for 5 s,Current A,55.072,Drop out,192
+41043,DFW1.GEN-1,9/11/2026 10:17:27.160 AM,9/11/2026 3:17:27.160 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+41049,DFW1.GEN-2,9/18/2026 9:12:32.617 AM,9/18/2026 2:12:32.617 PM,General Event,Engine Running,Engine Speed,1797.094,Pick up,64
+41055,DFW1.ATS-B,9/18/2026 9:14:11.247 AM,9/18/2026 2:14:11.247 PM,ATS-B Transfer to Emergency,Test,Emergency Voltage A-B,478.622,Instantaneous,128
+41063,DFW1.UPS-B,9/18/2026 9:14:11.261 AM,9/18/2026 2:14:11.261 PM,On Battery,Input out of tolerance,Output Active Power,134.015,Pick up,192
+41070,DFW1.SWGR-B-MAIN,9/18/2026 9:14:11.304 AM,9/18/2026 2:14:11.304 PM,Interruption,Duration 0.185 s,Voltage A-B,5.606,Instantaneous,192
+41077,DFW1.GEN-2,9/18/2026 9:14:12.190 AM,9/18/2026 2:14:12.190 PM,Backup Power,Generator breaker closed,Active Power,190.154,Pick up,128
+41078,DFW1.SWGR-B-CB3,9/18/2026 9:14:17.284 AM,9/18/2026 2:14:17.284 PM,Under Current,Below 25 A for 5 s,Current A,15.215,Pick up,192
+41083,DFW1.UPS-B,9/18/2026 9:14:17.382 AM,9/18/2026 2:14:17.382 PM,Utility Power Restored,,Input Voltage A-B,481.935,Instantaneous,64
+41090,DFW1.UPS-B,9/18/2026 9:14:17.402 AM,9/18/2026 2:14:17.402 PM,On Battery,Input out of tolerance,Output Active Power,134.116,Drop out,192
+41095,DFW1.SWGR-B-CB3,9/18/2026 9:17:30.630 AM,9/18/2026 2:17:30.630 PM,Under Current,Below 25 A for 5 s,Current A,54.489,Drop out,192
+41101,DFW1.ATS-B,9/18/2026 9:47:55.322 AM,9/18/2026 2:47:55.322 PM,ATS-B Retransfer to Normal,Test,Normal Voltage A-B,481.685,Instantaneous,128
+41109,DFW1.UPS-B,9/18/2026 9:47:55.345 AM,9/18/2026 2:47:55.345 PM,On Battery,Input out of tolerance,Output Active Power,134.422,Pick up,192
+41118,DFW1.SWGR-B-MAIN,9/18/2026 9:47:55.451 AM,9/18/2026 2:47:55.451 PM,Interruption,Duration 0.318 s,Voltage A-B,7.490,Instantaneous,192
+41122,DFW1.GEN-2,9/18/2026 9:47:55.719 AM,9/18/2026 2:47:55.719 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+41131,DFW1.SWGR-B-CB3,9/18/2026 9:48:01.176 AM,9/18/2026 2:48:01.176 PM,Under Current,Below 25 A for 5 s,Current A,16.331,Pick up,192
+41138,DFW1.UPS-B,9/18/2026 9:48:04.656 AM,9/18/2026 2:48:04.656 PM,Utility Power Restored,,Input Voltage A-B,480.694,Instantaneous,64
+41139,DFW1.UPS-B,9/18/2026 9:48:04.676 AM,9/18/2026 2:48:04.676 PM,On Battery,Input out of tolerance,Output Active Power,135.130,Drop out,192
+41148,DFW1.SWGR-B-CB3,9/18/2026 9:50:54.855 AM,9/18/2026 2:50:54.855 PM,Under Current,Below 25 A for 5 s,Current A,55.719,Drop out,192
+41153,DFW1.GEN-2,9/18/2026 9:53:24.221 AM,9/18/2026 2:53:24.221 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+41162,DFW1.SWGR-A-MAIN,10/3/2026 2:41:09.653 PM,10/3/2026 7:41:09.653 PM,Swell (Voltage),Duration 0.083 s,Voltage A-B,520.127,Instantaneous,128
+41165,DFW1.SWGR-B-MAIN,10/3/2026 2:41:09.655 PM,10/3/2026 7:41:09.655 PM,Swell (Voltage),Duration 0.083 s,Voltage A-B,519.327,Instantaneous,128
+41167,DFW1.GEN-1,10/9/2026 9:28:24.108 AM,10/9/2026 2:28:24.108 PM,General Event,Engine Running,Engine Speed,1797.763,Pick up,64
+41171,DFW1.ATS-A,10/9/2026 9:30:11.321 AM,10/9/2026 2:30:11.321 PM,ATS-A Transfer to Emergency,Test,Emergency Voltage A-B,483.357,Instantaneous,128
+41176,DFW1.UPS-A,10/9/2026 9:30:11.340 AM,10/9/2026 2:30:11.340 PM,On Battery,Input out of tolerance,Output Active Power,198.205,Pick up,192
+41180,DFW1.SWGR-A-MAIN,10/9/2026 9:30:11.450 AM,10/9/2026 2:30:11.450 PM,Interruption,Duration 0.290 s,Voltage A-B,2.121,Instantaneous,192
+41184,DFW1.GEN-1,10/9/2026 9:30:12.271 AM,10/9/2026 2:30:12.271 PM,Backup Power,Generator breaker closed,Active Power,242.046,Pick up,128
+41185,DFW1.SWGR-A-CB3,10/9/2026 9:30:16.950 AM,10/9/2026 2:30:16.950 PM,Under Current,Below 25 A for 5 s,Current A,14.697,Pick up,192
+41192,DFW1.UPS-A,10/9/2026 9:30:20.380 AM,10/9/2026 2:30:20.380 PM,Utility Power Restored,,Input Voltage A-B,479.028,Instantaneous,64
+41197,DFW1.UPS-A,10/9/2026 9:30:20.400 AM,10/9/2026 2:30:20.400 PM,On Battery,Input out of tolerance,Output Active Power,198.886,Drop out,192
+41205,DFW1.SWGR-A-CB3,10/9/2026 9:33:14.688 AM,10/9/2026 2:33:14.688 PM,Under Current,Below 25 A for 5 s,Current A,47.290,Drop out,192
+41213,DFW1.ATS-A,10/9/2026 10:02:29.796 AM,10/9/2026 3:02:29.796 PM,ATS-A Retransfer to Normal,Test,Normal Voltage A-B,482.298,Instantaneous,128
+41216,DFW1.UPS-A,10/9/2026 10:02:29.817 AM,10/9/2026 3:02:29.817 PM,On Battery,Input out of tolerance,Output Active Power,199.744,Pick up,192
+41224,DFW1.SWGR-A-MAIN,10/9/2026 10:02:29.905 AM,10/9/2026 3:02:29.905 PM,Interruption,Duration 0.198 s,Voltage A-B,3.182,Instantaneous,192
+41230,DFW1.GEN-1,10/9/2026 10:02:30.179 AM,10/9/2026 3:02:30.179 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+41236,DFW1.SWGR-A-CB3,10/9/2026 10:02:34.942 AM,10/9/2026 3:02:34.942 PM,Under Current,Below 25 A for 5 s,Current A,16.028,Pick up,192
+41239,DFW1.UPS-A,10/9/2026 10:02:38.089 AM,10/9/2026 3:02:38.089 PM,Utility Power Restored,,Input Voltage A-B,480.289,Instantaneous,64
+41247,DFW1.UPS-A,10/9/2026 10:02:38.109 AM,10/9/2026 3:02:38.109 PM,On Battery,Input out of tolerance,Output Active Power,200.342,Drop out,192
+41253,DFW1.SWGR-A-CB3,10/9/2026 10:05:03.221 AM,10/9/2026 3:05:03.221 PM,Under Current,Below 25 A for 5 s,Current A,48.238,Drop out,192
+41255,DFW1.GEN-1,10/9/2026 10:07:50.706 AM,10/9/2026 3:07:50.706 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64
+41262,DFW1.GEN-2,10/16/2026 9:25:51.445 AM,10/16/2026 2:25:51.445 PM,General Event,Engine Running,Engine Speed,1801.715,Pick up,64
+41271,DFW1.ATS-B,10/16/2026 9:27:43.240 AM,10/16/2026 2:27:43.240 PM,ATS-B Transfer to Emergency,Test,Emergency Voltage A-B,483.444,Instantaneous,128
+41279,DFW1.UPS-B,10/16/2026 9:27:43.267 AM,10/16/2026 2:27:43.267 PM,On Battery,Input out of tolerance,Output Active Power,134.754,Pick up,192
+41286,DFW1.SWGR-B-MAIN,10/16/2026 9:27:43.364 AM,10/16/2026 2:27:43.364 PM,Interruption,Duration 0.323 s,Voltage A-B,5.019,Instantaneous,192
+41291,DFW1.GEN-2,10/16/2026 9:27:44.212 AM,10/16/2026 2:27:44.212 PM,Backup Power,Generator breaker closed,Active Power,190.782,Pick up,128
+41295,DFW1.SWGR-B-CB3,10/16/2026 9:27:48.334 AM,10/16/2026 2:27:48.334 PM,Under Current,Below 25 A for 5 s,Current A,15.161,Pick up,192
+41301,DFW1.UPS-B,10/16/2026 9:27:51.186 AM,10/16/2026 2:27:51.186 PM,Utility Power Restored,,Input Voltage A-B,479.571,Instantaneous,64
+41304,DFW1.UPS-B,10/16/2026 9:27:51.206 AM,10/16/2026 2:27:51.206 PM,On Battery,Input out of tolerance,Output Active Power,134.030,Drop out,192
+41310,DFW1.SWGR-B-CB3,10/16/2026 9:30:17.555 AM,10/16/2026 2:30:17.555 PM,Under Current,Below 25 A for 5 s,Current A,45.709,Drop out,192
+41312,DFW1.ATS-B,10/16/2026 10:00:16.854 AM,10/16/2026 3:00:16.854 PM,ATS-B Retransfer to Normal,Test,Normal Voltage A-B,480.899,Instantaneous,128
+41317,DFW1.UPS-B,10/16/2026 10:00:16.878 AM,10/16/2026 3:00:16.878 PM,On Battery,Input out of tolerance,Output Active Power,134.707,Pick up,192
+41325,DFW1.SWGR-B-MAIN,10/16/2026 10:00:16.928 AM,10/16/2026 3:00:16.928 PM,Interruption,Duration 0.287 s,Voltage A-B,8.868,Instantaneous,192
+41328,DFW1.GEN-2,10/16/2026 10:00:17.187 AM,10/16/2026 3:00:17.187 PM,Backup Power,Generator breaker open,Active Power,0.000,Drop out,128
+41332,DFW1.SWGR-B-CB3,10/16/2026 10:00:22.310 AM,10/16/2026 3:00:22.310 PM,Under Current,Below 25 A for 5 s,Current A,16.154,Pick up,192
+41337,DFW1.UPS-B,10/16/2026 10:00:26.678 AM,10/16/2026 3:00:26.678 PM,Utility Power Restored,,Input Voltage A-B,480.691,Instantaneous,64
+41341,DFW1.UPS-B,10/16/2026 10:00:26.698 AM,10/16/2026 3:00:26.698 PM,On Battery,Input out of tolerance,Output Active Power,135.283,Drop out,192
+41344,DFW1.SWGR-B-CB3,10/16/2026 10:03:25.287 AM,10/16/2026 3:03:25.287 PM,Under Current,Below 25 A for 5 s,Current A,46.334,Drop out,192
+41349,DFW1.GEN-2,10/16/2026 10:05:20.185 AM,10/16/2026 3:05:20.185 PM,General Event,Engine Running,Engine Speed,0.000,Drop out,64

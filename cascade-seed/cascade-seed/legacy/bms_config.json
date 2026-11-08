@@ -1,0 +1,46 @@
+{
+  "site": "MESA-DC1",
+  "exported_from": "Centrix CX-Supervisor 4.0.2",
+  "network": {
+    "switches": [
+      {"id": "BMS-SW-01", "location": "Central plant", "ups_panel": "UPS-A"},
+      {"id": "BMS-SW-02", "location": "Data hall A electrical room", "ups_panel": "UPS-B"}
+    ]
+  },
+  "ups_panels": [
+    {"id": "UPS-A", "capacity_kw": 400},
+    {"id": "UPS-B", "capacity_kw": 250},
+    {"id": "UPS-C", "capacity_kw": 150, "note": "office floors only"}
+  ],
+  "chiller_plant": {
+    "redundancy": {"k_required": 2, "n_total": 3},
+    "chillers": [
+      {"id": "CH-1", "tons": 400, "controls_power": "UPS-B", "bacnet_device": 1101},
+      {"id": "CH-2", "tons": 400, "controls_power": "UPS-A", "bacnet_device": 1102},
+      {"id": "CH-3", "tons": 400, "controls_power": "UPS-A", "bacnet_device": 1103, "label": "CH-3B (breaker on UPS-B is a spare, not connected)"}
+    ],
+    "loop": {"id": "CHW-LOOP-1", "pumps": ["P-1", "P-2"], "pump_power": "UPS-B", "serves": ["CRAH-1", "CRAH-2", "CRAH-3", "CRAH-4"]}
+  },
+  "crah_units": [
+    {"id": "CRAH-1", "hall": "A", "power": "UPS-A"},
+    {"id": "CRAH-2", "hall": "A", "power": "UPS-A"},
+    {"id": "CRAH-3", "hall": "A", "power": "UPS-A"},
+    {"id": "CRAH-4", "hall": "A", "power": "UPS-B"}
+  ],
+  "points": [
+    {"id": "CHW-SUPPLY-T", "object": "AI:1", "device": 1101, "unit": "degC", "scale": 1, "expected": [5.5, 8.0]},
+    {"id": "CHW-LOOP-FLOW", "object": "AI:2", "device": 1101, "unit": "L/s", "scale": 1, "expected": [40, 75]},
+    {"id": "HALL-A-INLET-T", "object": "AI:7", "device": 2001, "unit": "degC", "scale": 10, "expected": [180, 270], "note": "stored x10"},
+    {"id": "HALL-A-RETURN-T", "object": "AI:8", "device": 2001, "unit": "degF", "scale": 1, "expected": [80, 100]},
+    {"id": "UPS-B-LOAD", "object": "AI:20", "device": 3002, "unit": "kW", "scale": 1, "expected": [60, 210]}
+  ],
+  "exports": [
+    {
+      "job": "BMSEXP",
+      "schedule": "02:00 daily",
+      "writes": "FAC.BMS.COOLFLAG",
+      "rule": "Y if HALL-A-INLET-T > 27.0 C for 10 minutes in the last 24h, else N",
+      "consumers": "unknown (left blank by integrator)"
+    }
+  ]
+}

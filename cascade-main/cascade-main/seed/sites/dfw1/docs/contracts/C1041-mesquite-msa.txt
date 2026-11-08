@@ -1,0 +1,30 @@
+MASTER SERVICES AGREEMENT No. DFW-MSA-1041
+DFW1 Data Center - 4200 Lakeshore Industrial Pkwy, Garland, TX
+
+Customer: Mesquite Cloud LLC (Account C1041)
+Effective Date: 2022-04-18
+
+[EXCERPT - Sections 1-6 omitted]
+
+7. SERVICE LEVELS
+7.1 Availability Commitment. Provider will maintain Power Availability of 99.999% per calendar month, excluding Scheduled Maintenance (Section 9).
+7.2 Power Outage. A Power Outage occurs when a Licensed Cabinet loses power on all contracted feeds.
+    For redundant (A+B or 2N) service, loss of a single feed is not a Power Outage.
+7.3 Exclusions. No credit is owed where (a) the Customer is not connected to all contracted feeds,
+    (b) Customer load on a redundant pair exceeds 80% of a single circuit rating, or (c) the event
+    occurs during Scheduled Maintenance.
+
+8. SERVICE CREDITS
+8.1 Credits are calculated on the Monthly Recurring Charge (MRC) of the affected Licensed Cabinets:
+      Cumulative Power Outage per month      Credit
+      10 - 43 minutes                         5% of MRC
+      43 - 240 minutes                        10% of MRC
+      240 - 720 minutes                       25% of MRC
+      > 720 minutes                           50% of MRC
+8.2 Total credits in any month shall not exceed 50% of the MRC. Credits are the sole and exclusive remedy
+    except as provided in Section 8.3 (chronic failure termination right).
+
+9. SCHEDULED MAINTENANCE
+9.1 Provider will give at least ten (10) business days written notice of Scheduled Maintenance.
+9.2 Provider will use commercially reasonable efforts to keep at least one contracted feed energized
+    during Scheduled Maintenance for redundant service.

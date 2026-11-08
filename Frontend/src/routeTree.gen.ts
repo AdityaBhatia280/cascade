@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccuracyRouteImport } from './routes/accuracy'
 import { Route as ActionsRouteImport } from './routes/actions'
 import { Route as AssumptionsRouteImport } from './routes/assumptions'
+import { Route as DynamicRouteImport } from './routes/dynamic'
 import { Route as EquipmentRouteImport } from './routes/equipment'
 import { Route as FindingsRouteImport } from './routes/findings'
 import { Route as IntelligenceRouteImport } from './routes/intelligence'
@@ -40,6 +41,11 @@ const ActionsRoute = ActionsRouteImport.update({
 const AssumptionsRoute = AssumptionsRouteImport.update({
   id: '/assumptions',
   path: '/assumptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DynamicRoute = DynamicRouteImport.update({
+  id: '/dynamic',
+  path: '/dynamic',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EquipmentRoute = EquipmentRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/accuracy': typeof AccuracyRoute
   '/actions': typeof ActionsRoute
   '/assumptions': typeof AssumptionsRoute
+  '/dynamic': typeof DynamicRoute
   '/equipment': typeof EquipmentRoute
   '/findings': typeof FindingsRoute
   '/intelligence': typeof IntelligenceRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/accuracy': typeof AccuracyRoute
   '/actions': typeof ActionsRoute
   '/assumptions': typeof AssumptionsRoute
+  '/dynamic': typeof DynamicRoute
   '/equipment': typeof EquipmentRoute
   '/findings': typeof FindingsRoute
   '/intelligence': typeof IntelligenceRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/accuracy': typeof AccuracyRoute
   '/actions': typeof ActionsRoute
   '/assumptions': typeof AssumptionsRoute
+  '/dynamic': typeof DynamicRoute
   '/equipment': typeof EquipmentRoute
   '/findings': typeof FindingsRoute
   '/intelligence': typeof IntelligenceRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/accuracy'
     | '/actions'
     | '/assumptions'
+    | '/dynamic'
     | '/equipment'
     | '/findings'
     | '/intelligence'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/accuracy'
     | '/actions'
     | '/assumptions'
+    | '/dynamic'
     | '/equipment'
     | '/findings'
     | '/intelligence'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/accuracy'
     | '/actions'
     | '/assumptions'
+    | '/dynamic'
     | '/equipment'
     | '/findings'
     | '/intelligence'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AccuracyRoute: typeof AccuracyRoute
   ActionsRoute: typeof ActionsRoute
   AssumptionsRoute: typeof AssumptionsRoute
+  DynamicRoute: typeof DynamicRoute
   EquipmentRoute: typeof EquipmentRoute
   FindingsRoute: typeof FindingsRoute
   IntelligenceRoute: typeof IntelligenceRoute
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/assumptions'
       fullPath: '/assumptions'
       preLoaderRoute: typeof AssumptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dynamic': {
+      id: '/dynamic'
+      path: '/dynamic'
+      fullPath: '/dynamic'
+      preLoaderRoute: typeof DynamicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/equipment': {
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccuracyRoute: AccuracyRoute,
   ActionsRoute: ActionsRoute,
   AssumptionsRoute: AssumptionsRoute,
+  DynamicRoute: DynamicRoute,
   EquipmentRoute: EquipmentRoute,
   FindingsRoute: FindingsRoute,
   IntelligenceRoute: IntelligenceRoute,

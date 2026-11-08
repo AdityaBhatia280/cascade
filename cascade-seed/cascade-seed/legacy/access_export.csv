@@ -1,0 +1,7 @@
+door_id,door_name,reader_id,controller_id,controller_network,badge_groups,fail_mode
+LOBBY-MAIN,Main lobby turnstiles,RDR-001,ACC-C1,CORP-LAN,ALL-STAFF;TENANTS,unlock
+DOCK-1,Loading dock,RDR-014,ACC-C3,CORP-LAN,FACILITIES;VENDOR-HVAC,secure
+MECH-1,Central plant,RDR-021,ACC-C4,CORP-LAN,FACILITIES;VENDOR-HVAC,secure
+DC-HALL-A,Data hall A,RDR-031,ACC-C7,BMS-SW-02,DC-OPS;ACME-CLOUD,secure
+DC-HALL-B,Data hall B (unbuilt),RDR-032,ACC-C8,CORP-LAN,DC-OPS,secure
+ELEC-B,Electrical room B (UPS-B),RDR-040,ACC-C4,CORP-LAN,FACILITIES,secure

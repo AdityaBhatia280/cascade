@@ -1,0 +1,25 @@
+{
+  "name": "cascade",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "core",
+    "server",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w frontend",
+    "build": "npm run build -w server && npm run build -w frontend",
+    "test": "npm test -w core -w server -w frontend"
+  },
+  "overrides": {
+    "vite": "6.2.6",
+    "@types/three": "0.186.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "typescript": "^5.8.3"
+  }
+}

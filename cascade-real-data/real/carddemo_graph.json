@@ -1,0 +1,7074 @@
+{
+ "source": "AWS CardDemo (github.com/aws-samples/aws-mainframe-modernization-carddemo), Apache-2.0",
+ "stats": {
+  "cobol_programs": 31,
+  "cobol_lines": 20650,
+  "copybooks": 30,
+  "jcl_jobs": 38,
+  "nodes": 224,
+  "edges": 732,
+  "by_kind": {
+   "file": 49,
+   "copies": 246,
+   "calls": 30,
+   "cics_io": 51,
+   "xctl": 16,
+   "runs": 98,
+   "dd": 123,
+   "maps_to": 119
+  }
+ },
+ "most_shared_copybooks": [
+  {
+   "copybook": "DFHBMSCA",
+   "used_by": [
+    "COACTUPC",
+    "COACTVWC",
+    "COADM01C",
+    "COBIL00C",
+    "COCRDLIC",
+    "COCRDSLC",
+    "COCRDUPC",
+    "COMEN01C",
+    "CORPT00C",
+    "COSGN00C",
+    "COTRN00C",
+    "COTRN01C",
+    "COTRN02C",
+    "COUSR00C",
+    "COUSR01C",
+    "COUSR02C",
+    "COUSR03C"
+   ],
+   "blast_radius": 17
+  },
+  {
+   "copybook": "DFHAID",
+   "used_by": [
+    "COACTUPC",
+    "COACTVWC",
+    "COADM01C",
+    "COBIL00C",
+    "COCRDLIC",
+    "COCRDSLC",
+    "COCRDUPC",
+    "COMEN01C",
+    "CORPT00C",
+    "COSGN00C",
+    "COTRN00C",
+    "COTRN01C",
+    "COTRN02C",
+    "COUSR00C",
+    "COUSR01C",
+    "COUSR02C",
+    "COUSR03C"
+   ],
+   "blast_radius": 17
+  },
+  {
+   "copybook": "COTTL01Y",
+   "used_by": [
+    "COACTUPC",
+    "COACTVWC",
+    "COADM01C",
+    "COBIL00C",
+    "COCRDLIC",
+    "COCRDSLC",
+    "COCRDUPC",
+    "COMEN01C",
+    "CORPT00C",
+    "COSGN00C",
+    "COTRN00C",
+    "COTRN01C",
+    "COTRN02C",
+    "COUSR00C",
+    "COUSR01C",
+    "COUSR02C",
+    "COUSR03C"
+   ],
+   "blast_radius": 17
+  },
+  {
+   "copybook": "CSDAT01Y",
+   "used_by": [
+    "COACTUPC",
+    "COACTVWC",
+    "COADM01C",
+    "COBIL00C",
+    "COCRDLIC",
+    "COCRDSLC",
+    "COCRDUPC",
+    "COMEN01C",
+    "CORPT00C",
+    "COSGN00C",
+    "COTRN00C",
+    "COTRN01C",
+    "COTRN02C",
+    "COUSR00C",
+    "COUSR01C",
+    "COUSR02C",
+    "COUSR03C"
+   ],
+   "blast_radius": 17
+  },
+  {
+   "copybook": "CSMSG01Y",
+   "used_by": [
+    "COACTUPC",
+    "COACTVWC",
+    "COADM01C",
+    "COBIL00C",
+    "COCRDLIC",
+    "COCRDSLC",
+    "COCRDUPC",
+    "COMEN01C",
+    "CORPT00C",
+    "COSGN00C",
+    "COTRN00C",
+    "COTRN01C",
+    "COTRN02C",
+    "COUSR00C",
+    "COUSR01C",
+    "COUSR02C",
+    "COUSR03C"
+   ],
+   "blast_radius": 17
+  },
+  {
+   "copybook": "COCOM01Y",
+   "used_by": [
+    "COACTUPC",
+    "COACTVWC",
+    "COADM01C",
+    "COBIL00C",
+    "COCRDLIC",
+    "COCRDSLC",
+    "COCRDUPC",
+    "COMEN01C",
+    "CORPT00C",
+    "COSGN00C",
+    "COTRN00C",
+    "COTRN01C",
+    "COTRN02C",
+    "COUSR00C",
+    "COUSR01C",
+    "COUSR02C",
+    "COUSR03C"
+   ],
+   "blast_radius": 17
+  },
+  {
+   "copybook": "CVACT03Y",
+   "used_by": [
+    "CBACT03C",
+    "CBACT04C",
+    "CBEXPORT",
+    "CBIMPORT",
+    "CBSTM03A",
+    "CBTRN01C",
+    "CBTRN02C",
+    "CBTRN03C",
+    "COACTUPC",
+    "COACTVWC",
+    "COBIL00C",
+    "COTRN02C"
+   ],
+   "blast_radius": 12
+  },
+  {
+   "copybook": "CSUSR01Y",
+   "used_by": [
+    "COACTUPC",
+    "COACTVWC",
+    "COADM01C",
+    "COCRDLIC",
+    "COCRDSLC",
+    "COCRDUPC",
+    "COMEN01C",
+    "COSGN00C",
+    "COUSR00C",
+    "COUSR01C",
+    "COUSR02C",
+    "COUSR03C"
+   ],
+   "blast_radius": 12
+  },
+  {
+   "copybook": "CVACT01Y",
+   "used_by": [
+    "CBACT01C",
+    "CBACT04C",
+    "CBEXPORT",
+    "CBIMPORT",
+    "CBSTM03A",
+    "CBTRN01C",
+    "CBTRN02C",
+    "COACTUPC",
+    "COACTVWC",
+    "COBIL00C",
+    "COTRN02C"
+   ],
+   "blast_radius": 11
+  },
+  {
+   "copybook": "CVTRA05Y",
+   "used_by": [
+    "CBACT04C",
+    "CBEXPORT",
+    "CBIMPORT",
+    "CBTRN01C",
+    "CBTRN02C",
+    "CBTRN03C",
+    "COBIL00C",
+    "CORPT00C",
+    "COTRN00C",
+    "COTRN01C",
+    "COTRN02C"
+   ],
+   "blast_radius": 11
+  }
+ ],
+ "datasets_touched_by_many_jobs": [
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "jobs": [
+    "JOB:CBEXPORT",
+    "JOB:CBIMPORT",
+    "JOB:CREASTMT",
+    "JOB:INTCALC",
+    "JOB:POSTTRAN",
+    "JOB:READACCT",
+    "JOB:READCARD",
+    "JOB:READCUST",
+    "JOB:READXREF",
+    "JOB:TRANREPT",
+    "JOB:WAITSTEP"
+   ]
+  },
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "jobs": [
+    "JOB:CBEXPORT",
+    "JOB:CREASTMT",
+    "JOB:INTCALC",
+    "JOB:POSTTRAN",
+    "JOB:READXREF",
+    "JOB:TRANREPT",
+    "JOB:XREFFILE"
+   ]
+  },
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "jobs": [
+    "JOB:CBEXPORT",
+    "JOB:COMBTRAN",
+    "JOB:CREASTMT",
+    "JOB:POSTTRAN",
+    "JOB:TRANBKP",
+    "JOB:TRANFILE",
+    "JOB:TRANREPT"
+   ]
+  },
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "jobs": [
+    "JOB:ACCTFILE",
+    "JOB:CBEXPORT",
+    "JOB:CREASTMT",
+    "JOB:INTCALC",
+    "JOB:POSTTRAN",
+    "JOB:READACCT"
+   ]
+  },
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "jobs": [
+    "JOB:CBEXPORT",
+    "JOB:CREASTMT",
+    "JOB:CUSTFILE",
+    "JOB:READCUST"
+   ]
+  },
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "jobs": [
+    "JOB:INTCALC",
+    "JOB:POSTTRAN",
+    "JOB:PRTCATBL",
+    "JOB:TCATBALF"
+   ]
+  },
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "jobs": [
+    "JOB:CARDFILE",
+    "JOB:CBEXPORT",
+    "JOB:READCARD"
+   ]
+  },
+  {
+   "dataset": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "jobs": [
+    "JOB:COMBTRAN",
+    "JOB:TRANBKP",
+    "JOB:TRANREPT"
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "id": "CBACT01C",
+   "type": "program"
+  },
+  {
+   "id": "DD:ACCTFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:OUTFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:ARRYFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:VBRCFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "CVACT01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CODATECN",
+   "type": "copybook"
+  },
+  {
+   "id": "COBDATFT",
+   "type": "program"
+  },
+  {
+   "id": "CEE3ABD",
+   "type": "program"
+  },
+  {
+   "id": "CBACT02C",
+   "type": "program"
+  },
+  {
+   "id": "DD:CARDFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "CVACT02Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CBACT03C",
+   "type": "program"
+  },
+  {
+   "id": "DD:XREFFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "CVACT03Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CBACT04C",
+   "type": "program"
+  },
+  {
+   "id": "DD:TCATBALF",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:DISCGRP",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:TRANSACT",
+   "type": "dataset"
+  },
+  {
+   "id": "CVTRA01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CVTRA02Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CVTRA05Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CBCUS01C",
+   "type": "program"
+  },
+  {
+   "id": "DD:CUSTFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "CVCUS01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CBEXPORT",
+   "type": "program"
+  },
+  {
+   "id": "DD:EXPFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "CVEXPORT",
+   "type": "copybook"
+  },
+  {
+   "id": "CBIMPORT",
+   "type": "program"
+  },
+  {
+   "id": "DD:CUSTOUT",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:ACCTOUT",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:XREFOUT",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:TRNXOUT",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:CARDOUT",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:ERROUT",
+   "type": "dataset"
+  },
+  {
+   "id": "CBSTM03A",
+   "type": "program"
+  },
+  {
+   "id": "DD:STMTFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:HTMLFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "COSTM01",
+   "type": "copybook"
+  },
+  {
+   "id": "CUSTREC",
+   "type": "copybook"
+  },
+  {
+   "id": "CBSTM03B",
+   "type": "program"
+  },
+  {
+   "id": "DD:TRNXFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "CBTRN01C",
+   "type": "program"
+  },
+  {
+   "id": "DD:DALYTRAN",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:TRANFILE",
+   "type": "dataset"
+  },
+  {
+   "id": "CVTRA06Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CBTRN02C",
+   "type": "program"
+  },
+  {
+   "id": "DD:DALYREJS",
+   "type": "dataset"
+  },
+  {
+   "id": "CBTRN03C",
+   "type": "program"
+  },
+  {
+   "id": "DD:CARDXREF",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:TRANTYPE",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:TRANCATG",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:TRANREPT",
+   "type": "dataset"
+  },
+  {
+   "id": "DD:DATEPARM",
+   "type": "dataset"
+  },
+  {
+   "id": "CVTRA03Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CVTRA04Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CVTRA07Y",
+   "type": "copybook"
+  },
+  {
+   "id": "COACTUPC",
+   "type": "program"
+  },
+  {
+   "id": "CVCRD01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CSLKPCDY",
+   "type": "copybook"
+  },
+  {
+   "id": "DFHBMSCA",
+   "type": "copybook"
+  },
+  {
+   "id": "DFHAID",
+   "type": "copybook"
+  },
+  {
+   "id": "COTTL01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "COACTUP",
+   "type": "copybook"
+  },
+  {
+   "id": "CSDAT01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CSMSG01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CSMSG02Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CSUSR01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "COCOM01Y",
+   "type": "copybook"
+  },
+  {
+   "id": "CSSETATY",
+   "type": "copybook"
+  },
+  {
+   "id": "CICS:LIT-CARDXREFNAME-ACCT-PATH",
+   "type": "cics_file"
+  },
+  {
+   "id": "CICS:LIT-ACCTFILENAME",
+   "type": "cics_file"
+  },
+  {
+   "id": "CICS:LIT-CUSTFILENAME",
+   "type": "cics_file"
+  },
+  {
+   "id": "CSUTLDPY",
+   "type": "copybook"
+  },
+  {
+   "id": "COACTVWC",
+   "type": "program"
+  },
+  {
+   "id": "COACTVW",
+   "type": "copybook"
+  },
+  {
+   "id": "COADM01C",
+   "type": "program"
+  },
+  {
+   "id": "COADM02Y",
+   "type": "copybook"
+  },
+  {
+   "id": "COADM01",
+   "type": "copybook"
+  },
+  {
+   "id": "COBIL00C",
+   "type": "program"
+  },
+  {
+   "id": "COBIL00",
+   "type": "copybook"
+  },
+  {
+   "id": "CICS:WS-ACCTDAT-FILE",
+   "type": "cics_file"
+  },
+  {
+   "id": "CICS:WS-CXACAIX-FILE",
+   "type": "cics_file"
+  },
+  {
+   "id": "CICS:WS-TRANSACT-FILE",
+   "type": "cics_file"
+  },
+  {
+   "id": "COBSWAIT",
+   "type": "program"
+  },
+  {
+   "id": "MVSWAIT",
+   "type": "program"
+  },
+  {
+   "id": "COCRDLIC",
+   "type": "program"
+  },
+  {
+   "id": "COCRDLI",
+   "type": "copybook"
+  },
+  {
+   "id": "CICS:LIT-CARD-FILE",
+   "type": "cics_file"
+  },
+  {
+   "id": "COCRDSLC",
+   "type": "program"
+  },
+  {
+   "id": "COCRDSL",
+   "type": "copybook"
+  },
+  {
+   "id": "CICS:LIT-CARDFILENAME",
+   "type": "cics_file"
+  },
+  {
+   "id": "CICS:LIT-CARDFILENAME-ACCT-PATH",
+   "type": "cics_file"
+  },
+  {
+   "id": "COCRDUPC",
+   "type": "program"
+  },
+  {
+   "id": "COCRDUP",
+   "type": "copybook"
+  },
+  {
+   "id": "COMEN01C",
+   "type": "program"
+  },
+  {
+   "id": "COMEN02Y",
+   "type": "copybook"
+  },
+  {
+   "id": "COMEN01",
+   "type": "copybook"
+  },
+  {
+   "id": "CORPT00C",
+   "type": "program"
+  },
+  {
+   "id": "CORPT00",
+   "type": "copybook"
+  },
+  {
+   "id": "CSUTLDTC",
+   "type": "program"
+  },
+  {
+   "id": "COSGN00C",
+   "type": "program"
+  },
+  {
+   "id": "COSGN00",
+   "type": "copybook"
+  },
+  {
+   "id": "CICS:WS-USRSEC-FILE",
+   "type": "cics_file"
+  },
+  {
+   "id": "COTRN00C",
+   "type": "program"
+  },
+  {
+   "id": "COTRN00",
+   "type": "copybook"
+  },
+  {
+   "id": "COTRN01C",
+   "type": "program"
+  },
+  {
+   "id": "COTRN01",
+   "type": "copybook"
+  },
+  {
+   "id": "COTRN02C",
+   "type": "program"
+  },
+  {
+   "id": "COTRN02",
+   "type": "copybook"
+  },
+  {
+   "id": "CICS:WS-CCXREF-FILE",
+   "type": "cics_file"
+  },
+  {
+   "id": "COUSR00C",
+   "type": "program"
+  },
+  {
+   "id": "COUSR00",
+   "type": "copybook"
+  },
+  {
+   "id": "COUSR01C",
+   "type": "program"
+  },
+  {
+   "id": "COUSR01",
+   "type": "copybook"
+  },
+  {
+   "id": "COUSR02C",
+   "type": "program"
+  },
+  {
+   "id": "COUSR02",
+   "type": "copybook"
+  },
+  {
+   "id": "COUSR03C",
+   "type": "program"
+  },
+  {
+   "id": "COUSR03",
+   "type": "copybook"
+  },
+  {
+   "id": "JOB:ACCTFILE",
+   "type": "job"
+  },
+  {
+   "id": "IDCAMS",
+   "type": "program"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:CARDFILE",
+   "type": "job"
+  },
+  {
+   "id": "SDSF",
+   "type": "program"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CARDDATA.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:CBADMCDJ",
+   "type": "job"
+  },
+  {
+   "id": "DFHCSDUP",
+   "type": "program"
+  },
+  {
+   "id": "DSN:OEM.CICSTS.V05R06M0.CICS.SDFHLOAD",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:OEM.CICSTS.DFHCSD",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:CBEXPORT",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.EXPORT.DATA",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:CBIMPORT",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CUSTDATA.IMPORT",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.ACCTDATA.IMPORT",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CARDXREF.IMPORT",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANSACT.IMPORT",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.IMPORT.ERRORS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:CLOSEFIL",
+   "type": "job"
+  },
+  {
+   "id": "JOB:COMBTRAN",
+   "type": "job"
+  },
+  {
+   "id": "SORT",
+   "type": "program"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.SYSTRAN",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANSACT.COMBINED",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:CREASTMT",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRXFL.SEQ",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "IEFBR14",
+   "type": "program"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.STATEMNT.HTML",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.STATEMNT.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:CUSTFILE",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CUSTDATA.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:DALYREJS",
+   "type": "job"
+  },
+  {
+   "id": "JOB:DEFCUST",
+   "type": "job"
+  },
+  {
+   "id": "JOB:DEFGDGB",
+   "type": "job"
+  },
+  {
+   "id": "JOB:DEFGDGD",
+   "type": "job"
+  },
+  {
+   "id": "IEBGENER",
+   "type": "program"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANTYPE.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANTYPE.BKUP",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS.BKUP",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.DISCGRP.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.DISCGRP.BKUP",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:DISCGRP",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:DUSRSECJ",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.USRSEC.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:ESDSRRDS",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:FTPJCL",
+   "type": "job"
+  },
+  {
+   "id": "FTP",
+   "type": "program"
+  },
+  {
+   "id": "JOB:INTCALC",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.AIX.PATH",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:INTRDRJ1",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDEMO.FTP.TEST",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.JCL",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:INTRDRJ2",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP.INTRDR",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:OPENFIL",
+   "type": "job"
+  },
+  {
+   "id": "JOB:POSTTRAN",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.DALYTRAN.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.DALYREJS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:PRTCATBL",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TCATBALF.REPT",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TCATBALF.BKUP",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:READACCT",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:READCARD",
+   "type": "job"
+  },
+  {
+   "id": "JOB:READCUST",
+   "type": "job"
+  },
+  {
+   "id": "JOB:READXREF",
+   "type": "job"
+  },
+  {
+   "id": "JOB:REPTFILE",
+   "type": "job"
+  },
+  {
+   "id": "JOB:TCATBALF",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TCATBALF.PS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:TRANBKP",
+   "type": "job"
+  },
+  {
+   "id": "JOB:TRANCATG",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:TRANFILE",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.DALYTRAN.PS.INIT",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:TRANIDX",
+   "type": "job"
+  },
+  {
+   "id": "JOB:TRANREPT",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANSACT.DALY",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.DATEPARM",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.TRANREPT",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:TRANTYPE",
+   "type": "job"
+  },
+  {
+   "id": "JOB:TXT2PDF1",
+   "type": "job"
+  },
+  {
+   "id": "IKJEFT1B",
+   "type": "program"
+  },
+  {
+   "id": "DSN:AWS.M2.LBD.TXT2PDF.LOAD",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "DSN:AWS.M2.LBD.TXT2PDF.EXEC",
+   "type": "dataset_physical"
+  },
+  {
+   "id": "JOB:WAITSTEP",
+   "type": "job"
+  },
+  {
+   "id": "JOB:XREFFILE",
+   "type": "job"
+  },
+  {
+   "id": "DSN:AWS.M2.CARDDEMO.CARDXREF.PS",
+   "type": "dataset_physical"
+  }
+ ],
+ "edges": [
+  {
+   "from": "CBACT01C",
+   "to": "DD:ACCTFILE",
+   "kind": "file",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 29,
+   "snippet": "SELECT ACCTFILE-FILE ASSIGN TO ACCTFILE"
+  },
+  {
+   "from": "CBACT01C",
+   "to": "DD:OUTFILE",
+   "kind": "file",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 35,
+   "snippet": "SELECT OUT-FILE ASSIGN TO OUTFILE"
+  },
+  {
+   "from": "CBACT01C",
+   "to": "DD:ARRYFILE",
+   "kind": "file",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 40,
+   "snippet": "SELECT ARRY-FILE ASSIGN TO ARRYFILE"
+  },
+  {
+   "from": "CBACT01C",
+   "to": "DD:VBRCFILE",
+   "kind": "file",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 45,
+   "snippet": "SELECT VBRC-FILE ASSIGN TO VBRCFILE"
+  },
+  {
+   "from": "CBACT01C",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 89,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "CBACT01C",
+   "to": "CODATECN",
+   "kind": "copies",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 90,
+   "snippet": "COPY CODATECN."
+  },
+  {
+   "from": "CBACT01C",
+   "to": "COBDATFT",
+   "kind": "calls",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 231,
+   "snippet": "CALL 'COBDATFT'       USING CODATECN-REC."
+  },
+  {
+   "from": "CBACT01C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBACT01C.cbl",
+   "line": 410,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "CBACT02C",
+   "to": "DD:CARDFILE",
+   "kind": "file",
+   "file": "cbl/CBACT02C.cbl",
+   "line": 29,
+   "snippet": "SELECT CARDFILE-FILE ASSIGN TO   CARDFILE"
+  },
+  {
+   "from": "CBACT02C",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/CBACT02C.cbl",
+   "line": 45,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "CBACT02C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBACT02C.cbl",
+   "line": 158,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "CBACT03C",
+   "to": "DD:XREFFILE",
+   "kind": "file",
+   "file": "cbl/CBACT03C.cbl",
+   "line": 29,
+   "snippet": "SELECT XREFFILE-FILE ASSIGN TO   XREFFILE"
+  },
+  {
+   "from": "CBACT03C",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBACT03C.cbl",
+   "line": 45,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBACT03C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBACT03C.cbl",
+   "line": 158,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "CBACT04C",
+   "to": "DD:TCATBALF",
+   "kind": "file",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 28,
+   "snippet": "SELECT TCATBAL-FILE ASSIGN TO TCATBALF"
+  },
+  {
+   "from": "CBACT04C",
+   "to": "DD:XREFFILE",
+   "kind": "file",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 34,
+   "snippet": "SELECT XREF-FILE ASSIGN TO   XREFFILE"
+  },
+  {
+   "from": "CBACT04C",
+   "to": "DD:ACCTFILE",
+   "kind": "file",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 41,
+   "snippet": "SELECT ACCOUNT-FILE ASSIGN TO ACCTFILE"
+  },
+  {
+   "from": "CBACT04C",
+   "to": "DD:DISCGRP",
+   "kind": "file",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 47,
+   "snippet": "SELECT DISCGRP-FILE ASSIGN TO DISCGRP"
+  },
+  {
+   "from": "CBACT04C",
+   "to": "DD:TRANSACT",
+   "kind": "file",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 53,
+   "snippet": "SELECT TRANSACT-FILE ASSIGN TO TRANSACT"
+  },
+  {
+   "from": "CBACT04C",
+   "to": "CVTRA01Y",
+   "kind": "copies",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 97,
+   "snippet": "COPY CVTRA01Y."
+  },
+  {
+   "from": "CBACT04C",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 102,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBACT04C",
+   "to": "CVTRA02Y",
+   "kind": "copies",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 107,
+   "snippet": "COPY CVTRA02Y."
+  },
+  {
+   "from": "CBACT04C",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 112,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "CBACT04C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 117,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "CBACT04C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBACT04C.cbl",
+   "line": 632,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "CBCUS01C",
+   "to": "DD:CUSTFILE",
+   "kind": "file",
+   "file": "cbl/CBCUS01C.cbl",
+   "line": 29,
+   "snippet": "SELECT CUSTFILE-FILE ASSIGN TO   CUSTFILE"
+  },
+  {
+   "from": "CBCUS01C",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/CBCUS01C.cbl",
+   "line": 45,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "CBCUS01C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBCUS01C.cbl",
+   "line": 158,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "DD:CUSTFILE",
+   "kind": "file",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 35,
+   "snippet": "SELECT CUSTOMER-INPUT ASSIGN TO CUSTFILE"
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "DD:ACCTFILE",
+   "kind": "file",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 41,
+   "snippet": "SELECT ACCOUNT-INPUT ASSIGN TO ACCTFILE"
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "DD:XREFFILE",
+   "kind": "file",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 47,
+   "snippet": "SELECT XREF-INPUT ASSIGN TO XREFFILE"
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "DD:TRANSACT",
+   "kind": "file",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 53,
+   "snippet": "SELECT TRANSACTION-INPUT ASSIGN TO TRANSACT"
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "DD:CARDFILE",
+   "kind": "file",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 59,
+   "snippet": "SELECT CARD-INPUT ASSIGN TO CARDFILE"
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "DD:EXPFILE",
+   "kind": "file",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 65,
+   "snippet": "SELECT EXPORT-OUTPUT ASSIGN TO EXPFILE"
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 75,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 78,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 81,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 84,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 87,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "CVEXPORT",
+   "kind": "copies",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 96,
+   "snippet": "COPY CVEXPORT."
+  },
+  {
+   "from": "CBEXPORT",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBEXPORT.cbl",
+   "line": 579,
+   "snippet": "CALL 'CEE3ABD'."
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "DD:EXPFILE",
+   "kind": "file",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 37,
+   "snippet": "SELECT EXPORT-INPUT ASSIGN TO EXPFILE"
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "DD:CUSTOUT",
+   "kind": "file",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 43,
+   "snippet": "SELECT CUSTOMER-OUTPUT ASSIGN TO CUSTOUT"
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "DD:ACCTOUT",
+   "kind": "file",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 48,
+   "snippet": "SELECT ACCOUNT-OUTPUT ASSIGN TO ACCTOUT"
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "DD:XREFOUT",
+   "kind": "file",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 53,
+   "snippet": "SELECT XREF-OUTPUT ASSIGN TO XREFOUT"
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "DD:TRNXOUT",
+   "kind": "file",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 58,
+   "snippet": "SELECT TRANSACTION-OUTPUT ASSIGN TO TRNXOUT"
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "DD:CARDOUT",
+   "kind": "file",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 63,
+   "snippet": "SELECT CARD-OUTPUT ASSIGN TO CARDOUT"
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "DD:ERROUT",
+   "kind": "file",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 68,
+   "snippet": "SELECT ERROR-OUTPUT ASSIGN TO ERROUT"
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 84,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 89,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 94,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 99,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 104,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "CVEXPORT",
+   "kind": "copies",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 113,
+   "snippet": "COPY CVEXPORT."
+  },
+  {
+   "from": "CBIMPORT",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBIMPORT.cbl",
+   "line": 484,
+   "snippet": "CALL 'CEE3ABD'."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "DD:STMTFILE",
+   "kind": "file",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 39,
+   "snippet": "SELECT STMT-FILE ASSIGN TO STMTFILE."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "DD:HTMLFILE",
+   "kind": "file",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 40,
+   "snippet": "SELECT HTML-FILE ASSIGN TO HTMLFILE."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "COSTM01",
+   "kind": "copies",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 51,
+   "snippet": "COPY COSTM01."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 53,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CUSTREC",
+   "kind": "copies",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 55,
+   "snippet": "COPY CUSTREC."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 57,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 351,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 377,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 401,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 734,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 746,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 769,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 787,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 805,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 835,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 860,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 877,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 893,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CBSTM03B",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 909,
+   "snippet": "CALL 'CBSTM03B' USING WS-M03B-AREA."
+  },
+  {
+   "from": "CBSTM03A",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBSTM03A.CBL",
+   "line": 923,
+   "snippet": "CALL 'CEE3ABD'."
+  },
+  {
+   "from": "CBSTM03B",
+   "to": "DD:TRNXFILE",
+   "kind": "file",
+   "file": "cbl/CBSTM03B.CBL",
+   "line": 31,
+   "snippet": "SELECT TRNX-FILE ASSIGN TO TRNXFILE"
+  },
+  {
+   "from": "CBSTM03B",
+   "to": "DD:XREFFILE",
+   "kind": "file",
+   "file": "cbl/CBSTM03B.CBL",
+   "line": 37,
+   "snippet": "SELECT XREF-FILE ASSIGN TO   XREFFILE"
+  },
+  {
+   "from": "CBSTM03B",
+   "to": "DD:CUSTFILE",
+   "kind": "file",
+   "file": "cbl/CBSTM03B.CBL",
+   "line": 43,
+   "snippet": "SELECT CUST-FILE ASSIGN TO CUSTFILE"
+  },
+  {
+   "from": "CBSTM03B",
+   "to": "DD:ACCTFILE",
+   "kind": "file",
+   "file": "cbl/CBSTM03B.CBL",
+   "line": 49,
+   "snippet": "SELECT ACCT-FILE ASSIGN TO ACCTFILE"
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "DD:DALYTRAN",
+   "kind": "file",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 29,
+   "snippet": "SELECT DALYTRAN-FILE ASSIGN TO DALYTRAN"
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "DD:CUSTFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 34,
+   "snippet": "SELECT CUSTOMER-FILE ASSIGN TO   CUSTFILE"
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "DD:XREFFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 40,
+   "snippet": "SELECT XREF-FILE ASSIGN TO   XREFFILE"
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "DD:CARDFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 46,
+   "snippet": "SELECT CARD-FILE ASSIGN TO   CARDFILE"
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "DD:ACCTFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 52,
+   "snippet": "SELECT ACCOUNT-FILE ASSIGN TO   ACCTFILE"
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "DD:TRANFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 58,
+   "snippet": "SELECT TRANSACT-FILE ASSIGN TO   TRANFILE"
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "CVTRA06Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 99,
+   "snippet": "COPY CVTRA06Y."
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 104,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 109,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 114,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 119,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 124,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "CBTRN01C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBTRN01C.cbl",
+   "line": 473,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "DD:DALYTRAN",
+   "kind": "file",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 29,
+   "snippet": "SELECT DALYTRAN-FILE ASSIGN TO DALYTRAN"
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "DD:TRANFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 34,
+   "snippet": "SELECT TRANSACT-FILE ASSIGN TO TRANFILE"
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "DD:XREFFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 40,
+   "snippet": "SELECT XREF-FILE ASSIGN TO   XREFFILE"
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "DD:DALYREJS",
+   "kind": "file",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 46,
+   "snippet": "SELECT DALYREJS-FILE ASSIGN TO DALYREJS"
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "DD:ACCTFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 51,
+   "snippet": "SELECT ACCOUNT-FILE ASSIGN TO ACCTFILE"
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "DD:TCATBALF",
+   "kind": "file",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 57,
+   "snippet": "SELECT TCATBAL-FILE ASSIGN TO TCATBALF"
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "CVTRA06Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 102,
+   "snippet": "COPY CVTRA06Y."
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 107,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 112,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 121,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "CVTRA01Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 126,
+   "snippet": "COPY CVTRA01Y."
+  },
+  {
+   "from": "CBTRN02C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBTRN02C.cbl",
+   "line": 711,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "DD:TRANFILE",
+   "kind": "file",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 29,
+   "snippet": "SELECT TRANSACT-FILE ASSIGN TO TRANFILE"
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "DD:CARDXREF",
+   "kind": "file",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 33,
+   "snippet": "SELECT XREF-FILE ASSIGN TO CARDXREF"
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "DD:TRANTYPE",
+   "kind": "file",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 39,
+   "snippet": "SELECT TRANTYPE-FILE ASSIGN TO TRANTYPE"
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "DD:TRANCATG",
+   "kind": "file",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 45,
+   "snippet": "SELECT TRANCATG-FILE ASSIGN TO TRANCATG"
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "DD:TRANREPT",
+   "kind": "file",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 51,
+   "snippet": "SELECT REPORT-FILE ASSIGN TO TRANREPT"
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "DD:DATEPARM",
+   "kind": "file",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 55,
+   "snippet": "SELECT DATE-PARMS-FILE ASSIGN TO DATEPARM"
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 93,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 98,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "CVTRA03Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 103,
+   "snippet": "COPY CVTRA03Y."
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "CVTRA04Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 108,
+   "snippet": "COPY CVTRA04Y."
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "CVTRA07Y",
+   "kind": "copies",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 113,
+   "snippet": "COPY CVTRA07Y."
+  },
+  {
+   "from": "CBTRN03C",
+   "to": "CEE3ABD",
+   "kind": "calls",
+   "file": "cbl/CBTRN03C.cbl",
+   "line": 630,
+   "snippet": "CALL 'CEE3ABD' USING ABCODE, TIMING."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CVCRD01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 597,
+   "snippet": "COPY CVCRD01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSLKPCDY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 602,
+   "snippet": "COPY CSLKPCDY."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 615,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 616,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 620,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "COACTUP",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 623,
+   "snippet": "COPY COACTUP."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 626,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 629,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSMSG02Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 632,
+   "snippet": "COPY CSMSG02Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 635,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 640,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 643,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 646,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 650,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3208,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3214,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3220,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3226,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3232,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3238,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3244,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3250,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3256,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3262,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3268,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3274,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3280,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3286,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3292,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3298,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3304,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3310,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3316,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3322,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3328,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3334,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3340,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3346,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3352,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3358,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3364,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3370,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3376,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3382,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3388,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3394,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3400,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3405,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3411,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3417,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3422,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3427,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSSETATY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3432,
+   "snippet": "COPY CSSETATY REPLACING"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CICS:LIT-CARDXREFNAME-ACCT-PATH",
+   "kind": "cics_io",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3655,
+   "snippet": "DATASET   (LIT-CARDXREFNAME-ACCT-PATH)"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CICS:LIT-ACCTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3704,
+   "snippet": "DATASET   (LIT-ACCTFILENAME)"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CICS:LIT-CUSTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3754,
+   "snippet": "DATASET   (LIT-CUSTFILENAME)"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CICS:LIT-ACCTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3895,
+   "snippet": "FILE      (LIT-ACCTFILENAME)"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CICS:LIT-CUSTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 3922,
+   "snippet": "FILE      (LIT-CUSTFILENAME)"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CICS:LIT-ACCTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 4066,
+   "snippet": "REWRITE FILE(LIT-ACCTFILENAME)"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CICS:LIT-CUSTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 4086,
+   "snippet": "REWRITE FILE(LIT-CUSTFILENAME)"
+  },
+  {
+   "from": "COACTUPC",
+   "to": "CSUTLDPY",
+   "kind": "copies",
+   "file": "cbl/COACTUPC.cbl",
+   "line": 4232,
+   "snippet": "COPY CSUTLDPY"
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CVCRD01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 207,
+   "snippet": "COPY CVCRD01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 211,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 221,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 222,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 226,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "COACTVW",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 229,
+   "snippet": "COPY COACTVW."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 232,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 235,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CSMSG02Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 238,
+   "snippet": "COPY CSMSG02Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 241,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 244,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 248,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 251,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 254,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CICS:LIT-CARDXREFNAME-ACCT-PATH",
+   "kind": "cics_io",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 728,
+   "snippet": "DATASET   (LIT-CARDXREFNAME-ACCT-PATH)"
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CICS:LIT-ACCTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 777,
+   "snippet": "DATASET   (LIT-ACCTFILENAME)"
+  },
+  {
+   "from": "COACTVWC",
+   "to": "CICS:LIT-CUSTFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COACTVWC.cbl",
+   "line": 827,
+   "snippet": "DATASET   (LIT-CUSTFILENAME)"
+  },
+  {
+   "from": "COADM01C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 50,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COADM01C",
+   "to": "COADM02Y",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 51,
+   "snippet": "COPY COADM02Y."
+  },
+  {
+   "from": "COADM01C",
+   "to": "COADM01",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 53,
+   "snippet": "COPY COADM01."
+  },
+  {
+   "from": "COADM01C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 55,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COADM01C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 56,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COADM01C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 57,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COADM01C",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 58,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COADM01C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 60,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COADM01C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COADM01C.cbl",
+   "line": 61,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COADM01C",
+   "to": "CDEMO-ADMIN-OPT-PGMNAME",
+   "kind": "xctl",
+   "file": "cbl/COADM01C.cbl",
+   "line": 146,
+   "snippet": "XCTL PROGRAM(CDEMO-ADMIN-OPT-PGMNAME(WS-OPTION))"
+  },
+  {
+   "from": "COADM01C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COADM01C.cbl",
+   "line": 169,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 63,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "COBIL00",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 74,
+   "snippet": "COPY COBIL00."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 76,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 77,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 78,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 80,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 81,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 82,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 84,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 85,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 282,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CICS:WS-ACCTDAT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 346,
+   "snippet": "DATASET   (WS-ACCTDAT-FILE)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CICS:WS-ACCTDAT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 380,
+   "snippet": "DATASET   (WS-ACCTDAT-FILE)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CICS:WS-CXACAIX-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 411,
+   "snippet": "DATASET   (WS-CXACAIX-FILE)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 444,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 475,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 504,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COBIL00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COBIL00C.cbl",
+   "line": 513,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COBSWAIT",
+   "to": "MVSWAIT",
+   "kind": "calls",
+   "file": "cbl/COBSWAIT.cbl",
+   "line": 38,
+   "snippet": "CALL 'MVSWAIT'       USING MVSWAIT-TIME."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CVCRD01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 221,
+   "snippet": "COPY CVCRD01Y."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 227,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 267,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 268,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 272,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "COCRDLI",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 276,
+   "snippet": "COPY COCRDLI."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 279,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 281,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 285,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 290,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1130,
+   "snippet": "DATASET(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1147,
+   "snippet": "DATASET(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1198,
+   "snippet": "DATASET(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1258,
+   "snippet": "EXEC CICS ENDBR FILE(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1274,
+   "snippet": "DATASET(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1295,
+   "snippet": "DATASET(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1323,
+   "snippet": "DATASET(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDLIC",
+   "to": "CICS:LIT-CARD-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COCRDLIC.cbl",
+   "line": 1376,
+   "snippet": "ENDBR FILE(LIT-CARD-FILE)"
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CVCRD01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 194,
+   "snippet": "COPY CVCRD01Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 198,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 208,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 209,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 213,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "COCRDSL",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 215,
+   "snippet": "COPY COCRDSL."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 218,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 221,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CSMSG02Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 224,
+   "snippet": "COPY CSMSG02Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 227,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 234,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 240,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CICS:LIT-CARDFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 743,
+   "snippet": "FILE      (LIT-CARDFILENAME)"
+  },
+  {
+   "from": "COCRDSLC",
+   "to": "CICS:LIT-CARDFILENAME-ACCT-PATH",
+   "kind": "cics_io",
+   "file": "cbl/COCRDSLC.cbl",
+   "line": 784,
+   "snippet": "FILE      (LIT-CARDFILENAME-ACCT-PATH)"
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CVCRD01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 268,
+   "snippet": "COPY CVCRD01Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 272,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 327,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 328,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 332,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "COCRDUP",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 334,
+   "snippet": "COPY COCRDUP."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 337,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 340,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CSMSG02Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 343,
+   "snippet": "COPY CSMSG02Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 346,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CVACT02Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 353,
+   "snippet": "COPY CVACT02Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CVCUS01Y",
+   "kind": "copies",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 359,
+   "snippet": "COPY CVCUS01Y."
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CICS:LIT-CARDFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 1383,
+   "snippet": "FILE      (LIT-CARDFILENAME)"
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CICS:LIT-CARDFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 1428,
+   "snippet": "FILE      (LIT-CARDFILENAME)"
+  },
+  {
+   "from": "COCRDUPC",
+   "to": "CICS:LIT-CARDFILENAME",
+   "kind": "cics_io",
+   "file": "cbl/COCRDUPC.cbl",
+   "line": 1478,
+   "snippet": "REWRITE FILE(LIT-CARDFILENAME)"
+  },
+  {
+   "from": "COMEN01C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 50,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "COMEN02Y",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 51,
+   "snippet": "COPY COMEN02Y."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "COMEN01",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 53,
+   "snippet": "COPY COMEN01."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 55,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 56,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 57,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 58,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 60,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 61,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COMEN01C",
+   "to": "CDEMO-MENU-OPT-PGMNAME",
+   "kind": "xctl",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 185,
+   "snippet": "XCTL PROGRAM(CDEMO-MENU-OPT-PGMNAME(WS-OPTION))"
+  },
+  {
+   "from": "COMEN01C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COMEN01C.cbl",
+   "line": 202,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "CORPT00C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 138,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "CORPT00",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 140,
+   "snippet": "COPY CORPT00."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 142,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 143,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 144,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 146,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 148,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 149,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "CORPT00C",
+   "to": "CSUTLDTC",
+   "kind": "calls",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 392,
+   "snippet": "CALL 'CSUTLDTC' USING   CSUTLDTC-DATE"
+  },
+  {
+   "from": "CORPT00C",
+   "to": "CSUTLDTC",
+   "kind": "calls",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 412,
+   "snippet": "CALL 'CSUTLDTC' USING   CSUTLDTC-DATE"
+  },
+  {
+   "from": "CORPT00C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/CORPT00C.cbl",
+   "line": 549,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COSGN00C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 48,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "COSGN00",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 50,
+   "snippet": "COPY COSGN00."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 52,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 53,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 54,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 55,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 57,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 58,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COSGN00C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COSGN00C.cbl",
+   "line": 212,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COTRN00C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 61,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "COTRN00",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 72,
+   "snippet": "COPY COTRN00."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 74,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 75,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 76,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 78,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 80,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 81,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 193,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 519,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 594,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 627,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 661,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN00C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN00C.cbl",
+   "line": 695,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN01C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 52,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "COTRN01",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 63,
+   "snippet": "COPY COTRN01."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 65,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 66,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 67,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 69,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 71,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 72,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COTRN01C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 206,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COTRN01C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN01C.cbl",
+   "line": 270,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 71,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "COTRN02",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 82,
+   "snippet": "COPY COTRN02."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 84,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 85,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 86,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CVTRA05Y",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 88,
+   "snippet": "COPY CVTRA05Y."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CVACT01Y",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 89,
+   "snippet": "COPY CVACT01Y."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CVACT03Y",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 90,
+   "snippet": "COPY CVACT03Y."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 92,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 93,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CSUTLDTC",
+   "kind": "calls",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 393,
+   "snippet": "CALL 'CSUTLDTC' USING   CSUTLDTC-DATE"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CSUTLDTC",
+   "kind": "calls",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 413,
+   "snippet": "CALL 'CSUTLDTC' USING   CSUTLDTC-DATE"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 509,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CICS:WS-CXACAIX-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 579,
+   "snippet": "DATASET   (WS-CXACAIX-FILE)"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CICS:WS-CCXREF-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 612,
+   "snippet": "DATASET   (WS-CCXREF-FILE)"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 645,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 676,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 705,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COTRN02C",
+   "to": "CICS:WS-TRANSACT-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COTRN02C.cbl",
+   "line": 714,
+   "snippet": "DATASET   (WS-TRANSACT-FILE)"
+  },
+  {
+   "from": "COUSR00C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 66,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "COUSR00",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 76,
+   "snippet": "COPY COUSR00."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 78,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 79,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 80,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 81,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 83,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 84,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 197,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 207,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 515,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 589,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 622,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 656,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR00C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR00C.cbl",
+   "line": 690,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR01C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 46,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "COUSR01",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 48,
+   "snippet": "COPY COUSR01."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 50,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 51,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 52,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 53,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 55,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 56,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COUSR01C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 176,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COUSR01C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR01C.cbl",
+   "line": 241,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR02C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 49,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "COUSR02",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 60,
+   "snippet": "COPY COUSR02."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 62,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 63,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 64,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 65,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 67,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 68,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COUSR02C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 259,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COUSR02C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 323,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR02C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR02C.cbl",
+   "line": 361,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR03C",
+   "to": "COCOM01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 49,
+   "snippet": "COPY COCOM01Y."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "COUSR03",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 60,
+   "snippet": "COPY COUSR03."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "COTTL01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 62,
+   "snippet": "COPY COTTL01Y."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "CSDAT01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 63,
+   "snippet": "COPY CSDAT01Y."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "CSMSG01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 64,
+   "snippet": "COPY CSMSG01Y."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "CSUSR01Y",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 65,
+   "snippet": "COPY CSUSR01Y."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "DFHAID",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 67,
+   "snippet": "COPY DFHAID."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "DFHBMSCA",
+   "kind": "copies",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 68,
+   "snippet": "COPY DFHBMSCA."
+  },
+  {
+   "from": "COUSR03C",
+   "to": "CDEMO-TO-PROGRAM",
+   "kind": "xctl",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 206,
+   "snippet": "XCTL PROGRAM(CDEMO-TO-PROGRAM)"
+  },
+  {
+   "from": "COUSR03C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 270,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "COUSR03C",
+   "to": "CICS:WS-USRSEC-FILE",
+   "kind": "cics_io",
+   "file": "cbl/COUSR03C.cbl",
+   "line": 308,
+   "snippet": "DATASET   (WS-USRSEC-FILE)"
+  },
+  {
+   "from": "JOB:ACCTFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/ACCTFILE.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:ACCTFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/ACCTFILE.jcl",
+   "line": 33,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:ACCTFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/ACCTFILE.jcl",
+   "line": 54,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:ACCTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PS",
+   "kind": "dd:ACCTDATA",
+   "file": "jcl/ACCTFILE.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.PS"
+  },
+  {
+   "from": "DD:ACCTDATA",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PS",
+   "kind": "maps_to",
+   "file": "jcl/ACCTFILE.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.PS"
+  },
+  {
+   "from": "JOB:ACCTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "dd:ACCTVSAM",
+   "file": "jcl/ACCTFILE.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:ACCTVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/ACCTFILE.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 22,
+   "snippet": "//CLCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 33,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 47,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 68,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.PS",
+   "kind": "dd:CARDDATA",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 71,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.PS"
+  },
+  {
+   "from": "DD:CARDDATA",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.PS",
+   "kind": "maps_to",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 71,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.PS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "kind": "dd:CARDVSAM",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 73,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CARDVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 73,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 80,
+   "snippet": "//STEP40  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 97,
+   "snippet": "//STEP50  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 107,
+   "snippet": "//STEP60  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CARDFILE",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/CARDFILE.jcl",
+   "line": 118,
+   "snippet": "//OPCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:CBADMCDJ",
+   "to": "DFHCSDUP",
+   "kind": "runs",
+   "file": "jcl/CBADMCDJ.jcl",
+   "line": 27,
+   "snippet": "//STEP1   EXEC PGM=DFHCSDUP,REGION=0M,"
+  },
+  {
+   "from": "JOB:CBADMCDJ",
+   "to": "DSN:OEM.CICSTS.V05R06M0.CICS.SDFHLOAD",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/CBADMCDJ.jcl",
+   "line": 29,
+   "snippet": "//STEPLIB  DD  DSN=OEM.CICSTS.V05R06M0.CICS.SDFHLOAD,DISP=SHR"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:OEM.CICSTS.V05R06M0.CICS.SDFHLOAD",
+   "kind": "maps_to",
+   "file": "jcl/CBADMCDJ.jcl",
+   "line": 29,
+   "snippet": "//STEPLIB  DD  DSN=OEM.CICSTS.V05R06M0.CICS.SDFHLOAD,DISP=SHR"
+  },
+  {
+   "from": "JOB:CBADMCDJ",
+   "to": "DSN:OEM.CICSTS.DFHCSD",
+   "kind": "dd:DFHCSD",
+   "file": "jcl/CBADMCDJ.jcl",
+   "line": 30,
+   "snippet": "//DFHCSD   DD  UNIT=SYSDA,DISP=SHR,DSN=OEM.CICSTS.DFHCSD"
+  },
+  {
+   "from": "DD:DFHCSD",
+   "to": "DSN:OEM.CICSTS.DFHCSD",
+   "kind": "maps_to",
+   "file": "jcl/CBADMCDJ.jcl",
+   "line": 30,
+   "snippet": "//DFHCSD   DD  UNIT=SYSDA,DISP=SHR,DSN=OEM.CICSTS.DFHCSD"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 24,
+   "snippet": "//STEP01   EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "CBEXPORT",
+   "kind": "runs",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 43,
+   "snippet": "//STEP02 EXEC PGM=CBEXPORT"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 45,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 45,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "dd:CUSTFILE",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 50,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CUSTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 50,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "dd:ACCTFILE",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 52,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:ACCTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 52,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "dd:XREFFILE",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 54,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:XREFFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 54,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "dd:TRANSACT",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 56,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TRANSACT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 56,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "kind": "dd:CARDFILE",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 58,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CARDFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 58,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CBEXPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.EXPORT.DATA",
+   "kind": "dd:EXPFILE",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 63,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.EXPORT.DATA"
+  },
+  {
+   "from": "DD:EXPFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.EXPORT.DATA",
+   "kind": "maps_to",
+   "file": "jcl/CBEXPORT.jcl",
+   "line": 63,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.EXPORT.DATA"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "CBIMPORT",
+   "kind": "runs",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 22,
+   "snippet": "//STEP01 EXEC PGM=CBIMPORT"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.EXPORT.DATA",
+   "kind": "dd:EXPFILE",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 29,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.EXPORT.DATA"
+  },
+  {
+   "from": "DD:EXPFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.EXPORT.DATA",
+   "kind": "maps_to",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 29,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.EXPORT.DATA"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.IMPORT",
+   "kind": "dd:CUSTOUT",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 34,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.IMPORT,"
+  },
+  {
+   "from": "DD:CUSTOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.IMPORT",
+   "kind": "maps_to",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 34,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.IMPORT,"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.IMPORT",
+   "kind": "dd:ACCTOUT",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 39,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.IMPORT,"
+  },
+  {
+   "from": "DD:ACCTOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.IMPORT",
+   "kind": "maps_to",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 39,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.IMPORT,"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.IMPORT",
+   "kind": "dd:XREFOUT",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 44,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.IMPORT,"
+  },
+  {
+   "from": "DD:XREFOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.IMPORT",
+   "kind": "maps_to",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 44,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.IMPORT,"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.IMPORT",
+   "kind": "dd:TRNXOUT",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 49,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.IMPORT,"
+  },
+  {
+   "from": "DD:TRNXOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.IMPORT",
+   "kind": "maps_to",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 49,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.IMPORT,"
+  },
+  {
+   "from": "JOB:CBIMPORT",
+   "to": "DSN:AWS.M2.CARDDEMO.IMPORT.ERRORS",
+   "kind": "dd:ERROUT",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.IMPORT.ERRORS,"
+  },
+  {
+   "from": "DD:ERROUT",
+   "to": "DSN:AWS.M2.CARDDEMO.IMPORT.ERRORS",
+   "kind": "maps_to",
+   "file": "jcl/CBIMPORT.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.IMPORT.ERRORS,"
+  },
+  {
+   "from": "JOB:CLOSEFIL",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/CLOSEFIL.jcl",
+   "line": 22,
+   "snippet": "//CLCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:COMBTRAN",
+   "to": "SORT",
+   "kind": "runs",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 22,
+   "snippet": "//STEP05R  EXEC PGM=SORT"
+  },
+  {
+   "from": "JOB:COMBTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "kind": "dd:SORTIN",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(0)"
+  },
+  {
+   "from": "DD:SORTIN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(0)"
+  },
+  {
+   "from": "JOB:COMBTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.SYSTRAN",
+   "kind": "dd:SORTIN",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 26,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.SYSTRAN(0)"
+  },
+  {
+   "from": "DD:SORTIN",
+   "to": "DSN:AWS.M2.CARDDEMO.SYSTRAN",
+   "kind": "maps_to",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 26,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.SYSTRAN(0)"
+  },
+  {
+   "from": "JOB:COMBTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.COMBINED",
+   "kind": "dd:SORTOUT",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 37,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.COMBINED(+1)"
+  },
+  {
+   "from": "DD:SORTOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.COMBINED",
+   "kind": "maps_to",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 37,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.COMBINED(+1)"
+  },
+  {
+   "from": "JOB:COMBTRAN",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 41,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:COMBTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.COMBINED",
+   "kind": "dd:TRANSACT",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 44,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.COMBINED(+1)"
+  },
+  {
+   "from": "DD:TRANSACT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.COMBINED",
+   "kind": "maps_to",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 44,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.COMBINED(+1)"
+  },
+  {
+   "from": "JOB:COMBTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "dd:TRANVSAM",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 46,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TRANVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/COMBTRAN.jcl",
+   "line": 46,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 22,
+   "snippet": "//DELDEF01 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "SORT",
+   "kind": "runs",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 44,
+   "snippet": "//STEP010  EXEC PGM=SORT"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "dd:SORTIN",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 45,
+   "snippet": "//SORTIN   DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "DD:SORTIN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 45,
+   "snippet": "//SORTIN   DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.SEQ",
+   "kind": "dd:SORTOUT",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 48,
+   "snippet": "//SORTOUT  DD  DSN=AWS.M2.CARDDEMO.TRXFL.SEQ,"
+  },
+  {
+   "from": "DD:SORTOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.SEQ",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 48,
+   "snippet": "//SORTOUT  DD  DSN=AWS.M2.CARDDEMO.TRXFL.SEQ,"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 56,
+   "snippet": "//STEP020  EXEC PGM=IDCAMS,COND=(0,NE)"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.SEQ",
+   "kind": "dd:INFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 58,
+   "snippet": "//INFILE   DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRXFL.SEQ"
+  },
+  {
+   "from": "DD:INFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.SEQ",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 58,
+   "snippet": "//INFILE   DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRXFL.SEQ"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+   "kind": "dd:OUTFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 59,
+   "snippet": "//OUTFILE  DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS"
+  },
+  {
+   "from": "DD:OUTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 59,
+   "snippet": "//OUTFILE  DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "IEFBR14",
+   "kind": "runs",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 66,
+   "snippet": "//STEP030  EXEC PGM=IEFBR14,COND=(0,NE)"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.HTML",
+   "kind": "dd:HTMLFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 71,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.HTML"
+  },
+  {
+   "from": "DD:HTMLFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.HTML",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 71,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.HTML"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.PS",
+   "kind": "dd:STMTFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 75,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.PS"
+  },
+  {
+   "from": "DD:STMTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.PS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 75,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.PS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "CBSTM03A",
+   "kind": "runs",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 79,
+   "snippet": "//STEP040  EXEC PGM=CBSTM03A,COND=(0,NE)"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 80,
+   "snippet": "//STEPLIB  DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 80,
+   "snippet": "//STEPLIB  DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+   "kind": "dd:TRNXFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 83,
+   "snippet": "//TRNXFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TRNXFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 83,
+   "snippet": "//TRNXFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "dd:XREFFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 84,
+   "snippet": "//XREFFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:XREFFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 84,
+   "snippet": "//XREFFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "dd:ACCTFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 85,
+   "snippet": "//ACCTFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:ACCTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 85,
+   "snippet": "//ACCTFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "dd:CUSTFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 86,
+   "snippet": "//CUSTFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CUSTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 86,
+   "snippet": "//CUSTFILE DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.PS",
+   "kind": "dd:STMTFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 91,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.PS"
+  },
+  {
+   "from": "DD:STMTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.PS",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 91,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.PS"
+  },
+  {
+   "from": "JOB:CREASTMT",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.HTML",
+   "kind": "dd:HTMLFILE",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 96,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.HTML"
+  },
+  {
+   "from": "DD:HTMLFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.HTML",
+   "kind": "maps_to",
+   "file": "jcl/CREASTMT.JCL",
+   "line": 96,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.STATEMNT.HTML"
+  },
+  {
+   "from": "JOB:CUSTFILE",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 22,
+   "snippet": "//CLCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:CUSTFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 32,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CUSTFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 43,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CUSTFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 64,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:CUSTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.PS",
+   "kind": "dd:CUSTDATA",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 67,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.PS"
+  },
+  {
+   "from": "DD:CUSTDATA",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.PS",
+   "kind": "maps_to",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 67,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.PS"
+  },
+  {
+   "from": "JOB:CUSTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "dd:CUSTVSAM",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 69,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CUSTVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 69,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:CUSTFILE",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/CUSTFILE.jcl",
+   "line": 76,
+   "snippet": "//OPCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:DALYREJS",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DALYREJS.jcl",
+   "line": 21,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DEFCUST",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DEFCUST.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DEFCUST",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DEFCUST.jcl",
+   "line": 32,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DEFGDGB",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DEFGDGB.jcl",
+   "line": 21,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 24,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "IEBGENER",
+   "kind": "runs",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 36,
+   "snippet": "//STEP20   EXEC PGM=IEBGENER,COND=(0,NE)"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.PS",
+   "kind": "dd:SYSUT1",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 39,
+   "snippet": "//SYSUT1   DD   DISP=SHR,DSN=AWS.M2.CARDDEMO.TRANTYPE.PS"
+  },
+  {
+   "from": "DD:SYSUT1",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.PS",
+   "kind": "maps_to",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 39,
+   "snippet": "//SYSUT1   DD   DISP=SHR,DSN=AWS.M2.CARDDEMO.TRANTYPE.PS"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.BKUP",
+   "kind": "dd:SYSUT2",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 40,
+   "snippet": "//SYSUT2   DD   DSN=AWS.M2.CARDDEMO.TRANTYPE.BKUP(+1),"
+  },
+  {
+   "from": "DD:SYSUT2",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 40,
+   "snippet": "//SYSUT2   DD   DSN=AWS.M2.CARDDEMO.TRANTYPE.BKUP(+1),"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 47,
+   "snippet": "//STEP30 EXEC PGM=IDCAMS,COND=(0,NE)"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "IEBGENER",
+   "kind": "runs",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 59,
+   "snippet": "//STEP40   EXEC PGM=IEBGENER,COND=(0,NE)"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS",
+   "kind": "dd:SYSUT1",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 62,
+   "snippet": "//SYSUT1   DD   DISP=SHR,DSN=AWS.M2.CARDDEMO.TRANCATG.PS"
+  },
+  {
+   "from": "DD:SYSUT1",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS",
+   "kind": "maps_to",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 62,
+   "snippet": "//SYSUT1   DD   DISP=SHR,DSN=AWS.M2.CARDDEMO.TRANCATG.PS"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS.BKUP",
+   "kind": "dd:SYSUT2",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 63,
+   "snippet": "//SYSUT2   DD   DSN=AWS.M2.CARDDEMO.TRANCATG.PS.BKUP(+1),"
+  },
+  {
+   "from": "DD:SYSUT2",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 63,
+   "snippet": "//SYSUT2   DD   DSN=AWS.M2.CARDDEMO.TRANCATG.PS.BKUP(+1),"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 70,
+   "snippet": "//STEP50 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "IEBGENER",
+   "kind": "runs",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 82,
+   "snippet": "//STEP60   EXEC PGM=IEBGENER,COND=(0,NE)"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.PS",
+   "kind": "dd:SYSUT1",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 85,
+   "snippet": "//SYSUT1   DD   DISP=SHR,DSN=AWS.M2.CARDDEMO.DISCGRP.PS"
+  },
+  {
+   "from": "DD:SYSUT1",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.PS",
+   "kind": "maps_to",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 85,
+   "snippet": "//SYSUT1   DD   DISP=SHR,DSN=AWS.M2.CARDDEMO.DISCGRP.PS"
+  },
+  {
+   "from": "JOB:DEFGDGD",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.BKUP",
+   "kind": "dd:SYSUT2",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 86,
+   "snippet": "//SYSUT2   DD   DSN=AWS.M2.CARDDEMO.DISCGRP.BKUP(+1),"
+  },
+  {
+   "from": "DD:SYSUT2",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/DEFGDGD.jcl",
+   "line": 86,
+   "snippet": "//SYSUT2   DD   DSN=AWS.M2.CARDDEMO.DISCGRP.BKUP(+1),"
+  },
+  {
+   "from": "JOB:DISCGRP",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DISCGRP.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DISCGRP",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DISCGRP.jcl",
+   "line": 33,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DISCGRP",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DISCGRP.jcl",
+   "line": 54,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DISCGRP",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.PS",
+   "kind": "dd:DISCGRP",
+   "file": "jcl/DISCGRP.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DISCGRP.PS"
+  },
+  {
+   "from": "DD:DISCGRP",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.PS",
+   "kind": "maps_to",
+   "file": "jcl/DISCGRP.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DISCGRP.PS"
+  },
+  {
+   "from": "JOB:DISCGRP",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS",
+   "kind": "dd:DISCVSAM",
+   "file": "jcl/DISCGRP.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS"
+  },
+  {
+   "from": "DD:DISCVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/DISCGRP.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "IEFBR14",
+   "kind": "runs",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 23,
+   "snippet": "//PREDEL  EXEC PGM=IEFBR14"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.PS",
+   "kind": "dd:DD01",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 25,
+   "snippet": "//DD01     DD DSN=AWS.M2.CARDDEMO.USRSEC.PS,"
+  },
+  {
+   "from": "DD:DD01",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.PS",
+   "kind": "maps_to",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 25,
+   "snippet": "//DD01     DD DSN=AWS.M2.CARDDEMO.USRSEC.PS,"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "IEBGENER",
+   "kind": "runs",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 32,
+   "snippet": "//STEP01  EXEC PGM=IEBGENER"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.PS",
+   "kind": "dd:SYSUT2",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 46,
+   "snippet": "//SYSUT2   DD DSN=AWS.M2.CARDDEMO.USRSEC.PS,"
+  },
+  {
+   "from": "DD:SYSUT2",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.PS",
+   "kind": "maps_to",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 46,
+   "snippet": "//SYSUT2   DD DSN=AWS.M2.CARDDEMO.USRSEC.PS,"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 58,
+   "snippet": "//STEP02  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 80,
+   "snippet": "//STEP03  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.PS",
+   "kind": "dd:IN",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 82,
+   "snippet": "//IN       DD  DSN=AWS.M2.CARDDEMO.USRSEC.PS,DISP=SHR"
+  },
+  {
+   "from": "DD:IN",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.PS",
+   "kind": "maps_to",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 82,
+   "snippet": "//IN       DD  DSN=AWS.M2.CARDDEMO.USRSEC.PS,DISP=SHR"
+  },
+  {
+   "from": "JOB:DUSRSECJ",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS",
+   "kind": "dd:OUT",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 83,
+   "snippet": "//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS,DISP=SHR"
+  },
+  {
+   "from": "DD:OUT",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/DUSRSECJ.jcl",
+   "line": 83,
+   "snippet": "//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS,DISP=SHR"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "IEFBR14",
+   "kind": "runs",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 24,
+   "snippet": "//PREDEL  EXEC PGM=IEFBR14"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "dd:DD01",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 26,
+   "snippet": "//DD01     DD DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,"
+  },
+  {
+   "from": "DD:DD01",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "maps_to",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 26,
+   "snippet": "//DD01     DD DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "IEBGENER",
+   "kind": "runs",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 33,
+   "snippet": "//STEP01  EXEC PGM=IEBGENER"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "dd:SYSUT2",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 47,
+   "snippet": "//SYSUT2   DD DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,"
+  },
+  {
+   "from": "DD:SYSUT2",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "maps_to",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 47,
+   "snippet": "//SYSUT2   DD DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 59,
+   "snippet": "//STEP02  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 79,
+   "snippet": "//STEP03  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "dd:IN",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 81,
+   "snippet": "//IN       DD  DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,DISP=SHR"
+  },
+  {
+   "from": "DD:IN",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "maps_to",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 81,
+   "snippet": "//IN       DD  DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,DISP=SHR"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS",
+   "kind": "dd:OUT",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 82,
+   "snippet": "//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS,DISP=SHR"
+  },
+  {
+   "from": "DD:OUT",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS",
+   "kind": "maps_to",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 82,
+   "snippet": "//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS,DISP=SHR"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 93,
+   "snippet": "//STEP04  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 113,
+   "snippet": "//STEP05  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "dd:IN",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 115,
+   "snippet": "//IN       DD  DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,DISP=SHR"
+  },
+  {
+   "from": "DD:IN",
+   "to": "DSN:AWS.M2.CARDDEMO.ESDSRRDS.PS",
+   "kind": "maps_to",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 115,
+   "snippet": "//IN       DD  DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,DISP=SHR"
+  },
+  {
+   "from": "JOB:ESDSRRDS",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS",
+   "kind": "dd:OUT",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 116,
+   "snippet": "//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS,DISP=SHR"
+  },
+  {
+   "from": "DD:OUT",
+   "to": "DSN:AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS",
+   "kind": "maps_to",
+   "file": "jcl/ESDSRRDS.jcl",
+   "line": 116,
+   "snippet": "//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS,DISP=SHR"
+  },
+  {
+   "from": "JOB:FTPJCL",
+   "to": "FTP",
+   "kind": "runs",
+   "file": "jcl/FTPJCL.JCL",
+   "line": 30,
+   "snippet": "//STEP1 EXEC PGM=FTP,REGION=2048K"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "CBACT04C",
+   "kind": "runs",
+   "file": "jcl/INTCALC.jcl",
+   "line": 22,
+   "snippet": "//STEP15 EXEC PGM=CBACT04C,PARM='2022071800'"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/INTCALC.jcl",
+   "line": 24,
+   "snippet": "//            DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/INTCALC.jcl",
+   "line": 24,
+   "snippet": "//            DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "dd:TCATBALF",
+   "file": "jcl/INTCALC.jcl",
+   "line": 28,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TCATBALF",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/INTCALC.jcl",
+   "line": 28,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "dd:XREFFILE",
+   "file": "jcl/INTCALC.jcl",
+   "line": 30,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:XREFFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/INTCALC.jcl",
+   "line": 30,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.AIX.PATH",
+   "kind": "dd:XREFFIL1",
+   "file": "jcl/INTCALC.jcl",
+   "line": 32,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.AIX.PATH"
+  },
+  {
+   "from": "DD:XREFFIL1",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.AIX.PATH",
+   "kind": "maps_to",
+   "file": "jcl/INTCALC.jcl",
+   "line": 32,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.AIX.PATH"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "dd:ACCTFILE",
+   "file": "jcl/INTCALC.jcl",
+   "line": 34,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:ACCTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/INTCALC.jcl",
+   "line": 34,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS",
+   "kind": "dd:DISCGRP",
+   "file": "jcl/INTCALC.jcl",
+   "line": 36,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS"
+  },
+  {
+   "from": "DD:DISCGRP",
+   "to": "DSN:AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/INTCALC.jcl",
+   "line": 36,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:INTCALC",
+   "to": "DSN:AWS.M2.CARDDEMO.SYSTRAN",
+   "kind": "dd:TRANSACT",
+   "file": "jcl/INTCALC.jcl",
+   "line": 41,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.SYSTRAN(+1)"
+  },
+  {
+   "from": "DD:TRANSACT",
+   "to": "DSN:AWS.M2.CARDDEMO.SYSTRAN",
+   "kind": "maps_to",
+   "file": "jcl/INTCALC.jcl",
+   "line": 41,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.SYSTRAN(+1)"
+  },
+  {
+   "from": "JOB:INTRDRJ1",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 6,
+   "snippet": "//IDCAMS   EXEC PGM=IDCAMS,DYNAMNBR=200"
+  },
+  {
+   "from": "JOB:INTRDRJ1",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST",
+   "kind": "dd:IN",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 8,
+   "snippet": "//IN DD DSN=AWS.M2.CARDEMO.FTP.TEST,DISP=SHR"
+  },
+  {
+   "from": "DD:IN",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST",
+   "kind": "maps_to",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 8,
+   "snippet": "//IN DD DSN=AWS.M2.CARDEMO.FTP.TEST,DISP=SHR"
+  },
+  {
+   "from": "JOB:INTRDRJ1",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP",
+   "kind": "dd:OUT",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 9,
+   "snippet": "//OUT DD DSN=AWS.M2.CARDEMO.FTP.TEST.BKUP,DISP=SHR"
+  },
+  {
+   "from": "DD:OUT",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 9,
+   "snippet": "//OUT DD DSN=AWS.M2.CARDEMO.FTP.TEST.BKUP,DISP=SHR"
+  },
+  {
+   "from": "JOB:INTRDRJ1",
+   "to": "IEBGENER",
+   "kind": "runs",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 14,
+   "snippet": "//STEP01  EXEC PGM=IEBGENER"
+  },
+  {
+   "from": "JOB:INTRDRJ1",
+   "to": "DSN:AWS.M2.CARDDEMO.JCL",
+   "kind": "dd:SYSUT1",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 17,
+   "snippet": "//SYSUT1 DD DSN=AWS.M2.CARDDEMO.JCL(INTRDRJ2),DISP=SHR"
+  },
+  {
+   "from": "DD:SYSUT1",
+   "to": "DSN:AWS.M2.CARDDEMO.JCL",
+   "kind": "maps_to",
+   "file": "jcl/INTRDRJ1.JCL",
+   "line": 17,
+   "snippet": "//SYSUT1 DD DSN=AWS.M2.CARDDEMO.JCL(INTRDRJ2),DISP=SHR"
+  },
+  {
+   "from": "JOB:INTRDRJ2",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/INTRDRJ2.JCL",
+   "line": 7,
+   "snippet": "//IDCAMS   EXEC PGM=IDCAMS,DYNAMNBR=200"
+  },
+  {
+   "from": "JOB:INTRDRJ2",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP",
+   "kind": "dd:IN",
+   "file": "jcl/INTRDRJ2.JCL",
+   "line": 9,
+   "snippet": "//IN DD DSN=AWS.M2.CARDEMO.FTP.TEST.BKUP,DISP=SHR"
+  },
+  {
+   "from": "DD:IN",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/INTRDRJ2.JCL",
+   "line": 9,
+   "snippet": "//IN DD DSN=AWS.M2.CARDEMO.FTP.TEST.BKUP,DISP=SHR"
+  },
+  {
+   "from": "JOB:INTRDRJ2",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP.INTRDR",
+   "kind": "dd:OUT",
+   "file": "jcl/INTRDRJ2.JCL",
+   "line": 10,
+   "snippet": "//OUT DD DSN=AWS.M2.CARDEMO.FTP.TEST.BKUP.INTRDR,DISP=SHR"
+  },
+  {
+   "from": "DD:OUT",
+   "to": "DSN:AWS.M2.CARDEMO.FTP.TEST.BKUP.INTRDR",
+   "kind": "maps_to",
+   "file": "jcl/INTRDRJ2.JCL",
+   "line": 10,
+   "snippet": "//OUT DD DSN=AWS.M2.CARDEMO.FTP.TEST.BKUP.INTRDR,DISP=SHR"
+  },
+  {
+   "from": "JOB:OPENFIL",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/OPENFIL.jcl",
+   "line": 22,
+   "snippet": "//OPCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "CBTRN02C",
+   "kind": "runs",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 23,
+   "snippet": "//STEP15 EXEC PGM=CBTRN02C"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 25,
+   "snippet": "//            DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 25,
+   "snippet": "//            DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "dd:TRANFILE",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 29,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TRANFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 29,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.DALYTRAN.PS",
+   "kind": "dd:DALYTRAN",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 31,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DALYTRAN.PS"
+  },
+  {
+   "from": "DD:DALYTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.DALYTRAN.PS",
+   "kind": "maps_to",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 31,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DALYTRAN.PS"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "dd:XREFFILE",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 33,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:XREFFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 33,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.DALYREJS",
+   "kind": "dd:DALYREJS",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 38,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DALYREJS(+1)"
+  },
+  {
+   "from": "DD:DALYREJS",
+   "to": "DSN:AWS.M2.CARDDEMO.DALYREJS",
+   "kind": "maps_to",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 38,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DALYREJS(+1)"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "dd:ACCTFILE",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 40,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:ACCTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 40,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:POSTTRAN",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "dd:TCATBALF",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 42,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TCATBALF",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/POSTTRAN.jcl",
+   "line": 42,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:PRTCATBL",
+   "to": "IEFBR14",
+   "kind": "runs",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 21,
+   "snippet": "//DELDEF   EXEC PGM=IEFBR14"
+  },
+  {
+   "from": "JOB:PRTCATBL",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.REPT",
+   "kind": "dd:THEFILE",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 25,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.REPT"
+  },
+  {
+   "from": "DD:THEFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.REPT",
+   "kind": "maps_to",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 25,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.REPT"
+  },
+  {
+   "from": "JOB:PRTCATBL",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "dd:THEFILE",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 33,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:THEFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 33,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:PRTCATBL",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.BKUP",
+   "kind": "dd:THEFILE",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 39,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TCATBALF.BKUP(+1)"
+  },
+  {
+   "from": "DD:THEFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 39,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TCATBALF.BKUP(+1)"
+  },
+  {
+   "from": "JOB:PRTCATBL",
+   "to": "SORT",
+   "kind": "runs",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 43,
+   "snippet": "//STEP10R  EXEC PGM=SORT"
+  },
+  {
+   "from": "JOB:PRTCATBL",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.BKUP",
+   "kind": "dd:SORTIN",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 45,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.BKUP(+1)"
+  },
+  {
+   "from": "DD:SORTIN",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 45,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.BKUP(+1)"
+  },
+  {
+   "from": "JOB:PRTCATBL",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.REPT",
+   "kind": "dd:SORTOUT",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 63,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.REPT"
+  },
+  {
+   "from": "DD:SORTOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.REPT",
+   "kind": "maps_to",
+   "file": "jcl/PRTCATBL.jcl",
+   "line": 63,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.REPT"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "IEFBR14",
+   "kind": "runs",
+   "file": "jcl/READACCT.jcl",
+   "line": 22,
+   "snippet": "//PREDEL  EXEC PGM=IEFBR14"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+   "kind": "dd:DD01",
+   "file": "jcl/READACCT.jcl",
+   "line": 23,
+   "snippet": "//DD01     DD DSN=AWS.M2.CARDDEMO.ACCTDATA.PSCOMP,"
+  },
+  {
+   "from": "DD:DD01",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 23,
+   "snippet": "//DD01     DD DSN=AWS.M2.CARDDEMO.ACCTDATA.PSCOMP,"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+   "kind": "dd:DD02",
+   "file": "jcl/READACCT.jcl",
+   "line": 25,
+   "snippet": "//DD02     DD DSN=AWS.M2.CARDDEMO.ACCTDATA.ARRYPS,"
+  },
+  {
+   "from": "DD:DD02",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 25,
+   "snippet": "//DD02     DD DSN=AWS.M2.CARDDEMO.ACCTDATA.ARRYPS,"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+   "kind": "dd:DD03",
+   "file": "jcl/READACCT.jcl",
+   "line": 27,
+   "snippet": "//DD03     DD DSN=AWS.M2.CARDDEMO.ACCTDATA.VBPS,"
+  },
+  {
+   "from": "DD:DD03",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 27,
+   "snippet": "//DD03     DD DSN=AWS.M2.CARDDEMO.ACCTDATA.VBPS,"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "CBACT01C",
+   "kind": "runs",
+   "file": "jcl/READACCT.jcl",
+   "line": 32,
+   "snippet": "//STEP05 EXEC PGM=CBACT01C"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/READACCT.jcl",
+   "line": 34,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 34,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "dd:ACCTFILE",
+   "file": "jcl/READACCT.jcl",
+   "line": 36,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:ACCTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 36,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+   "kind": "dd:OUTFILE",
+   "file": "jcl/READACCT.jcl",
+   "line": 37,
+   "snippet": "//OUTFILE  DD DSN=AWS.M2.CARDDEMO.ACCTDATA.PSCOMP,"
+  },
+  {
+   "from": "DD:OUTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 37,
+   "snippet": "//OUTFILE  DD DSN=AWS.M2.CARDDEMO.ACCTDATA.PSCOMP,"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+   "kind": "dd:ARRYFILE",
+   "file": "jcl/READACCT.jcl",
+   "line": 41,
+   "snippet": "//ARRYFILE DD DSN=AWS.M2.CARDDEMO.ACCTDATA.ARRYPS,"
+  },
+  {
+   "from": "DD:ARRYFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 41,
+   "snippet": "//ARRYFILE DD DSN=AWS.M2.CARDDEMO.ACCTDATA.ARRYPS,"
+  },
+  {
+   "from": "JOB:READACCT",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+   "kind": "dd:VBRCFILE",
+   "file": "jcl/READACCT.jcl",
+   "line": 45,
+   "snippet": "//VBRCFILE DD DSN=AWS.M2.CARDDEMO.ACCTDATA.VBPS,"
+  },
+  {
+   "from": "DD:VBRCFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+   "kind": "maps_to",
+   "file": "jcl/READACCT.jcl",
+   "line": 45,
+   "snippet": "//VBRCFILE DD DSN=AWS.M2.CARDDEMO.ACCTDATA.VBPS,"
+  },
+  {
+   "from": "JOB:READCARD",
+   "to": "CBACT02C",
+   "kind": "runs",
+   "file": "jcl/READCARD.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=CBACT02C"
+  },
+  {
+   "from": "JOB:READCARD",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/READCARD.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/READCARD.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:READCARD",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "kind": "dd:CARDFILE",
+   "file": "jcl/READCARD.jcl",
+   "line": 26,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CARDFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/READCARD.jcl",
+   "line": 26,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:READCUST",
+   "to": "CBCUS01C",
+   "kind": "runs",
+   "file": "jcl/READCUST.jcl",
+   "line": 21,
+   "snippet": "//STEP05 EXEC PGM=CBCUS01C"
+  },
+  {
+   "from": "JOB:READCUST",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/READCUST.jcl",
+   "line": 23,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/READCUST.jcl",
+   "line": 23,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:READCUST",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "dd:CUSTFILE",
+   "file": "jcl/READCUST.jcl",
+   "line": 25,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CUSTFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/READCUST.jcl",
+   "line": 25,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:READXREF",
+   "to": "CBACT03C",
+   "kind": "runs",
+   "file": "jcl/READXREF.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=CBACT03C"
+  },
+  {
+   "from": "JOB:READXREF",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/READXREF.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/READXREF.jcl",
+   "line": 24,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:READXREF",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "dd:XREFFILE",
+   "file": "jcl/READXREF.jcl",
+   "line": 26,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:XREFFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/READXREF.jcl",
+   "line": 26,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:REPTFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/REPTFILE.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TCATBALF",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TCATBALF.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TCATBALF",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TCATBALF.jcl",
+   "line": 33,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TCATBALF",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TCATBALF.jcl",
+   "line": 54,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TCATBALF",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.PS",
+   "kind": "dd:TCATBAL",
+   "file": "jcl/TCATBALF.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.PS"
+  },
+  {
+   "from": "DD:TCATBAL",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.PS",
+   "kind": "maps_to",
+   "file": "jcl/TCATBALF.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.PS"
+  },
+  {
+   "from": "JOB:TCATBALF",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "dd:TCATBALV",
+   "file": "jcl/TCATBALF.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TCATBALV",
+   "to": "DSN:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/TCATBALF.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANBKP",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "dd:?",
+   "file": "jcl/TRANBKP.jcl",
+   "line": 27,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANBKP",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "kind": "dd:?",
+   "file": "jcl/TRANBKP.jcl",
+   "line": 33,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)"
+  },
+  {
+   "from": "JOB:TRANBKP",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANBKP.jcl",
+   "line": 37,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANBKP",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANBKP.jcl",
+   "line": 51,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS,COND=(4,LT)"
+  },
+  {
+   "from": "JOB:TRANCATG",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANCATG.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANCATG",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANCATG.jcl",
+   "line": 33,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANCATG",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANCATG.jcl",
+   "line": 54,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANCATG",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS",
+   "kind": "dd:TRANCATG",
+   "file": "jcl/TRANCATG.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANCATG.PS"
+  },
+  {
+   "from": "DD:TRANCATG",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.PS",
+   "kind": "maps_to",
+   "file": "jcl/TRANCATG.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANCATG.PS"
+  },
+  {
+   "from": "JOB:TRANCATG",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+   "kind": "dd:TCATVSAM",
+   "file": "jcl/TRANCATG.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TCATVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/TRANCATG.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 22,
+   "snippet": "//CLCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 32,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 46,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 67,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.DALYTRAN.PS.INIT",
+   "kind": "dd:TRANSACT",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 70,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DALYTRAN.PS.INIT"
+  },
+  {
+   "from": "DD:TRANSACT",
+   "to": "DSN:AWS.M2.CARDDEMO.DALYTRAN.PS.INIT",
+   "kind": "maps_to",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 70,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DALYTRAN.PS.INIT"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "dd:TRANVSAM",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 72,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TRANVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 72,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 79,
+   "snippet": "//STEP20  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 96,
+   "snippet": "//STEP25  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 106,
+   "snippet": "//STEP30  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANFILE",
+   "to": "SDSF",
+   "kind": "runs",
+   "file": "jcl/TRANFILE.jcl",
+   "line": 116,
+   "snippet": "//OPCIFIL EXEC PGM=SDSF"
+  },
+  {
+   "from": "JOB:TRANIDX",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANIDX.jcl",
+   "line": 22,
+   "snippet": "//STEP20  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANIDX",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANIDX.jcl",
+   "line": 39,
+   "snippet": "//STEP25  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANIDX",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANIDX.jcl",
+   "line": 49,
+   "snippet": "//STEP30  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+   "kind": "dd:?",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 27,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "kind": "dd:?",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 33,
+   "snippet": "//        DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "SORT",
+   "kind": "runs",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 37,
+   "snippet": "//STEP05R  EXEC PGM=SORT"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "kind": "dd:SORTIN",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 39,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)"
+  },
+  {
+   "from": "DD:SORTIN",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.BKUP",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 39,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.DALY",
+   "kind": "dd:SORTOUT",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 55,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.DALY(+1)"
+  },
+  {
+   "from": "DD:SORTOUT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.DALY",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 55,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.DALY(+1)"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "CBTRN03C",
+   "kind": "runs",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 59,
+   "snippet": "//STEP10R EXEC PGM=CBTRN03C"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 61,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 61,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.LOADLIB"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.DALY",
+   "kind": "dd:TRANFILE",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 66,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.DALY(+1)"
+  },
+  {
+   "from": "DD:TRANFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANSACT.DALY",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 66,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANSACT.DALY(+1)"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "dd:CARDXREF",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 68,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:CARDXREF",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 68,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+   "kind": "dd:TRANTYPE",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 70,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TRANTYPE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 70,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+   "kind": "dd:TRANCATG",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 72,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TRANCATG",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 72,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.DATEPARM",
+   "kind": "dd:DATEPARM",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 74,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DATEPARM"
+  },
+  {
+   "from": "DD:DATEPARM",
+   "to": "DSN:AWS.M2.CARDDEMO.DATEPARM",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 74,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.DATEPARM"
+  },
+  {
+   "from": "JOB:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANREPT",
+   "kind": "dd:TRANREPT",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 80,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANREPT(+1)"
+  },
+  {
+   "from": "DD:TRANREPT",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANREPT",
+   "kind": "maps_to",
+   "file": "jcl/TRANREPT.jcl",
+   "line": 80,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANREPT(+1)"
+  },
+  {
+   "from": "JOB:TRANTYPE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANTYPE.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANTYPE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANTYPE.jcl",
+   "line": 33,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANTYPE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/TRANTYPE.jcl",
+   "line": 54,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:TRANTYPE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.PS",
+   "kind": "dd:TRANTYPE",
+   "file": "jcl/TRANTYPE.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANTYPE.PS"
+  },
+  {
+   "from": "DD:TRANTYPE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.PS",
+   "kind": "maps_to",
+   "file": "jcl/TRANTYPE.jcl",
+   "line": 57,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANTYPE.PS"
+  },
+  {
+   "from": "JOB:TRANTYPE",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+   "kind": "dd:TTYPVSAM",
+   "file": "jcl/TRANTYPE.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS"
+  },
+  {
+   "from": "DD:TTYPVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/TRANTYPE.jcl",
+   "line": 59,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:TXT2PDF1",
+   "to": "IKJEFT1B",
+   "kind": "runs",
+   "file": "jcl/TXT2PDF1.JCL",
+   "line": 24,
+   "snippet": "//TXT2PDF  EXEC PGM=IKJEFT1B,DYNAMNBR=50,"
+  },
+  {
+   "from": "JOB:TXT2PDF1",
+   "to": "DSN:AWS.M2.LBD.TXT2PDF.LOAD",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/TXT2PDF1.JCL",
+   "line": 29,
+   "snippet": "//         DSN=AWS.M2.LBD.TXT2PDF.LOAD"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.LBD.TXT2PDF.LOAD",
+   "kind": "maps_to",
+   "file": "jcl/TXT2PDF1.JCL",
+   "line": 29,
+   "snippet": "//         DSN=AWS.M2.LBD.TXT2PDF.LOAD"
+  },
+  {
+   "from": "JOB:TXT2PDF1",
+   "to": "DSN:AWS.M2.LBD.TXT2PDF.EXEC",
+   "kind": "dd:SYSEXEC",
+   "file": "jcl/TXT2PDF1.JCL",
+   "line": 31,
+   "snippet": "//SYSEXEC  DD  DISP=SHR,DSN=AWS.M2.LBD.TXT2PDF.EXEC"
+  },
+  {
+   "from": "DD:SYSEXEC",
+   "to": "DSN:AWS.M2.LBD.TXT2PDF.EXEC",
+   "kind": "maps_to",
+   "file": "jcl/TXT2PDF1.JCL",
+   "line": 31,
+   "snippet": "//SYSEXEC  DD  DISP=SHR,DSN=AWS.M2.LBD.TXT2PDF.EXEC"
+  },
+  {
+   "from": "JOB:TXT2PDF1",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.PS",
+   "kind": "dd:INDD",
+   "file": "jcl/TXT2PDF1.JCL",
+   "line": 33,
+   "snippet": "//INDD     DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.STATEMNT.PS"
+  },
+  {
+   "from": "DD:INDD",
+   "to": "DSN:AWS.M2.CARDDEMO.STATEMNT.PS",
+   "kind": "maps_to",
+   "file": "jcl/TXT2PDF1.JCL",
+   "line": 33,
+   "snippet": "//INDD     DD  DISP=SHR,DSN=AWS.M2.CARDDEMO.STATEMNT.PS"
+  },
+  {
+   "from": "JOB:WAITSTEP",
+   "to": "COBSWAIT",
+   "kind": "runs",
+   "file": "jcl/WAITSTEP.jcl",
+   "line": 22,
+   "snippet": "//WAIT     EXEC PGM=COBSWAIT                                            00040001"
+  },
+  {
+   "from": "JOB:WAITSTEP",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "dd:STEPLIB",
+   "file": "jcl/WAITSTEP.jcl",
+   "line": 23,
+   "snippet": "//STEPLIB  DD DSN=AWS.M2.CARDDEMO.LOADLIB,DISP=SHR                      00050000"
+  },
+  {
+   "from": "DD:STEPLIB",
+   "to": "DSN:AWS.M2.CARDDEMO.LOADLIB",
+   "kind": "maps_to",
+   "file": "jcl/WAITSTEP.jcl",
+   "line": 23,
+   "snippet": "//STEPLIB  DD DSN=AWS.M2.CARDDEMO.LOADLIB,DISP=SHR                      00050000"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 22,
+   "snippet": "//STEP05 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 36,
+   "snippet": "//STEP10 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 57,
+   "snippet": "//STEP15 EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.PS",
+   "kind": "dd:XREFDATA",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 60,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.PS"
+  },
+  {
+   "from": "DD:XREFDATA",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.PS",
+   "kind": "maps_to",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 60,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.PS"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "dd:XREFVSAM",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 62,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "DD:XREFVSAM",
+   "to": "DSN:AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+   "kind": "maps_to",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 62,
+   "snippet": "//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 69,
+   "snippet": "//STEP20  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 87,
+   "snippet": "//STEP25  EXEC PGM=IDCAMS"
+  },
+  {
+   "from": "JOB:XREFFILE",
+   "to": "IDCAMS",
+   "kind": "runs",
+   "file": "jcl/XREFFILE.jcl",
+   "line": 97,
+   "snippet": "//STEP30  EXEC PGM=IDCAMS"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+## Cascade frontend
+- All server access goes through `src/lib/api.ts`, a client keyed by the contract's `ApiRoutes` / `SseRoutes`: call `api('GET /scene', { query })`, never write a path by hand. There is no fixture fallback: the UI needs the server (`npm run dev` at the repo root).
+- Wire types come from `@cascade/core/contract` (the file `core/src/contract.ts`), the same module the server compiles against. Never redeclare a DTO here.
+- Every POST carries an `Idempotency-Key`: mint one `newIntent()` per user click and reuse it only to retry that click. `X-Cascade-User` is a fixed default user set in `src/lib/api.ts`.
+- `useServerEvents()` (mounted once in `__root.tsx`) listens to `GET /events` and invalidates TanStack Query caches; queries are keyed by their route key first.
+- One screen: a slim menubar (Site, Week, Handoff, Procedures, Approvals; keys 1 to 5), one floor canvas that stays mounted under every view (`components/floor/Floor.tsx`), and the companion ring. A view is a set of floating panels over the floor. No docked sidebars.
+- A view tells the floor what to show with `useFloor(paint, handlers, insets)` (`src/lib/floor.ts`); insets keep the plan framed clear of the view's panels. Overlays that follow equipment read `floorBus` in its frame callback.
+- View state lives in the URL (Site: `job`, `off`, `sel`, `cam`, `chain`, `edit`, `pick`). Entity colours come from `impactOf(scenario)` (`src/lib/impact.ts`): red goes dark, orange loses backup.
+- Edits are only the moves the patch language has (`src/lib/edits.ts`): a cord onto a spare circuit, a panel onto a spare breaker. Saving submits them with `POST /proposals`; the server re-audits and refuses a move that introduces a finding.
+- `routeTree.gen.ts` is edited by hand: no router plugin is installed. Add a route there when you add a file in `src/routes/`.
+- Words on screen are equipment names, customer names, numbers and button labels. Numbers come from the server; dollar figures are monthly revenue.

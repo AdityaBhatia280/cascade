@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.js.map
+.DS_Store
+.output/
+.nitro/
+.tanstack/
+
+# Per-site event logs (runtime state)
+data/
+
+.claude/worktrees/
+docs/ui-references/

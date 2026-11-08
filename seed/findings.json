@@ -4,7 +4,7 @@
     "kind": "billing_discrepancy",
     "severity": "high",
     "title": "Northwind base year billing discrepancy",
-    "description": "LEASEBIL hardcodes base year 2019 ($11.20/sf). The 2021 amendment sets the base to $12.05/sf. Northwind (8,200 sf) is overcharged $580.83/month.",
+    "description": "LEASEBIL hardcodes base year 2019 ($11.20/sf). The 2021 amendment sets the base to $12.05/sf. Northwind (8,200 sf) is overcharged $580.83/month ($6,969.96/yr, golden case T01).",
     "node_ids": ["LEASEBIL", "northwind_retail"],
     "usd_per_year": 6970,
     "code_file": "seed/cobol/LEASEBIL.cbl",
@@ -16,6 +16,21 @@
   },
   {
     "id": "F-2",
+    "kind": "billing_discrepancy",
+    "severity": "high",
+    "title": "Northwind CAM denominator uses occupied SF instead of total SF",
+    "description": "CAMCALC.cbl divides tenant area by occupied building SF instead of total rentable SF required by Northwind Lease Section 4.2 ('regardless of occupancy').",
+    "node_ids": ["CAMCALC", "LEASECPY", "northwind_retail"],
+    "usd_per_year": 6055,
+    "code_file": "seed/cobol/CAMCALC.cbl",
+    "code_line": 93,
+    "contract_file": "seed/leases/northwind.txt",
+    "contract_line": 73,
+    "monthly_billed_usd": 3784.60,
+    "monthly_correct_usd": 3280.00
+  },
+  {
+    "id": "F-3",
     "kind": "hidden_dependency",
     "severity": "critical",
     "title": "Chiller 1 and CRAH 4 share UPS panel B",
@@ -26,7 +41,7 @@
     "code_line": 35
   },
   {
-    "id": "F-3",
+    "id": "F-4",
     "kind": "hidden_dependency",
     "severity": "high",
     "title": "Billing reads physical cooling status",
@@ -37,7 +52,7 @@
     "code_line": 278
   },
   {
-    "id": "F-4",
+    "id": "F-5",
     "kind": "hidden_dependency",
     "severity": "medium",
     "title": "Nightly batch reads stale cooling flags",
@@ -48,7 +63,7 @@
     "code_line": 36
   },
   {
-    "id": "F-5",
+    "id": "F-6",
     "kind": "security",
     "severity": "high",
     "title": "Work orders auto-grant badge access",
@@ -57,5 +72,16 @@
     "usd_per_year": 0,
     "code_file": "seed/sql/schema.sql",
     "code_line": 279
+  },
+  {
+    "id": "F-7",
+    "kind": "hardcoded_value",
+    "severity": "medium",
+    "title": "COBOL picture edit truncates invoices >= $1,000,000 and Y2K pivot at 50",
+    "description": "PIC -,---,--9.99 drops the high-order millions digit without ON SIZE ERROR (golden case E12 prints ',055,053.16'), and 2-digit start year pivots at 50 (cases E02–E03).",
+    "node_ids": ["LEASEBIL"],
+    "usd_per_year": 0,
+    "code_file": "seed/cobol/LEASEBIL.cbl",
+    "code_line": 310
   }
 ]

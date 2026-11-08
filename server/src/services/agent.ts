@@ -3,8 +3,9 @@ import { v4 as uuid } from 'uuid';
 import { store } from '../db/store.js';
 import { config } from '../config.js';
 import type { AgentRun, AgentStep, Incident, Simulation, Stage } from '../db/schema.js';
-import { runSimulation } from '../engines/cascade.js';
-import { createAction } from './actions.js';
+import { evaluateFaults, runSimulation } from '../engines/cascade.js';
+import { createAction, deduplicateStoreHistory } from './actions.js';
+import { nextIncidentId } from './simulation.js';
 import { broadcastTelemetryEvent, emitNodeStatus, setPointOverride } from './telemetry.js';
 
 const agentSseClients: Set<Response> = new Set();
@@ -12,6 +13,7 @@ const agentSseClients: Set<Response> = new Set();
 /**
  * SSE endpoint: GET /api/agent/stream
  * Streams `incident`, `simulation`, `step`, `action_pending`, `action_updated`, and `run_complete` events.
+ * Also replays current active incident/steps/actions on initial connection so late subscribers don't miss anything.
  */
 export function streamAgent(req: Request, res: Response): void {
   res.writeHead(200, {
@@ -22,6 +24,24 @@ export function streamAgent(req: Request, res: Response): void {
   res.write(': connected\n\n');
 
   agentSseClients.add(res);
+
+  // Send current state if a scenario is active or recently ran
+  const latestInc = store.incidents[store.incidents.length - 1];
+  if (latestInc) {
+    res.write(`event: incident\ndata: ${JSON.stringify(latestInc)}\n\n`);
+    if (latestInc.simulation_id) {
+      const sim = store.getSimulation(latestInc.simulation_id);
+      if (sim) res.write(`event: simulation\ndata: ${JSON.stringify(sim)}\n\n`);
+    }
+    if (latestInc.agent_run_id) {
+      for (const st of store.getStepsForRun(latestInc.agent_run_id)) {
+        res.write(`event: step\ndata: ${JSON.stringify(st)}\n\n`);
+      }
+      for (const act of store.actions.filter((a) => a.run_id === latestInc.agent_run_id && a.status === 'pending')) {
+        res.write(`event: action_pending\ndata: ${JSON.stringify(act)}\n\n`);
+      }
+    }
+  }
 
   req.on('close', () => {
     agentSseClients.delete(res);
@@ -146,24 +166,34 @@ async function callNemotronPlanner(sim: Simulation): Promise<NemotronPlanResult>
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-let scenarioActive = false;
+let runCounter = 0;
 
 /**
  * Executes the full incident scenario and Nemotron agent loop:
  * 1. Step 1 (refine / detect_anomaly): CH-2 trips -> 2 of 3 chillers running -> cooling_loop degraded, no cascade.
  * 2. Step 2 (refine / detect_anomaly): UPS-B power event trips CH-1 & CRAH-4 -> 1 of 3 chillers running (< 2 required) -> Incident opened!
- * 3. Step 3 (plan / plan_response): Nemotron plans the response.
+ * 3. Step 3 (plan / plan_response): Nemotron plans the response (or instant cached plan in replay mode).
  * 4. Step 4 (map / simulate_cascade): Deterministic cascade simulation runs from UPS-B (with CH-2 pre-failed).
  * 5. Step 5 (plan / price_impact): SLA credit & emergency response costs computed.
  * 6. Step 6 (assemble / send_email): Proposes Acme Cloud notification (awaiting human approval).
  * 7. Step 7 (assemble / schedule_maintenance): Proposes chiller vendor calendar invite (awaiting human approval).
  */
 export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<void> {
-  if (scenarioActive) return;
-  scenarioActive = true;
+  const myToken = ++runCounter;
+  const isCanceled = () => myToken !== runCounter;
+  const pace = mode === 'replay' ? 0.45 : 1.0;
 
-  const runId = `RUN-${uuid().slice(0, 8)}`;
-  const incId = `INC-${uuid().slice(0, 8)}`;
+  // Clean up duplicate stacked scenario incidents and unapproved scenario actions from prior runs
+  deduplicateStoreHistory();
+  store.incidents = store.incidents.filter(
+    (i) => i.title !== 'Chiller failures — Data hall 200 cooling at risk',
+  );
+  store.actions = store.actions.filter(
+    (a) => !(a.status === 'pending' && a.run_id.startsWith('RUN-')),
+  );
+
+  const runId = `RUN-${100 + myToken}`;
+  const incId = nextIncidentId();
 
   const run: AgentRun = {
     id: runId,
@@ -190,6 +220,7 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       modelOverride?: string;
     }>,
   ) => {
+    if (isCanceled()) return;
     const step: AgentStep = {
       id: `${runId}-S${idx + 1}`,
       run_id: runId,
@@ -209,9 +240,10 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
 
     const t0 = Date.now();
     const res = await workFn();
+    if (isCanceled()) return;
     step.status = res.finalStatus ?? 'done';
     step.result_summary = res.resultSummary;
-    step.latency_ms = res.latencyMs ?? Math.max(120, Date.now() - t0);
+    step.latency_ms = res.latencyMs ?? Math.max(80, Date.now() - t0);
     if (res.modelOverride) step.model = res.modelOverride;
 
     store.upsertAgentStep(step);
@@ -219,7 +251,8 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
   };
 
   try {
-    await sleep(400);
+    await sleep(250 * pace);
+    if (isCanceled()) return;
 
     // Step 0: CH-2 trips -> 2-of-3 chillers remain healthy -> cooling_loop is degraded, NO cascade
     await emitStep(
@@ -227,14 +260,17 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       'refine',
       'detect_anomaly',
       'CH-2 tripped. 2 of 3 chillers still running; loop is degraded, no cascade.',
-      { point_id: 'PT-CH2-TEMP', value_c: 14.8, k_required: 2, healthy_chillers: 2 },
+      { point_id: 'PT-CH2-TEMP', value_c: 14.8, k_required: 2, healthy_chillers: 2, mode },
       'engine/anomaly',
       async () => {
         setPointOverride('PT-CH2-TEMP', 14.8);
         setPointOverride('PT-LOOP-FLOW', 265);
+        store.injectedFaults = new Set(['CH-2']);
         emitNodeStatus('CH-2', 'failed');
+        await sleep(420 * pace);
         emitNodeStatus('cooling_loop', 'degraded');
-        await sleep(500);
+        broadcastTelemetryEvent('what_if', evaluateFaults(['CH-2']));
+        await sleep(300 * pace);
         return {
           resultSummary: '2 of 3 chillers active (k_required = 2). Redundancy holding.',
           latencyMs: 180,
@@ -242,7 +278,8 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       },
     );
 
-    await sleep(700);
+    await sleep(450 * pace);
+    if (isCanceled()) return;
 
     // Step 1: UPS-B power event trips CH-1 (and CRAH-4) -> only 1 of 3 chillers running -> Incident opens!
     let incident: Incident | null = null;
@@ -258,6 +295,7 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
         ups_b_load_pct: 0,
         healthy_chillers: 1,
         k_required: 2,
+        mode,
       },
       'engine/anomaly',
       async () => {
@@ -266,12 +304,12 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
         setPointOverride('PT-LOOP-FLOW', 110);
         setPointOverride('PT-HALL-TEMP', 28.4);
 
+        store.injectedFaults = new Set(['CH-2', 'UPS-B']);
+        // Smooth wave: first UPS-B trips, then 400ms later CH-1 & CRAH-4 lose power
         emitNodeStatus('UPS-B', 'failed');
+        await sleep(400 * pace);
         emitNodeStatus('CH-1', 'failed');
         emitNodeStatus('CRAH-4', 'failed');
-        emitNodeStatus('cooling_loop', 'failed');
-        emitNodeStatus('hall_200', 'failed');
-        emitNodeStatus('acme_sla', 'failed');
 
         const anomaly = {
           id: `ANOM-${uuid().slice(0, 8)}`,
@@ -297,28 +335,30 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
         store.addIncident(incident);
         broadcastAgentEvent('incident', incident);
 
-        await sleep(450);
+        await sleep(300 * pace);
         return {
           resultSummary: `Opened incident ${incId} (root: UPS-B)`,
-          latencyMs: 240,
+          latencyMs: 220,
         };
       },
     );
 
-    await sleep(500);
+    await sleep(350 * pace);
+    if (isCanceled()) return;
 
     // Pre-compute deterministic simulation so Nemotron planner has exact figures
     const sim = runSimulation('UPS-B', ['CH-2']);
 
-    // Step 2: Nemotron Plan
+    // Step 2: Nemotron Plan (live calls API; replay uses deterministic cached plan with 0 external calls)
     let planResult: NemotronPlanResult = {
-      planSummary: 'Plan: simulate cascade from UPS-B, price impact, propose notifications.',
+      planSummary:
+        'Plan (cached replay): simulate cascade from UPS-B (with CH-2 offline), price Acme Cloud 99.99% SLA exposure, and stage tenant & vendor notifications behind human approval.',
       acmeEmailBody:
-        'Cooling capacity for Data hall 200 is reduced after a UPS-B power event tripped Chiller 1 (Chiller 2 already offline). Our team is responding and will brief you shortly.',
+        'Cooling capacity for Data hall 200 is reduced after a UPS-B power event tripped Chiller 1 and CRAH-4 (with Chiller 2 already offline). Hall 200 reaches its 32°C thermal SLA limit in ~4 minutes. Our engineering team is executing emergency mitigation and will brief you shortly.',
       vendorInviteBody:
-        'Calendar invite: emergency service for Chiller 1 and Chiller 2 at Cascade Tower — Chicago, IL.',
-      modelUsed: config.nvidia.modelPlanner,
-      latencyMs: 320,
+        'Calendar invite: Emergency dispatch for Chiller 1 (UPS-B control feed trip) and Chiller 2 at Cascade Tower — Basement 2 Mech Room, Chicago, IL.',
+      modelUsed: mode === 'replay' ? `${config.nvidia.modelPlanner} (cached)` : config.nvidia.modelPlanner,
+      latencyMs: mode === 'replay' ? 95 : 320,
     };
 
     await emitStep(
@@ -327,13 +367,13 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       'plan_response',
       'Plan: simulate cascade from UPS-B, price impact, propose notifications.',
       { incident_id: incId, root_node: 'UPS-B', prefailed: ['CH-2'], mode },
-      config.nvidia.modelPlanner,
+      planResult.modelUsed,
       async () => {
         if (mode === 'live') {
           planResult = await callNemotronPlanner(sim);
           run.total_llm_calls += 1;
         } else {
-          await sleep(350);
+          await sleep(250 * pace);
         }
         return {
           resultSummary: planResult.planSummary,
@@ -343,9 +383,10 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       },
     );
 
-    await sleep(500);
+    await sleep(350 * pace);
+    if (isCanceled()) return;
 
-    // Step 3: Map / Simulate Cascade
+    // Step 3: Map / Simulate Cascade — smoothly step through each hop of the cascade wave
     await emitStep(
       3,
       'map',
@@ -359,15 +400,27 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
           broadcastAgentEvent('simulation', sim);
           broadcastAgentEvent('incident', incident);
         }
-        await sleep(400);
+        // Staggered hop-by-hop cascade wave across physical -> SLA -> COBOL billing nodes
+        emitNodeStatus('cooling_loop', 'failed');
+        await sleep(450 * pace);
+        emitNodeStatus('hall_200', 'failed');
+        emitNodeStatus('COOLFLAG.DAT', 'degraded');
+        await sleep(450 * pace);
+        emitNodeStatus('acme_sla', 'failed');
+        emitNodeStatus('LEASEBIL', 'degraded');
+        await sleep(450 * pace);
+        emitNodeStatus('northwind_retail', 'degraded');
+        emitNodeStatus('meridian_analytics', 'degraded');
+        broadcastTelemetryEvent('what_if', evaluateFaults(['CH-2', 'UPS-B']));
         return {
           resultSummary: `${sim.timeline.length} nodes affected across physical & COBOL billing layers`,
-          latencyMs: 210,
+          latencyMs: 650,
         };
       },
     );
 
-    await sleep(500);
+    await sleep(350 * pace);
+    if (isCanceled()) return;
 
     // Step 4: Plan / Price Impact
     const acmeImpact = sim.impacts.find((i) => i.tenant_id === 'hall_200');
@@ -380,15 +433,16 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       { simulation_id: sim.id, assumptions_version: store.assumptions.version },
       'engine/cost',
       async () => {
-        await sleep(350);
+        await sleep(250 * pace);
         return {
           resultSummary: `Total exposure $${sim.total_usd.toLocaleString()} (Acme SLA credit $${acmeCredit.toLocaleString()})`,
-          latencyMs: 190,
+          latencyMs: 170,
         };
       },
     );
 
-    await sleep(500);
+    await sleep(350 * pace);
+    if (isCanceled()) return;
 
     // Step 5: Assemble / send_email (Human-in-the-loop approval gate)
     await emitStep(
@@ -399,7 +453,7 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       { recipient: 'facilities@acme-cloud.example', sla_credit_usd: acmeCredit },
       planResult.modelUsed,
       async () => {
-        await sleep(300);
+        await sleep(220 * pace);
         createAction({
           run_id: runId,
           tool: 'send_email',
@@ -410,14 +464,15 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
           requires_approval: true,
         });
         return {
-          resultSummary: 'Awaiting human approval',
+          resultSummary: 'Queued in notification bell — awaiting human approval',
           finalStatus: 'awaiting_approval',
-          latencyMs: 260,
+          latencyMs: 210,
         };
       },
     );
 
-    await sleep(500);
+    await sleep(350 * pace);
+    if (isCanceled()) return;
 
     // Step 6: Assemble / schedule_maintenance (Human-in-the-loop approval gate)
     await emitStep(
@@ -432,7 +487,7 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
       },
       planResult.modelUsed,
       async () => {
-        await sleep(300);
+        await sleep(220 * pace);
         createAction({
           run_id: runId,
           tool: 'schedule_maintenance',
@@ -443,22 +498,25 @@ export async function startScenarioAgentRun(mode: 'live' | 'replay'): Promise<vo
           requires_approval: true,
         });
         return {
-          resultSummary: 'Awaiting human approval',
+          resultSummary: 'Queued in notification bell — awaiting human approval',
           finalStatus: 'awaiting_approval',
-          latencyMs: 250,
+          latencyMs: 200,
         };
       },
     );
 
-    if (incident) {
+    if (incident && !isCanceled()) {
       (incident as Incident).status = 'mitigating';
       broadcastAgentEvent('incident', incident);
     }
 
-    run.status = 'completed';
-    run.completed_at = new Date().toISOString();
-    broadcastAgentEvent('run_complete', { run_id: runId, status: 'completed' });
-  } finally {
-    scenarioActive = false;
+    if (!isCanceled()) {
+      run.status = 'completed';
+      run.completed_at = new Date().toISOString();
+      broadcastAgentEvent('run_complete', { run_id: runId, status: 'completed' });
+    }
+  } catch (err) {
+    console.error('[agent] scenario error:', err);
+    broadcastAgentEvent('run_complete', { run_id: runId, status: 'failed' });
   }
 }

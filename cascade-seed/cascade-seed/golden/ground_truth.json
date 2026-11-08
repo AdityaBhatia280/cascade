@@ -1,0 +1,317 @@
+{
+ "dependencies": [
+  {
+   "id": "D1",
+   "from": "LEASEBIL",
+   "to": "COOLFLAG.DAT",
+   "kind": "reads",
+   "why": "LEASEBIL reads the thermal flag file and gives SLA credits from it",
+   "evidence": [
+    {
+     "file": "legacy/LEASEBIL.cbl",
+     "line": 16,
+     "snippet": "SELECT COOL-FLAG ASSIGN TO \"COOLFLAG.DAT\""
+    },
+    {
+     "file": "legacy/LEASEBIL.cbl",
+     "line": 180,
+     "snippet": "IF WS-COOL = \"Y\" AND LR-SLA-PCT > 0"
+    }
+   ]
+  },
+  {
+   "id": "D2",
+   "from": "BMSEXP",
+   "to": "COOLFLAG.DAT",
+   "kind": "writes",
+   "why": "The BMS export job writes the flag that billing reads",
+   "evidence": [
+    {
+     "file": "legacy/bms_config.json",
+     "line": 41,
+     "snippet": "\"writes\": \"FAC.BMS.COOLFLAG\","
+    },
+    {
+     "file": "legacy/INVBATCH.jcl",
+     "line": 11,
+     "snippet": "//COOLFLAG DD DSN=FAC.BMS.COOLFLAG,DISP=SHR"
+    }
+   ]
+  },
+  {
+   "id": "D3",
+   "from": "CAMCALC",
+   "to": "LEASECPY",
+   "kind": "shares_layout",
+   "why": "Both programs compile the same record layout; changing it breaks both",
+   "evidence": [
+    {
+     "file": "legacy/CAMCALC.cbl",
+     "line": 12,
+     "snippet": "COPY LEASECPY."
+    },
+    {
+     "file": "legacy/LEASEBIL.cbl",
+     "line": 46,
+     "snippet": "COPY LEASECPY."
+    }
+   ]
+  },
+  {
+   "id": "D4",
+   "from": "LEASEBIL",
+   "to": "lease:NW0101",
+   "kind": "code_vs_contract",
+   "why": "Code hardcodes base year 2019; Northwind amendment moved it to 2021",
+   "evidence": [
+    {
+     "file": "legacy/LEASEBIL.cbl",
+     "line": 51,
+     "snippet": "01  WS-BASE-YEAR                PIC 9(4)   VALUE 2019."
+    },
+    {
+     "file": "leases/northwind.txt",
+     "line": 13,
+     "snippet": "1. Section 5.2 is amended so that \"Base Year\" means calendar year 2021."
+    }
+   ]
+  },
+  {
+   "id": "D5",
+   "from": "work_orders",
+   "to": "badge:DC-HALL-A",
+   "kind": "grants",
+   "why": "Inserting a work order silently grants the vendor 72h badge access to the data hall",
+   "evidence": [
+    {
+     "file": "legacy/schema.sql",
+     "line": 79,
+     "snippet": "CREATE TRIGGER trg_wo_vendor_access"
+    },
+    {
+     "file": "legacy/schema.sql",
+     "line": 74,
+     "snippet": "SELECT v.badge_group, 'DC-HALL-A', now() + interval '72 hours', 'WO ' || NEW.wo_id"
+    }
+   ]
+  },
+  {
+   "id": "D6",
+   "from": "CHW-LOOP-1",
+   "to": "UPS-B",
+   "kind": "powered_by",
+   "why": "Chilled water loop pumps run on UPS panel B",
+   "evidence": [
+    {
+     "file": "legacy/bms_config.json",
+     "line": 22,
+     "snippet": "\"loop\": {\"id\": \"CHW-LOOP-1\", \"pumps\": [\"P-1\", \"P-2\"], \"pump_power\": \"UPS-B\", \"serves\": [\"CRAH-1\", \"CRAH-2\", \"CRAH-3\", \"CRAH-4\"]}"
+    }
+   ]
+  },
+  {
+   "id": "D7",
+   "from": "CRAH-4",
+   "to": "UPS-B",
+   "kind": "powered_by",
+   "why": "CRAH-4 is also on UPS-B, so one panel event hits pumps, CH-1 controls and a CRAH",
+   "evidence": [
+    {
+     "file": "legacy/bms_config.json",
+     "line": 28,
+     "snippet": "{\"id\": \"CRAH-4\", \"hall\": \"A\", \"power\": \"UPS-B\"}"
+    }
+   ]
+  },
+  {
+   "id": "D8",
+   "from": "door:DC-HALL-A",
+   "to": "BMS-SW-02",
+   "kind": "network",
+   "why": "The data hall door controller sits on the BMS switch (which is on UPS-B)",
+   "evidence": [
+    {
+     "file": "legacy/access_export.csv",
+     "line": 5,
+     "snippet": "DC-HALL-A,Data hall A,RDR-031,ACC-C7,BMS-SW-02,DC-OPS;ACME-CLOUD,secure"
+    }
+   ]
+  },
+  {
+   "id": "D9",
+   "from": "sla:AC0200",
+   "to": "CHW-LOOP-1",
+   "kind": "contractual",
+   "why": "Acme Cloud's 99.99% SLA depends on the chilled water plant",
+   "evidence": [
+    {
+     "file": "leases/acme.txt",
+     "line": 5,
+     "snippet": "below 27.0 C (80.6 F), consistent with ASHRAE recommended ranges, 99.99% of each calendar month."
+    },
+    {
+     "file": "leases/acme.txt",
+     "line": 6,
+     "snippet": "Landlord's obligation depends on the chilled water plant serving Data Hall A."
+    }
+   ]
+  },
+  {
+   "id": "D10",
+   "from": "INVBATCH",
+   "to": "BMSEXP",
+   "kind": "schedule",
+   "why": "Billing runs at 01:00 but the flag is refreshed at 02:00, so invoices use yesterday's flag",
+   "evidence": [
+    {
+     "file": "legacy/INVBATCH.jcl",
+     "line": 5,
+     "snippet": "//* SCHEDULED BY CONTROL-M JOB INV01 AT 01:00 DAILY                   *"
+    },
+    {
+     "file": "legacy/bms_config.json",
+     "line": 40,
+     "snippet": "\"schedule\": \"02:00 daily\","
+    }
+   ]
+  }
+ ],
+ "extra_edges": [
+  {
+   "id": "X1",
+   "from": "CH-1",
+   "to": "UPS-B",
+   "kind": "powered_by",
+   "why": "CH-1 control power on UPS-B (used by the incident script)",
+   "evidence": [
+    {
+     "file": "legacy/bms_config.json",
+     "line": 18,
+     "snippet": "{\"id\": \"CH-1\", \"tons\": 400, \"controls_power\": \"UPS-B\", \"bacnet_device\": 1101},"
+    }
+   ]
+  }
+ ],
+ "decoys": [
+  {
+   "id": "X-DEC1",
+   "from": "LEASEBIL",
+   "to": "COOLFLAG.BAK",
+   "why_not": "Only appears in a commented-out JCL step disabled in 2015",
+   "evidence": [
+    {
+     "file": "legacy/INVBATCH.jcl",
+     "line": 21,
+     "snippet": "//* OLD BACKUP STEP, DISABLED 2015. COOLFLAG.BAK NO LONGER WRITTEN."
+    }
+   ]
+  },
+  {
+   "id": "X-DEC2",
+   "from": "CH-3",
+   "to": "UPS-B",
+   "why_not": "Label says CH-3B on UPS-B, but that breaker is a spare; CH-3 runs on UPS-A",
+   "evidence": [
+    {
+     "file": "legacy/bms_config.json",
+     "line": 20,
+     "snippet": "{\"id\": \"CH-3\", \"tons\": 400, \"controls_power\": \"UPS-A\", \"bacnet_device\": 1103, \"label\": \"CH-3B (breaker on UPS-B is a spare, not connected)\"}"
+    }
+   ]
+  },
+  {
+   "id": "X-DEC3",
+   "from": "v_coolflag_history",
+   "to": "COOLFLAG.DAT",
+   "why_not": "View name mentions coolflag but only reads invoices; unused since 2019",
+   "evidence": [
+    {
+     "file": "legacy/schema.sql",
+     "line": 84,
+     "snippet": "CREATE VIEW v_coolflag_history AS SELECT period, sla_credit FROM invoices WHERE sla_credit > 0;"
+    }
+   ]
+  }
+ ],
+ "findings": [
+  {
+   "id": "F1",
+   "kind": "billing_discrepancy",
+   "tenant": "NW0101",
+   "title": "Northwind billed against base year 2019; Amendment No. 2 says 2021",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 51,
+    "snippet": "01  WS-BASE-YEAR                PIC 9(4)   VALUE 2019."
+   },
+   "contract": {
+    "file": "leases/northwind.txt",
+    "line": 13,
+    "snippet": "1. Section 5.2 is amended so that \"Base Year\" means calendar year 2021."
+   },
+   "per_month_code": 1503.33,
+   "per_month_lease": 922.5,
+   "overcharge_per_month": 580.83,
+   "usd_per_year": 6969.96,
+   "golden_case": "T01 (opex_pass column = 1,503.33)"
+  },
+  {
+   "id": "F2",
+   "kind": "billing_discrepancy",
+   "tenant": "NW0101",
+   "title": "CAM share uses occupied SF; Northwind lease 5.4 says total building SF",
+   "code": {
+    "file": "legacy/CAMCALC.cbl",
+    "line": 20,
+    "snippet": "LR-SQFT / LR-BLDG-OCC-SF"
+   },
+   "contract": {
+    "file": "leases/northwind.txt",
+    "line": 10,
+    "snippet": "TOTAL rentable area of the Building (120,000 sf), regardless of occupancy."
+   },
+   "per_month_code": 3784.6,
+   "per_month_lease": 3280.0,
+   "overcharge_per_month": 504.6,
+   "usd_per_year": 6055.2,
+   "note": "Copper Bean's lease has the same total-area language",
+   "golden_case": "T01 (cam column = 3,784.60)"
+  },
+  {
+   "id": "F3",
+   "kind": "hardcoded_value",
+   "title": "Invoice amount fields cannot print $1,000,000 or more",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 91,
+    "snippet": "05  O-TOTAL                 PIC -,---,--9.99."
+   },
+   "detail": "Floating minus edit leaves 6 integer digits; a 7-digit amount loses its leading digit (golden case E12 prints ',055,053.16')",
+   "usd_per_year": null
+  },
+  {
+   "id": "F4",
+   "kind": "hardcoded_value",
+   "title": "CAM charge is truncated, not rounded",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 156,
+    "snippet": "COMPUTE WS-CAM-CHG = LR-CAM-POOL-MO * WS-CAM-SHARE."
+   },
+   "detail": "COMPUTE without ROUNDED drops fractions of a cent (golden cases C01-C04)",
+   "usd_per_year": null
+  },
+  {
+   "id": "F5",
+   "kind": "hardcoded_value",
+   "title": "Two-digit year window pivots at 50",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 138,
+    "snippet": "IF LI-START-YY < 50"
+   },
+   "detail": "A lease starting in 2050 or later will be read as 1950s (golden cases E02, E03)",
+   "usd_per_year": null
+  }
+ ]
+}

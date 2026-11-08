@@ -3,8 +3,8 @@ import * as fx from './fixtures';
 import { openSSE, type SSEHandle } from './sse';
 import type {
   Action, AgentStep, Anomaly, Assumptions, EvalReport, Finding, GraphEdge, GraphNode, Incident,
-  ModernizationStage, NodeStatus, Overview, ParityResult, RiskEntry, Simulation, SourceSnippet,
-  TelemetryPoint, TelemetryReading, TimelineEntry,
+  ModernizationStage, NodeStatus, Overview, ParityResult, RealBenchmarks, RiskEntry, Simulation, SourceSnippet,
+  TelemetryPoint, TelemetryReading, TimelineEntry, WhatIfResult,
 } from './types';
 
 const env = import.meta.env as Record<string, string | undefined>;
@@ -38,15 +38,11 @@ async function request<T>(path: string, init: RequestInit | undefined, fallback:
     return structuredClone(fallback());
   }
   if (!res.ok) {
-    if (res.status === 404 && (res.headers.get('content-type') ?? '').includes('text/html')) {
-      setUsingFixtures();
-      return structuredClone(fallback());
-    }
-    throw new Error(`Request failed (${res.status})`);
+    // Fall back gracefully for this call without permanently killing live backend mode on 404/500
+    return structuredClone(fallback());
   }
   const ct = res.headers.get('content-type') ?? '';
   if (!ct.includes('json')) {
-    setUsingFixtures();
     return structuredClone(fallback());
   }
   return res.json() as Promise<T>;
@@ -61,54 +57,158 @@ const fxState = {
   actions: [] as Action[],
   assumptions: structuredClone(fx.fxAssumptions),
   incidentStatus: 'nominal' as Overview['incident_status'],
+  faults: [] as string[],
   seq: 0,
 };
 const nid = (p: string) => `${p}-${Date.now().toString(36)}${(fxState.seq++).toString(36)}`;
 
 const PHYSICAL = new Set(['powers', 'cools', 'network', 'contractual', 'feeds']);
+const DATA_CATS = new Set(['legacy', 'data']);
+
+function evaluateClientGraph(faults: string[]) {
+  const edges = fx.fxEdges.filter((e) => e.verified);
+  const nodes = fx.fxNodes;
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const faultSet = new Set(faults.filter((f) => byId.has(f)));
+  const label = (id: string) => byId.get(id)?.label ?? id;
+
+  const statuses: Record<string, NodeStatus> = {};
+  const reasons: Record<string, string> = {};
+  for (const n of nodes) {
+    if (faultSet.has(n.id)) {
+      statuses[n.id] = 'failed';
+      reasons[n.id] = 'Manually injected fault';
+    } else {
+      statuses[n.id] = 'healthy';
+      reasons[n.id] = 'All upstream dependencies nominal';
+    }
+  }
+
+  for (let iter = 0; iter < nodes.length + 2; iter++) {
+    let changed = false;
+    for (const n of nodes) {
+      if (faultSet.has(n.id)) continue;
+      const incoming = edges.filter((e) => e.target === n.id);
+      const phys = incoming.filter((e) => PHYSICAL.has(e.kind));
+      const soft = incoming.filter((e) => !PHYSICAL.has(e.kind));
+      let next: NodeStatus = 'healthy';
+      let reason = 'All upstream dependencies nominal';
+
+      if (phys.length > 0) {
+        const failedUp = phys.filter((e) => statuses[e.source] === 'failed');
+        const healthyCount = phys.length - failedUp.length;
+        const need = Math.min(Math.max(1, n.k_required), phys.length);
+        const downList = failedUp.map((e) => label(e.source)).join(', ');
+
+        if (healthyCount < need) {
+          next = 'failed';
+          reason =
+            phys.length > 1
+              ? `Only ${healthyCount} of ${phys.length} providers healthy (${need} required). Down: ${downList}`
+              : `Lost supply: ${downList} (${failedUp[0]!.kind})`;
+        } else if (failedUp.length > 0) {
+          next = 'degraded';
+          reason = `Redundancy consumed: ${healthyCount} of ${phys.length} providers healthy (${need} required). Down: ${downList}`;
+        } else {
+          const atRisk = phys.find((e) => e.kind === 'contractual' && statuses[e.source] === 'degraded');
+          if (atRisk) {
+            next = 'degraded';
+            reason = `At risk: ${label(atRisk.source)} is running with reduced redundancy`;
+          }
+        }
+      }
+
+      if (next === 'healthy' && soft.length > 0) {
+        const impaired = soft.filter((e) => {
+          const s = statuses[e.source];
+          const src = byId.get(e.source);
+          return s === 'failed' || (s === 'degraded' && src && DATA_CATS.has(src.category));
+        });
+        if (impaired.length > 0) {
+          next = 'degraded';
+          reason = `Data dependency impaired: ${impaired.map((e) => `${label(e.source)} (${e.kind})`).join(', ')}`;
+        }
+      }
+
+      if (statuses[n.id] !== next) {
+        statuses[n.id] = next;
+        reasons[n.id] = reason;
+        changed = true;
+      } else if (next !== 'healthy') {
+        reasons[n.id] = reason;
+      }
+    }
+    if (!changed) break;
+  }
+
+  const times = new Map<string, number>();
+  for (const f of faultSet) times.set(f, 0);
+  for (let iter = 0; iter < nodes.length + 2; iter++) {
+    let changed = false;
+    for (const e of edges) {
+      const ts = times.get(e.source);
+      if (ts === undefined) continue;
+      if (statuses[e.target] === 'healthy') continue;
+      const stepDelay = Math.max(1, e.delay_min ?? 1);
+      const cand = ts + stepDelay;
+      const cur = times.get(e.target);
+      if (cur === undefined || cand < cur) {
+        times.set(e.target, cand);
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+
+  return { faultSet, statuses, reasons, times, byId };
+}
+
+export function fixtureWhatIf(faults: string[]): WhatIfResult {
+  const { faultSet, statuses, reasons, times, byId } = evaluateClientGraph(faults);
+  fxState.faults = [...faultSet];
+  fxState.nodeStatus = { ...statuses };
+  for (const [node_id, status] of Object.entries(statuses)) {
+    telemetryEmitter.emit('node_status', { node_id, status });
+  }
+  const impacts = fx.fxNodes
+    .filter((n) => n.type === 'tenant' && statuses[n.id] !== 'healthy')
+    .map((n) => ({
+      tenant_id: n.id,
+      tenant_label: n.label,
+      minutes_to_impact: times.get(n.id) ?? 4,
+      sla_credit_usd: statuses[n.id] === 'failed' ? Math.round(n.monthly_fee_usd * 0.3) : 0,
+    }));
+  const total_usd = impacts.reduce((s, i) => s + i.sla_credit_usd, 0) + (Object.values(statuses).includes('failed') ? 2500 : 0);
+  const res: WhatIfResult = { faults: [...faultSet], statuses, reasons, impacts, total_usd };
+  telemetryEmitter.emit('what_if', res);
+  return res;
+}
 
 /** Preview-only cascade propagation over verified edges (backend owns the real engine). */
 export function fixtureSimulate(rootId: string, prefailed: string[] = []): Simulation {
-  const edges = fx.fxEdges.filter((e) => e.verified);
-  const nodes = new Map(fx.fxNodes.map((n) => [n.id, n]));
-  const state = new Map<string, NodeStatus>();
-  prefailed.forEach((id) => state.set(id, 'failed'));
-  const timeline: TimelineEntry[] = [];
-  const failedAt = new Map<string, number>();
-  failedAt.set(rootId, 0);
-  state.set(rootId, 'failed');
-  timeline.push({ t_min: 0, node_id: rootId, state: 'failed', reason: 'Initiating failure' });
-  const queue: { id: string; t: number }[] = [{ id: rootId, t: 0 }];
-  while (queue.length) {
-    queue.sort((a, b) => a.t - b.t);
-    const { id, t } = queue.shift()!;
-    for (const e of edges.filter((x) => x.source === id)) {
-      const tgt = nodes.get(e.target);
-      if (!tgt) continue;
-      const tt = t + e.delay_min;
-      let next: NodeStatus;
-      if (PHYSICAL.has(e.kind)) {
-        const ups = edges.filter((x) => x.target === e.target && PHYSICAL.has(x.kind));
-        const healthy = ups.filter((u) => state.get(u.source) !== 'failed').length;
-        next = healthy < tgt.k_required ? 'failed' : 'degraded';
-      } else {
-        next = 'degraded';
-      }
-      const cur = state.get(e.target) ?? 'healthy';
-      const rank = { healthy: 0, degraded: 1, failed: 2 };
-      if (rank[next] <= rank[cur]) continue;
-      state.set(e.target, next);
-      if (next === 'failed') failedAt.set(e.target, tt);
-      const srcLabel = nodes.get(id)?.label ?? id;
-      timeline.push({ t_min: tt, node_id: e.target, state: next, reason: `${srcLabel} ${e.kind} ${tgt.label}` });
-      queue.push({ id: e.target, t: tt });
-    }
-  }
-  timeline.sort((a, b) => a.t_min - b.t_min);
+  const otherFaults = prefailed.length ? prefailed : fxState.faults.filter((f) => f !== rootId);
+  const { statuses, reasons, times, byId } = evaluateClientGraph([rootId, ...otherFaults]);
+  const rank: Record<NodeStatus, number> = { healthy: 0, degraded: 1, failed: 2 };
+  const rootLabel = byId.get(rootId)?.label ?? rootId;
+  const timeline: TimelineEntry[] = fx.fxNodes
+    .filter((n) => statuses[n.id] !== 'healthy')
+    .map((n) => ({
+      t_min: times.get(n.id) ?? 0,
+      node_id: n.id,
+      state: statuses[n.id]!,
+      reason: n.id === rootId ? `Initiating failure on ${rootLabel}` : reasons[n.id] ?? '',
+    }))
+    .sort((a, b) => a.t_min - b.t_min || (a.node_id === rootId ? -1 : b.node_id === rootId ? 1 : 0) || rank[b.state] - rank[a.state]);
   const impacts = timeline
-    .filter((t) => nodes.get(t.node_id)?.type === 'tenant')
-    .map((t) => ({ tenant_id: t.node_id, tenant_label: nodes.get(t.node_id)!.label, minutes_to_impact: t.t_min, sla_credit_usd: 0 }));
-  const sim: Simulation = { id: nid('SIM'), root_node: rootId, timeline, impacts, total_usd: 0, assumptions_version: fxState.assumptions.version };
+    .filter((t) => byId.get(t.node_id)?.type === 'tenant')
+    .map((t) => ({
+      tenant_id: t.node_id,
+      tenant_label: byId.get(t.node_id)!.label,
+      minutes_to_impact: t.t_min,
+      sla_credit_usd: t.state === 'failed' ? Math.round((byId.get(t.node_id)?.monthly_fee_usd ?? 0) * 0.3) : 0,
+    }));
+  const total_usd = impacts.reduce((s, i) => s + i.sla_credit_usd, 0) + (timeline.some((t) => t.state === 'failed') ? 2500 : 0);
+  const sim: Simulation = { id: nid('SIM'), root_node: rootId, timeline, impacts, total_usd, assumptions_version: fxState.assumptions.version };
   fxState.simulations[sim.id] = sim;
   return sim;
 }
@@ -142,8 +242,17 @@ export const api = {
     ),
   simulate: (node_id: string) =>
     request<Simulation>('/simulate', { method: 'POST', body: JSON.stringify({ node_id }) }, () => fixtureSimulate(node_id)),
+  whatIf: () =>
+    request<WhatIfResult>('/what-if', undefined, () => fixtureWhatIf(fxState.faults)),
+  setWhatIf: (faults: string[]) =>
+    request<WhatIfResult>('/what-if', { method: 'POST', body: JSON.stringify({ faults }) }, () => fixtureWhatIf(faults)),
   incidents: () =>
     request<Incident[]>('/incidents', undefined, () => [...fxState.incidents].sort((a, b) => b.opened_at.localeCompare(a.opened_at))),
+  clearIncidents: (onlyResolved = false) =>
+    request<Incident[]>(`/incidents/clear?resolved=${onlyResolved}`, { method: 'POST' }, () => {
+      fxState.incidents = onlyResolved ? fxState.incidents.filter((i) => i.status !== 'resolved') : [];
+      return fxState.incidents;
+    }),
   incident: (id: string) =>
     request<{ incident: Incident; simulation: Simulation | null; steps: AgentStep[]; actions: Action[] } | null>(
       `/incidents/${id}`, undefined, () => {
@@ -166,6 +275,11 @@ export const api = {
     request<Action[]>(`/actions${status ? `?status=${status}` : ''}`, undefined, () =>
       fxState.actions.filter((a) => !status || a.status === status),
     ),
+  clearActions: (onlyPending = false) =>
+    request<Action[]>(`/actions/clear?pending=${onlyPending}`, { method: 'POST' }, () => {
+      fxState.actions = onlyPending ? fxState.actions.filter((a) => a.status !== 'pending') : [];
+      return fxState.actions;
+    }),
   approve: (id: string, content?: string) =>
     request<Action>(`/actions/${id}/approve`, { method: 'POST', body: JSON.stringify({ content }) }, () =>
       decide(id, 'approved', content),
@@ -184,8 +298,10 @@ export const api = {
       return a;
     }),
   modernization: () => request<ModernizationStage[]>('/modernization', undefined, () => fx.fxModernization),
-  runParity: () => request<ParityResult[]>('/parity/run', { method: 'POST' }, () => fx.fxParity),
+  runParity: (mode: 'strict' | 'patched' = 'strict') =>
+    request<ParityResult[]>(`/parity/run?mode=${mode}`, { method: 'POST' }, () => fx.fxParity),
   eval: () => request<EvalReport>('/eval', undefined, () => fx.fxEval),
+  benchmarks: () => request<RealBenchmarks>('/benchmarks', undefined, () => ({ carddemo: null, bdg2: null })),
   assumptions: () => request<Assumptions>('/assumptions', undefined, () => fxState.assumptions),
   saveAssumptions: (a: Assumptions) =>
     request<Assumptions>('/assumptions', { method: 'PUT', body: JSON.stringify(a) }, () => {
@@ -194,10 +310,42 @@ export const api = {
     }),
   telemetryPoints: () =>
     request<TelemetryPoint[]>('/telemetry/points', undefined, () => fx.fxTelemetryPoints.map(({ baseline: _b, ...p }) => p)),
-  voiceWebCall: async (): Promise<{ access_token: string }> => {
+  voiceWebCall: async (incidentId?: string): Promise<{ access_token: string }> => {
     if (usingFixtures) throw new Error('Voice backend not connected in preview');
-    const res = await fetch(`${API_BASE}/voice/web-call`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/voice/web-call`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(incidentId ? { incident_id: incidentId } : {}),
+    });
     if (!res.ok) throw new Error(`Voice call failed (${res.status})`);
+    return res.json();
+  },
+  voicePhoneCall: async (
+    toNumber: string,
+    incidentId?: string,
+  ): Promise<{ call_id: string; from_number: string; to_number: string }> => {
+    if (usingFixtures) throw new Error('Voice backend not connected in preview');
+    const res = await fetch(`${API_BASE}/voice/phone-call`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to_number: toNumber, ...(incidentId ? { incident_id: incidentId } : {}) }),
+    });
+    if (!res.ok) {
+      const err = (await res.json().catch(() => ({}))) as { error?: string };
+      throw new Error(err.error ?? `Outbound phone call failed (${res.status})`);
+    }
+    return res.json();
+  },
+  voiceCallStatus: async (callId: string): Promise<{
+    call_id: string;
+    call_status: string;
+    transcript: Array<{ role: string; content: string }>;
+    call_summary?: string;
+    user_sentiment?: string;
+    call_successful?: boolean;
+  }> => {
+    const res = await fetch(`${API_BASE}/voice/call/${encodeURIComponent(callId)}`);
+    if (!res.ok) throw new Error(`Call status failed (${res.status})`);
     return res.json();
   },
 };
@@ -270,20 +418,17 @@ export function subscribeAgent({ onEvent, onConnection }: StreamHandlers): () =>
   };
 }
 
-let scenarioRunning = false;
+let fixtureRunToken = 0;
 function runFixtureScenario() {
-  if (scenarioRunning) return;
-  scenarioRunning = true;
+  const token = ++fixtureRunToken;
   const run_id = nid('RUN');
   fxState.steps[run_id] = [];
   let incident: Incident | null = null;
-  const setStatus = (node_id: string, status: NodeStatus) => {
-    fxState.nodeStatus[node_id] = status;
-    telemetryEmitter.emit('node_status', { node_id, status });
-  };
+  fixtureWhatIf([]);
   fx.fxAgentSteps.forEach(([stage, tool, summary, model, finalStatus], idx) => {
-    const at = 1200 * (idx + 1);
+    const at = 700 * (idx + 1);
     setTimeout(() => {
+      if (token !== fixtureRunToken) return;
       const step: AgentStep = {
         id: `${run_id}-S${idx + 1}`, run_id, idx, stage, tool, summary, args: {}, result_summary: '',
         status: 'running', latency_ms: 0, model, created_at: new Date().toISOString(),
@@ -291,18 +436,17 @@ function runFixtureScenario() {
       fxState.steps[run_id]!.push(step);
       agentEmitter.emit('step', step);
       setTimeout(() => {
+        if (token !== fixtureRunToken) return;
         step.status = finalStatus;
-        step.latency_ms = 300;
+        step.latency_ms = 240;
         step.result_summary = finalStatus === 'awaiting_approval' ? 'Awaiting human approval' : 'Completed';
         agentEmitter.emit('step', step);
         if (idx === 0) {
-          setStatus('CH-2', 'failed');
-          setStatus('cooling_loop', 'degraded');
+          fixtureWhatIf(['CH-2']);
           fxState.incidentStatus = 'degraded';
         }
         if (idx === 1) {
-          setStatus('UPS-B', 'failed');
-          setStatus('CH-1', 'failed');
+          fixtureWhatIf(['CH-2', 'UPS-B']);
           fxState.incidentStatus = 'critical';
           incident = {
             id: nid('INC'), title: 'Chiller failures — Data hall 200 cooling at risk', root_node: 'UPS-B',
@@ -328,9 +472,8 @@ function runFixtureScenario() {
         if (idx === fx.fxAgentSteps.length - 1) {
           if (incident) incident.status = 'mitigating';
           agentEmitter.emit('run_complete', { run_id, status: 'completed' });
-          scenarioRunning = false;
         }
-      }, 300);
+      }, 240);
     }, at);
   });
 }

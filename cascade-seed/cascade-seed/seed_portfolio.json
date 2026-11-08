@@ -1,0 +1,1734 @@
+{
+ "properties": [
+  {
+   "id": "MESA-DC1",
+   "name": "Mesa DC1",
+   "kind": "data_center",
+   "total_sf": 60000
+  },
+  {
+   "id": "ALICE",
+   "name": "Alice Tower",
+   "kind": "office",
+   "total_sf": 120000
+  },
+  {
+   "id": "COPPER",
+   "name": "Copper Plaza",
+   "kind": "retail",
+   "total_sf": 120000,
+   "occupied_sf": 104000
+  }
+ ],
+ "source_files": [
+  {
+   "id": "legacy/CAMCALC.cbl",
+   "path": "legacy/CAMCALC.cbl",
+   "kind": "cobol",
+   "content": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. CAMCALC.\n      *****************************************************************\n      * CAMCALC   PRO RATA SHARE OF THE MONTHLY CAM POOL               *\n      * CALLED BY LEASEBIL PARAGRAPH 2300-CAM-SHARE                    *\n      * 1994-03  R.OKAFOR   ORIGINAL (DENOMINATOR = TOTAL SF)          *\n      * 2003-07  T.NGUYEN   DENOMINATOR CHANGED TO OCCUPIED SF         *\n      *                     PER PROPERTY MGMT REQUEST (TKT 4471)       *\n      *****************************************************************\n       DATA DIVISION.\n       LINKAGE SECTION.\n       COPY LEASECPY.\n       01  LK-SHARE                    PIC S9V9(6)    COMP-3.\n       PROCEDURE DIVISION USING LEASE-REC LK-SHARE.\n       0000-CALC-SHARE.\n           IF LR-BLDG-OCC-SF = 0\n               MOVE 0 TO LK-SHARE\n           ELSE\n               COMPUTE LK-SHARE ROUNDED =\n                   LR-SQFT / LR-BLDG-OCC-SF\n           END-IF\n           GOBACK.\n"
+  },
+  {
+   "id": "legacy/INVBATCH.jcl",
+   "path": "legacy/INVBATCH.jcl",
+   "kind": "jcl",
+   "content": "//INVBATCH JOB (PROP001),'NIGHTLY INVOICES',CLASS=A,MSGCLASS=X,\n//             NOTIFY=&SYSUID\n//*********************************************************************\n//* NIGHTLY TENANT INVOICE RUN                                        *\n//* SCHEDULED BY CONTROL-M JOB INV01 AT 01:00 DAILY                   *\n//* COOLFLAG IS REFRESHED BY BMS EXPORT JOB BMSEXP (SEE FACILITIES)   *\n//*********************************************************************\n//STEP010  EXEC PGM=LEASEBIL\n//STEPLIB  DD DSN=PROP.LOADLIB,DISP=SHR\n//LEASEIN  DD DSN=PROP.LEASE.MASTER,DISP=SHR\n//COOLFLAG DD DSN=FAC.BMS.COOLFLAG,DISP=SHR\n//INVOICE  DD DSN=PROP.INVOICE.DAILY(+1),\n//            DISP=(NEW,CATLG,DELETE),\n//            SPACE=(TRK,(50,10)),DCB=(RECFM=FB,LRECL=100)\n//*\n//STEP020  EXEC PGM=INVPOST,COND=(4,LT,STEP010)\n//STEPLIB  DD DSN=PROP.LOADLIB,DISP=SHR\n//INVOICE  DD DSN=PROP.INVOICE.DAILY(0),DISP=SHR\n//GLFEED   DD DSN=FIN.GL.FEED,DISP=MOD\n//*\n//* OLD BACKUP STEP, DISABLED 2015. COOLFLAG.BAK NO LONGER WRITTEN.\n//*STEP030 EXEC PGM=IEBGENER\n//*SYSUT1  DD DSN=FAC.BMS.COOLFLAG.BAK,DISP=SHR\n"
+  },
+  {
+   "id": "legacy/LEASEBIL.cbl",
+   "path": "legacy/LEASEBIL.cbl",
+   "kind": "cobol",
+   "content": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. LEASEBIL.\n      *****************************************************************\n      * LEASEBIL  MONTHLY RENT, CAM AND OPEX PASS-THROUGH BILLING      *\n      * RUN NIGHTLY BY INVBATCH STEP010                                *\n      * 1994-03  R.OKAFOR   ORIGINAL                                   *\n      * 1999-11  R.OKAFOR   Y2K: TWO-DIGIT YEAR WINDOW (PIVOT 50)      *\n      * 2011-02  J.PATEL    SLA CREDIT FOR DATA CENTER TENANTS         *\n      * 2019-01  J.PATEL    OPEX BASE YEAR SET TO 2019                 *\n      *****************************************************************\n       ENVIRONMENT DIVISION.\n       INPUT-OUTPUT SECTION.\n       FILE-CONTROL.\n           SELECT LEASE-IN  ASSIGN TO \"LEASEIN.DAT\"\n               ORGANIZATION IS LINE SEQUENTIAL.\n           SELECT COOL-FLAG ASSIGN TO \"COOLFLAG.DAT\"\n               ORGANIZATION IS LINE SEQUENTIAL\n               FILE STATUS IS WS-CF-STATUS.\n           SELECT INV-OUT   ASSIGN TO \"INVOICE.DAT\"\n               ORGANIZATION IS LINE SEQUENTIAL.\n       DATA DIVISION.\n       FILE SECTION.\n       FD  LEASE-IN.\n       01  LI-REC.\n           05  LI-TENANT-ID            PIC X(6).\n           05  LI-SQFT                 PIC 9(7).\n           05  LI-RENT-PSF             PIC 9(3)V99.\n           05  LI-ESC-PCT              PIC V9999.\n           05  LI-START-YY             PIC 99.\n           05  LI-BILL-YEAR            PIC 9(4).\n           05  LI-CAP-PCT              PIC V9999.\n           05  LI-BLDG-TOTAL-SF        PIC 9(7).\n           05  LI-BLDG-OCC-SF          PIC 9(7).\n           05  LI-CAM-POOL-MO          PIC 9(7)V99.\n           05  LI-MONTHLY-FEE          PIC 9(7)V99.\n           05  LI-SLA-PCT              PIC 99.\n           05  LI-ADJ-SIGN             PIC X.\n           05  LI-ADJ-AMT              PIC 9(5)V99.\n       FD  COOL-FLAG.\n       01  CF-REC.\n           05  CF-FLAG                 PIC X.\n           05  FILLER                  PIC X(19).\n       FD  INV-OUT.\n       01  INV-LINE                    PIC X(100).\n       WORKING-STORAGE SECTION.\n       COPY LEASECPY.\n       01  WS-CF-STATUS                PIC XX.\n       01  WS-EOF                      PIC X      VALUE \"N\".\n       01  WS-COOL                     PIC X      VALUE \"N\".\n      * OPEX BASE YEAR FOR ALL BASE-YEAR LEASES\n       01  WS-BASE-YEAR                PIC 9(4)   VALUE 2019.\n       01  WS-OPEX-TABLE.\n           05  FILLER                  PIC X(9)   VALUE \"201901120\".\n           05  FILLER                  PIC X(9)   VALUE \"202001160\".\n           05  FILLER                  PIC X(9)   VALUE \"202101205\".\n           05  FILLER                  PIC X(9)   VALUE \"202201250\".\n           05  FILLER                  PIC X(9)   VALUE \"202301295\".\n           05  FILLER                  PIC X(9)   VALUE \"202401340\".\n           05  FILLER                  PIC X(9)   VALUE \"202501390\".\n           05  FILLER                  PIC X(9)   VALUE \"202601435\".\n       01  WS-OPEX-TBL REDEFINES WS-OPEX-TABLE.\n           05  WS-OPEX-ENTRY OCCURS 8 TIMES INDEXED BY OX.\n               10  OT-YEAR             PIC 9(4).\n               10  OT-PSF              PIC 9(3)V99.\n       01  WS-START-YEAR               PIC 9(4).\n       01  WS-YEARS                    PIC S9(3).\n       01  WS-ESC-RENT-PSF             PIC S9(5)V9(6) COMP-3.\n       01  WS-BASE-RENT-MO             PIC S9(7)V99   COMP-3.\n       01  WS-CAM-SHARE                PIC S9V9(6)    COMP-3.\n       01  WS-CAM-CHG                  PIC S9(7)V99   COMP-3.\n       01  WS-OPEX-CUR                 PIC 9(3)V99.\n       01  WS-OPEX-BASE                PIC 9(3)V99.\n       01  WS-OPEX-PASS                PIC S9(7)V99   COMP-3.\n       01  WS-CAP-AMT                  PIC S9(7)V99   COMP-3.\n       01  WS-SLA-CREDIT               PIC S9(7)V99   COMP-3.\n       01  WS-ADJ                      PIC S9(5)V99   COMP-3.\n       01  WS-TOTAL                    PIC S9(7)V99   COMP-3.\n       01  WS-OUT.\n           05  O-TENANT                PIC X(6).\n           05  FILLER                  PIC X      VALUE SPACE.\n           05  O-RENT                  PIC -,---,--9.99.\n           05  FILLER                  PIC X      VALUE SPACE.\n           05  O-CAM                   PIC -,---,--9.99.\n           05  FILLER                  PIC X      VALUE SPACE.\n           05  O-OPEX                  PIC -,---,--9.99.\n           05  FILLER                  PIC X      VALUE SPACE.\n           05  O-SLA                   PIC -,---,--9.99.\n           05  FILLER                  PIC X      VALUE SPACE.\n           05  O-ADJ                   PIC -,---,--9.99.\n           05  FILLER                  PIC X      VALUE SPACE.\n           05  O-TOTAL                 PIC -,---,--9.99.\n       PROCEDURE DIVISION.\n       0000-MAIN.\n           PERFORM 1000-READ-COOL-FLAG\n           OPEN INPUT LEASE-IN\n           OPEN OUTPUT INV-OUT\n           PERFORM UNTIL WS-EOF = \"Y\"\n               READ LEASE-IN\n                   AT END MOVE \"Y\" TO WS-EOF\n                   NOT AT END PERFORM 2000-BILL-ONE\n               END-READ\n           END-PERFORM\n           CLOSE LEASE-IN\n           CLOSE INV-OUT\n           STOP RUN.\n       1000-READ-COOL-FLAG.\n      * THERMAL FLAG FILE WRITTEN BY THE BMS EXPORT JOB (BMSEXP).\n      * Y = DATA HALL OVER TEMPERATURE, TRIGGERS SLA CREDIT BELOW.\n           MOVE \"N\" TO WS-COOL\n           OPEN INPUT COOL-FLAG\n           IF WS-CF-STATUS = \"00\"\n               READ COOL-FLAG\n                   NOT AT END MOVE CF-FLAG TO WS-COOL\n               END-READ\n               CLOSE COOL-FLAG\n           END-IF.\n       2000-BILL-ONE.\n           MOVE LI-TENANT-ID     TO LR-TENANT-ID\n           MOVE LI-SQFT          TO LR-SQFT\n           MOVE LI-RENT-PSF      TO LR-RENT-PSF\n           MOVE LI-ESC-PCT       TO LR-ESC-PCT\n           MOVE LI-CAP-PCT       TO LR-CAP-PCT\n           MOVE LI-BLDG-TOTAL-SF TO LR-BLDG-TOTAL-SF\n           MOVE LI-BLDG-OCC-SF   TO LR-BLDG-OCC-SF\n           MOVE LI-CAM-POOL-MO   TO LR-CAM-POOL-MO\n           MOVE LI-MONTHLY-FEE   TO LR-MONTHLY-FEE\n           MOVE LI-SLA-PCT       TO LR-SLA-PCT\n           PERFORM 2100-YEAR-WINDOW\n           PERFORM 2200-BASE-RENT\n           PERFORM 2300-CAM-SHARE\n           PERFORM 2400-BASE-YEAR-STOP\n           PERFORM 2500-APPLY-CAP\n           PERFORM 2600-SLA-CREDIT\n           PERFORM 2650-ADJUSTMENT\n           PERFORM 2700-TOTAL\n           PERFORM 2900-WRITE-INVOICE.\n       2100-YEAR-WINDOW.\n           IF LI-START-YY < 50\n               COMPUTE WS-START-YEAR = 2000 + LI-START-YY\n           ELSE\n               COMPUTE WS-START-YEAR = 1900 + LI-START-YY\n           END-IF\n           COMPUTE WS-YEARS = LI-BILL-YEAR - WS-START-YEAR.\n       2200-BASE-RENT.\n           MOVE LR-RENT-PSF TO WS-ESC-RENT-PSF\n           IF WS-YEARS > 0\n               PERFORM WS-YEARS TIMES\n                   COMPUTE WS-ESC-RENT-PSF ROUNDED =\n                       WS-ESC-RENT-PSF * (1 + LR-ESC-PCT)\n               END-PERFORM\n           END-IF\n           COMPUTE WS-BASE-RENT-MO ROUNDED =\n               WS-ESC-RENT-PSF * LR-SQFT / 12.\n       2300-CAM-SHARE.\n           CALL \"CAMCALC\" USING LEASE-REC WS-CAM-SHARE\n           COMPUTE WS-CAM-CHG = LR-CAM-POOL-MO * WS-CAM-SHARE.\n       2400-BASE-YEAR-STOP.\n           MOVE 0 TO WS-OPEX-CUR WS-OPEX-BASE\n           PERFORM VARYING OX FROM 1 BY 1 UNTIL OX > 8\n               IF OT-YEAR (OX) = LI-BILL-YEAR\n                   MOVE OT-PSF (OX) TO WS-OPEX-CUR\n               END-IF\n               IF OT-YEAR (OX) = WS-BASE-YEAR\n                   MOVE OT-PSF (OX) TO WS-OPEX-BASE\n               END-IF\n           END-PERFORM\n           COMPUTE WS-OPEX-PASS ROUNDED =\n               (WS-OPEX-CUR - WS-OPEX-BASE) * LR-SQFT / 12.\n       2500-APPLY-CAP.\n           IF LR-CAP-PCT > 0\n               COMPUTE WS-CAP-AMT ROUNDED =\n                   WS-OPEX-BASE * LR-CAP-PCT\n                   * (LI-BILL-YEAR - WS-BASE-YEAR) * LR-SQFT / 12\n               IF WS-OPEX-PASS > WS-CAP-AMT\n                   MOVE WS-CAP-AMT TO WS-OPEX-PASS\n               END-IF\n           END-IF.\n       2600-SLA-CREDIT.\n           MOVE 0 TO WS-SLA-CREDIT\n           IF WS-COOL = \"Y\" AND LR-SLA-PCT > 0\n               COMPUTE WS-SLA-CREDIT ROUNDED =\n                   LR-MONTHLY-FEE * LR-SLA-PCT / 100\n           END-IF.\n       2650-ADJUSTMENT.\n           IF LI-ADJ-SIGN = \"-\"\n               COMPUTE WS-ADJ = 0 - LI-ADJ-AMT\n           ELSE\n               MOVE LI-ADJ-AMT TO WS-ADJ\n           END-IF.\n       2700-TOTAL.\n           COMPUTE WS-TOTAL = WS-BASE-RENT-MO + WS-CAM-CHG\n               + WS-OPEX-PASS - WS-SLA-CREDIT + WS-ADJ.\n       2900-WRITE-INVOICE.\n           MOVE LR-TENANT-ID    TO O-TENANT\n           MOVE WS-BASE-RENT-MO TO O-RENT\n           MOVE WS-CAM-CHG      TO O-CAM\n           MOVE WS-OPEX-PASS    TO O-OPEX\n           MOVE WS-SLA-CREDIT   TO O-SLA\n           MOVE WS-ADJ          TO O-ADJ\n           MOVE WS-TOTAL        TO O-TOTAL\n           MOVE WS-OUT          TO INV-LINE\n           WRITE INV-LINE.\n"
+  },
+  {
+   "id": "legacy/LEASECPY.cpy",
+   "path": "legacy/LEASECPY.cpy",
+   "kind": "copybook",
+   "content": "      *****************************************************************\n      * LEASECPY  LEASE MASTER RECORD LAYOUT                          *\n      * SHARED BY LEASEBIL AND CAMCALC. DO NOT CHANGE WITHOUT          *\n      * RECOMPILING BOTH PROGRAMS.                                     *\n      * 1994-03  R.OKAFOR   ORIGINAL                                   *\n      * 2003-07  T.NGUYEN   ADDED BLDG-OCC-SF (TKT 4471)               *\n      *****************************************************************\n       01  LEASE-REC.\n           05  LR-TENANT-KEY.\n               10  LR-TENANT-ID        PIC X(6).\n           05  LR-TENANT-KEY-R REDEFINES LR-TENANT-KEY.\n               10  LR-PROP-CODE        PIC X(2).\n               10  LR-UNIT-NO          PIC X(4).\n           05  LR-SQFT                 PIC S9(7)      COMP-3.\n           05  LR-RENT-PSF             PIC S9(3)V99   COMP-3.\n           05  LR-ESC-PCT              PIC SV9999     COMP-3.\n           05  LR-CAP-PCT              PIC SV9999     COMP-3.\n           05  LR-BLDG-TOTAL-SF        PIC S9(7)      COMP-3.\n           05  LR-BLDG-OCC-SF          PIC S9(7)      COMP-3.\n           05  LR-CAM-POOL-MO          PIC S9(7)V99   COMP-3.\n           05  LR-MONTHLY-FEE          PIC S9(7)V99   COMP-3.\n           05  LR-SLA-PCT              PIC S99        COMP-3.\n"
+  },
+  {
+   "id": "legacy/access_export.csv",
+   "path": "legacy/access_export.csv",
+   "kind": "access",
+   "content": "door_id,door_name,reader_id,controller_id,controller_network,badge_groups,fail_mode\nLOBBY-MAIN,Main lobby turnstiles,RDR-001,ACC-C1,CORP-LAN,ALL-STAFF;TENANTS,unlock\nDOCK-1,Loading dock,RDR-014,ACC-C3,CORP-LAN,FACILITIES;VENDOR-HVAC,secure\nMECH-1,Central plant,RDR-021,ACC-C4,CORP-LAN,FACILITIES;VENDOR-HVAC,secure\nDC-HALL-A,Data hall A,RDR-031,ACC-C7,BMS-SW-02,DC-OPS;ACME-CLOUD,secure\nDC-HALL-B,Data hall B (unbuilt),RDR-032,ACC-C8,CORP-LAN,DC-OPS,secure\nELEC-B,Electrical room B (UPS-B),RDR-040,ACC-C4,CORP-LAN,FACILITIES,secure\n"
+  },
+  {
+   "id": "legacy/bms_config.json",
+   "path": "legacy/bms_config.json",
+   "kind": "bms",
+   "content": "{\n  \"site\": \"MESA-DC1\",\n  \"exported_from\": \"Centrix CX-Supervisor 4.0.2\",\n  \"network\": {\n    \"switches\": [\n      {\"id\": \"BMS-SW-01\", \"location\": \"Central plant\", \"ups_panel\": \"UPS-A\"},\n      {\"id\": \"BMS-SW-02\", \"location\": \"Data hall A electrical room\", \"ups_panel\": \"UPS-B\"}\n    ]\n  },\n  \"ups_panels\": [\n    {\"id\": \"UPS-A\", \"capacity_kw\": 400},\n    {\"id\": \"UPS-B\", \"capacity_kw\": 250},\n    {\"id\": \"UPS-C\", \"capacity_kw\": 150, \"note\": \"office floors only\"}\n  ],\n  \"chiller_plant\": {\n    \"redundancy\": {\"k_required\": 2, \"n_total\": 3},\n    \"chillers\": [\n      {\"id\": \"CH-1\", \"tons\": 400, \"controls_power\": \"UPS-B\", \"bacnet_device\": 1101},\n      {\"id\": \"CH-2\", \"tons\": 400, \"controls_power\": \"UPS-A\", \"bacnet_device\": 1102},\n      {\"id\": \"CH-3\", \"tons\": 400, \"controls_power\": \"UPS-A\", \"bacnet_device\": 1103, \"label\": \"CH-3B (breaker on UPS-B is a spare, not connected)\"}\n    ],\n    \"loop\": {\"id\": \"CHW-LOOP-1\", \"pumps\": [\"P-1\", \"P-2\"], \"pump_power\": \"UPS-B\", \"serves\": [\"CRAH-1\", \"CRAH-2\", \"CRAH-3\", \"CRAH-4\"]}\n  },\n  \"crah_units\": [\n    {\"id\": \"CRAH-1\", \"hall\": \"A\", \"power\": \"UPS-A\"},\n    {\"id\": \"CRAH-2\", \"hall\": \"A\", \"power\": \"UPS-A\"},\n    {\"id\": \"CRAH-3\", \"hall\": \"A\", \"power\": \"UPS-A\"},\n    {\"id\": \"CRAH-4\", \"hall\": \"A\", \"power\": \"UPS-B\"}\n  ],\n  \"points\": [\n    {\"id\": \"CHW-SUPPLY-T\", \"object\": \"AI:1\", \"device\": 1101, \"unit\": \"degC\", \"scale\": 1, \"expected\": [5.5, 8.0]},\n    {\"id\": \"CHW-LOOP-FLOW\", \"object\": \"AI:2\", \"device\": 1101, \"unit\": \"L/s\", \"scale\": 1, \"expected\": [40, 75]},\n    {\"id\": \"HALL-A-INLET-T\", \"object\": \"AI:7\", \"device\": 2001, \"unit\": \"degC\", \"scale\": 10, \"expected\": [180, 270], \"note\": \"stored x10\"},\n    {\"id\": \"HALL-A-RETURN-T\", \"object\": \"AI:8\", \"device\": 2001, \"unit\": \"degF\", \"scale\": 1, \"expected\": [80, 100]},\n    {\"id\": \"UPS-B-LOAD\", \"object\": \"AI:20\", \"device\": 3002, \"unit\": \"kW\", \"scale\": 1, \"expected\": [60, 210]}\n  ],\n  \"exports\": [\n    {\n      \"job\": \"BMSEXP\",\n      \"schedule\": \"02:00 daily\",\n      \"writes\": \"FAC.BMS.COOLFLAG\",\n      \"rule\": \"Y if HALL-A-INLET-T > 27.0 C for 10 minutes in the last 24h, else N\",\n      \"consumers\": \"unknown (left blank by integrator)\"\n    }\n  ]\n}\n"
+  },
+  {
+   "id": "legacy/schema.sql",
+   "path": "legacy/schema.sql",
+   "kind": "sql",
+   "content": "-- Property management database (PostgreSQL port of the 2008 Oracle schema)\n-- Owner: property-ops. Last migration: 2021-04-12.\n\nCREATE TABLE properties (\n  property_id   TEXT PRIMARY KEY,\n  name          TEXT NOT NULL,\n  kind          TEXT NOT NULL,             -- office | retail | data_center\n  total_sf      INTEGER NOT NULL\n);\n\nCREATE TABLE tenants (\n  tenant_id     TEXT PRIMARY KEY,          -- matches LEASE-REC LR-TENANT-ID\n  name          TEXT NOT NULL,\n  property_id   TEXT REFERENCES properties,\n  contact_email TEXT\n);\n\nCREATE TABLE units (\n  unit_id       TEXT PRIMARY KEY,\n  property_id   TEXT REFERENCES properties,\n  tenant_id     TEXT REFERENCES tenants,\n  sf            INTEGER NOT NULL\n);\n\nCREATE TABLE leases (\n  lease_id      TEXT PRIMARY KEY,\n  tenant_id     TEXT REFERENCES tenants,\n  start_date    DATE NOT NULL,\n  base_year     INTEGER,                   -- informational only; billing uses LEASEBIL\n  cap_pct       NUMERIC(6,4),\n  sla_target    NUMERIC(6,3)\n);\n\nCREATE TABLE invoices (\n  invoice_id    BIGSERIAL PRIMARY KEY,\n  tenant_id     TEXT REFERENCES tenants,\n  period        DATE NOT NULL,\n  base_rent     NUMERIC(11,2),\n  cam           NUMERIC(11,2),\n  opex_pass     NUMERIC(11,2),\n  sla_credit    NUMERIC(11,2),\n  total         NUMERIC(11,2),\n  loaded_from   TEXT DEFAULT 'PROP.INVOICE.DAILY'\n);\n\nCREATE TABLE vendors (\n  vendor_id     TEXT PRIMARY KEY,\n  name          TEXT NOT NULL,\n  badge_group   TEXT                       -- access_export.csv group name\n);\n\nCREATE TABLE work_orders (\n  wo_id         BIGSERIAL PRIMARY KEY,\n  property_id   TEXT REFERENCES properties,\n  asset_id      TEXT,                      -- bms_config.json device id\n  vendor_id     TEXT REFERENCES vendors,\n  priority      TEXT,\n  status        TEXT DEFAULT 'open',\n  opened_at     TIMESTAMP DEFAULT now()\n);\n\nCREATE TABLE badge_grants (\n  grant_id      BIGSERIAL PRIMARY KEY,\n  badge_group   TEXT NOT NULL,\n  door_id       TEXT NOT NULL,\n  valid_until   TIMESTAMP NOT NULL,\n  reason        TEXT\n);\n\n-- Added 2017 so vendors can get in for emergency work without calling security.\nCREATE OR REPLACE FUNCTION grant_vendor_access() RETURNS trigger AS $$\nBEGIN\n  INSERT INTO badge_grants (badge_group, door_id, valid_until, reason)\n  SELECT v.badge_group, 'DC-HALL-A', now() + interval '72 hours', 'WO ' || NEW.wo_id\n  FROM vendors v WHERE v.vendor_id = NEW.vendor_id;\n  RETURN NEW;\nEND $$ LANGUAGE plpgsql;\n\nCREATE TRIGGER trg_wo_vendor_access\nAFTER INSERT ON work_orders\nFOR EACH ROW EXECUTE FUNCTION grant_vendor_access();\n\n-- Reporting view, unused since 2019.\nCREATE VIEW v_coolflag_history AS SELECT period, sla_credit FROM invoices WHERE sla_credit > 0;\n"
+  },
+  {
+   "id": "leases/acme.txt",
+   "path": "leases/acme.txt",
+   "kind": "lease",
+   "content": "COLOCATION AGREEMENT EXCERPT: ACME CLOUD INC. (TENANT ID AC0200)\nPremises: Data Hall A, 24,000 sf, 1.8 MW critical load. Commencement: January 1, 2016.\n\nSection 7.1 Environmental SLA. Landlord shall maintain cold-aisle inlet temperature in Data Hall A at or\nbelow 27.0 C (80.6 F), consistent with ASHRAE recommended ranges, 99.99% of each calendar month.\nLandlord's obligation depends on the chilled water plant serving Data Hall A.\n\nSection 7.3 Service Credits. If the Environmental SLA is missed, Tenant receives a credit against the\nMonthly Colocation Fee ($185,000): 10% for any miss, 20% if cumulative excursion exceeds 60 minutes,\n30% if it exceeds 240 minutes. Credits are capped at one month's fee and are tenant's sole remedy.\nOne credit per root cause event. Scheduled maintenance with 10 days' notice is excluded.\n"
+  },
+  {
+   "id": "leases/copperbean.txt",
+   "path": "leases/copperbean.txt",
+   "kind": "lease",
+   "content": "RETAIL LEASE EXCERPT: COPPER BEAN COFFEE (TENANT ID CB0105)\nPremises: Suite 105, 1,450 rsf. Commencement: April 1, 2022.\nBase Rent $41.00/rsf/yr, 3.5% annual increases. Base Year 2019. Pro rata share on total building area.\n"
+  },
+  {
+   "id": "leases/kessler.txt",
+   "path": "leases/kessler.txt",
+   "kind": "lease",
+   "content": "OFFICE LEASE EXCERPT: KESSLER & VANCE LLP (TENANT ID KV0310)\nPremises: Suite 310, 14,500 rsf. Commencement: May 1, 2018.\nBase Rent $36.25/rsf/yr, 3.0% annual increases. Base Year 2019.\nControllable Operating Expenses capped at 3.0% per year, non-cumulative, over the Base Year amount.\n"
+  },
+  {
+   "id": "leases/ledgerline.txt",
+   "path": "leases/ledgerline.txt",
+   "kind": "lease",
+   "content": "OFFICE LEASE EXCERPT: LEDGERLINE FINTECH INC. (TENANT ID LL0400)\nPremises: Floor 4, 21,000 rsf. Commencement: February 1, 2021.\nBase Rent $38.00/rsf/yr, 3.0% annual increases. Base Year 2019 per landlord's standard form.\nOne-time move-in credit of $12,500 applied to the first invoice of each lease year 2021 through 2025.\n"
+  },
+  {
+   "id": "leases/northwind.txt",
+   "path": "leases/northwind.txt",
+   "kind": "lease",
+   "content": "RETAIL LEASE EXCERPT: NORTHWIND RETAIL LLC (TENANT ID NW0101)\nPremises: Suite 101, 8,200 rentable square feet. Lease commencement: March 1, 2019.\n\nSection 4.1 Base Rent. $32.00 per rentable square foot per year, increasing 3.0% on each anniversary.\n\nSection 5.2 Operating Expenses. Tenant pays its pro rata share of Operating Expenses in excess of\nOperating Expenses for the Base Year. Base Year means calendar year 2019.\n\nSection 5.4 Pro Rata Share. Tenant's Pro Rata Share is the rentable area of the Premises divided by the\nTOTAL rentable area of the Building (120,000 sf), regardless of occupancy.\n\nAMENDMENT NO. 2 (executed June 15, 2021)\n1. Section 5.2 is amended so that \"Base Year\" means calendar year 2021.\n2. All other terms remain in effect.\n"
+  },
+  {
+   "id": "leases/saguaro.txt",
+   "path": "leases/saguaro.txt",
+   "kind": "lease",
+   "content": "OFFICE LEASE EXCERPT: SAGUARO FAMILY CLINIC PLLC (TENANT ID SG0320)\nPremises: Suite 320, 9,800 rsf. Commencement: September 1, 2020.\nBase Rent $29.75/rsf/yr, 2.75% annual increases. Base Year 2019 (stipulated, tenant waived 2020 as base).\nLandlord shall maintain HVAC to keep premises between 68 and 76 F during clinic hours (medication storage).\n"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "LEASEBIL",
+   "type": "module",
+   "name": "LEASEBIL (COBOL billing)",
+   "aliases": [
+    "lease billing"
+   ],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "CAMCALC",
+   "type": "module",
+   "name": "CAMCALC (COBOL CAM share)",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "LEASECPY",
+   "type": "module",
+   "name": "LEASECPY (copybook)",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "INVBATCH",
+   "type": "system",
+   "name": "INVBATCH nightly job 01:00",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "INVPOST",
+   "type": "module",
+   "name": "INVPOST (GL posting)",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "BMSEXP",
+   "type": "system",
+   "name": "BMS export job 02:00",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "COOLFLAG.DAT",
+   "type": "system",
+   "name": "COOLFLAG thermal flag file",
+   "aliases": [
+    "FAC.BMS.COOLFLAG"
+   ],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "work_orders",
+   "type": "system",
+   "name": "work_orders table + trigger",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "badge:DC-HALL-A",
+   "type": "system",
+   "name": "Badge access: Data Hall A",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": null
+  },
+  {
+   "id": "door:DC-HALL-A",
+   "type": "system",
+   "name": "Door controller ACC-C7",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "BMS-SW-02",
+   "type": "utility",
+   "name": "BMS network switch 02",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "UPS-A",
+   "type": "utility",
+   "name": "UPS panel A",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": 400,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "UPS-B",
+   "type": "utility",
+   "name": "UPS panel B",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": 250,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CH-1",
+   "type": "utility",
+   "name": "Chiller 1",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CH-2",
+   "type": "utility",
+   "name": "Chiller 2",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CH-3",
+   "type": "utility",
+   "name": "Chiller 3",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CHW-PLANT",
+   "type": "utility",
+   "name": "Chiller plant (2 of 3 required)",
+   "aliases": [],
+   "k_required": 2,
+   "n_total": 3,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CHW-LOOP-1",
+   "type": "utility",
+   "name": "Chilled water loop + pumps",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CRAH-1",
+   "type": "utility",
+   "name": "CRAH-1",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CRAH-2",
+   "type": "utility",
+   "name": "CRAH-2",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CRAH-3",
+   "type": "utility",
+   "name": "CRAH-3",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CRAH-4",
+   "type": "utility",
+   "name": "CRAH-4",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "HALL-A",
+   "type": "utility",
+   "name": "Data Hall A cooling (needs 3 of 4 CRAH)",
+   "aliases": [],
+   "k_required": 3,
+   "n_total": 4,
+   "capacity_kw": 1800,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "HALL-A-INLET-T",
+   "type": "sensor",
+   "name": "Hall A inlet temp (stored x10 degC)",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "CHW-SUPPLY-T",
+   "type": "sensor",
+   "name": "Chilled water supply temp",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "tenant:AC0200",
+   "type": "tenant",
+   "name": "Acme Cloud",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": 185000,
+   "sla_target_pct": null,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "sla:AC0200",
+   "type": "sla",
+   "name": "Acme Cloud 99.99% environmental SLA",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": 185000,
+   "sla_target_pct": 99.99,
+   "property_id": "MESA-DC1"
+  },
+  {
+   "id": "tenant:NW0101",
+   "type": "tenant",
+   "name": "Northwind Retail",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "COPPER"
+  },
+  {
+   "id": "lease:NW0101",
+   "type": "lease",
+   "name": "Northwind lease + Amendment No. 2",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "COPPER"
+  },
+  {
+   "id": "tenant:CB0105",
+   "type": "tenant",
+   "name": "Copper Bean Coffee",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "COPPER"
+  },
+  {
+   "id": "tenant:KV0310",
+   "type": "tenant",
+   "name": "Kessler & Vance LLP",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "ALICE"
+  },
+  {
+   "id": "tenant:SG0320",
+   "type": "tenant",
+   "name": "Saguaro Family Clinic",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "ALICE"
+  },
+  {
+   "id": "tenant:LL0400",
+   "type": "tenant",
+   "name": "Ledgerline Fintech",
+   "aliases": [],
+   "k_required": null,
+   "n_total": null,
+   "capacity_kw": null,
+   "monthly_fee_usd": null,
+   "sla_target_pct": null,
+   "property_id": "ALICE"
+  }
+ ],
+ "edges": [
+  {
+   "id": "D1",
+   "from": "LEASEBIL",
+   "to": "COOLFLAG.DAT",
+   "kind": "reads",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/LEASEBIL.cbl",
+   "evidence_line": 16,
+   "verified": true,
+   "planted": true,
+   "why": "LEASEBIL reads the thermal flag file and gives SLA credits from it"
+  },
+  {
+   "id": "D2",
+   "from": "BMSEXP",
+   "to": "COOLFLAG.DAT",
+   "kind": "writes",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": 41,
+   "verified": true,
+   "planted": true,
+   "why": "The BMS export job writes the flag that billing reads"
+  },
+  {
+   "id": "D3",
+   "from": "CAMCALC",
+   "to": "LEASECPY",
+   "kind": "shares_layout",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/CAMCALC.cbl",
+   "evidence_line": 12,
+   "verified": true,
+   "planted": true,
+   "why": "Both programs compile the same record layout; changing it breaks both"
+  },
+  {
+   "id": "D4",
+   "from": "LEASEBIL",
+   "to": "lease:NW0101",
+   "kind": "code_vs_contract",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/LEASEBIL.cbl",
+   "evidence_line": 51,
+   "verified": true,
+   "planted": true,
+   "why": "Code hardcodes base year 2019; Northwind amendment moved it to 2021"
+  },
+  {
+   "id": "D5",
+   "from": "work_orders",
+   "to": "badge:DC-HALL-A",
+   "kind": "grants",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/schema.sql",
+   "evidence_line": 79,
+   "verified": true,
+   "planted": true,
+   "why": "Inserting a work order silently grants the vendor 72h badge access to the data hall"
+  },
+  {
+   "id": "D6",
+   "from": "CHW-LOOP-1",
+   "to": "UPS-B",
+   "kind": "powered_by",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": 22,
+   "verified": true,
+   "planted": true,
+   "why": "Chilled water loop pumps run on UPS panel B"
+  },
+  {
+   "id": "D7",
+   "from": "CRAH-4",
+   "to": "UPS-B",
+   "kind": "powered_by",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": 28,
+   "verified": true,
+   "planted": true,
+   "why": "CRAH-4 is also on UPS-B, so one panel event hits pumps, CH-1 controls and a CRAH"
+  },
+  {
+   "id": "D8",
+   "from": "door:DC-HALL-A",
+   "to": "BMS-SW-02",
+   "kind": "network",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/access_export.csv",
+   "evidence_line": 5,
+   "verified": true,
+   "planted": true,
+   "why": "The data hall door controller sits on the BMS switch (which is on UPS-B)"
+  },
+  {
+   "id": "D9",
+   "from": "sla:AC0200",
+   "to": "CHW-LOOP-1",
+   "kind": "contractual",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "leases/acme.txt",
+   "evidence_line": 5,
+   "verified": true,
+   "planted": true,
+   "why": "Acme Cloud's 99.99% SLA depends on the chilled water plant"
+  },
+  {
+   "id": "D10",
+   "from": "INVBATCH",
+   "to": "BMSEXP",
+   "kind": "schedule",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/INVBATCH.jcl",
+   "evidence_line": 5,
+   "verified": true,
+   "planted": true,
+   "why": "Billing runs at 01:00 but the flag is refreshed at 02:00, so invoices use yesterday's flag"
+  },
+  {
+   "id": "X1",
+   "from": "CH-1",
+   "to": "UPS-B",
+   "kind": "powered_by",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": 18,
+   "verified": true,
+   "planted": false,
+   "why": "CH-1 control power on UPS-B (used by the incident script)"
+  },
+  {
+   "id": "P01",
+   "from": "UPS-B",
+   "to": "CH-1",
+   "kind": "powers",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": "CH-1 controls on UPS-B"
+  },
+  {
+   "id": "P02",
+   "from": "UPS-A",
+   "to": "CH-2",
+   "kind": "powers",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P03",
+   "from": "UPS-A",
+   "to": "CH-3",
+   "kind": "powers",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P04",
+   "from": "CH-1",
+   "to": "CHW-PLANT",
+   "kind": "feeds",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P05",
+   "from": "CH-2",
+   "to": "CHW-PLANT",
+   "kind": "feeds",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P06",
+   "from": "CH-3",
+   "to": "CHW-PLANT",
+   "kind": "feeds",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P07",
+   "from": "CHW-PLANT",
+   "to": "CHW-LOOP-1",
+   "kind": "feeds",
+   "delay_min": 1,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P08",
+   "from": "UPS-B",
+   "to": "CHW-LOOP-1",
+   "kind": "powers",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": "pumps on UPS-B (D6)"
+  },
+  {
+   "id": "P09",
+   "from": "CHW-LOOP-1",
+   "to": "CRAH-1",
+   "kind": "cools",
+   "delay_min": 2,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P10",
+   "from": "CHW-LOOP-1",
+   "to": "CRAH-2",
+   "kind": "cools",
+   "delay_min": 2,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P11",
+   "from": "CHW-LOOP-1",
+   "to": "CRAH-3",
+   "kind": "cools",
+   "delay_min": 2,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P12",
+   "from": "CHW-LOOP-1",
+   "to": "CRAH-4",
+   "kind": "cools",
+   "delay_min": 2,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P13",
+   "from": "UPS-B",
+   "to": "CRAH-4",
+   "kind": "powers",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": "D7"
+  },
+  {
+   "id": "P14",
+   "from": "CRAH-1",
+   "to": "HALL-A",
+   "kind": "cools",
+   "delay_min": 1,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P15",
+   "from": "CRAH-2",
+   "to": "HALL-A",
+   "kind": "cools",
+   "delay_min": 1,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P16",
+   "from": "CRAH-3",
+   "to": "HALL-A",
+   "kind": "cools",
+   "delay_min": 1,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P17",
+   "from": "CRAH-4",
+   "to": "HALL-A",
+   "kind": "cools",
+   "delay_min": 1,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P18",
+   "from": "HALL-A",
+   "to": "HALL-A-INLET-T",
+   "kind": "measured_by",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": null,
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P19",
+   "from": "HALL-A",
+   "to": "sla:AC0200",
+   "kind": "contractual",
+   "delay_min": 3,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": null,
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": "thermal limit 27.0 C"
+  },
+  {
+   "id": "P20",
+   "from": "sla:AC0200",
+   "to": "tenant:AC0200",
+   "kind": "bills",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": null,
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P21",
+   "from": "HALL-A-INLET-T",
+   "to": "BMSEXP",
+   "kind": "feeds",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": "flag rule"
+  },
+  {
+   "id": "P22",
+   "from": "COOLFLAG.DAT",
+   "to": "LEASEBIL",
+   "kind": "feeds",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": "read at 1000-READ-COOL-FLAG"
+  },
+  {
+   "id": "P23",
+   "from": "LEASEBIL",
+   "to": "CAMCALC",
+   "kind": "calls",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": null,
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P24",
+   "from": "INVBATCH",
+   "to": "LEASEBIL",
+   "kind": "runs",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": null,
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P25",
+   "from": "INVBATCH",
+   "to": "INVPOST",
+   "kind": "runs",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": null,
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  },
+  {
+   "id": "P26",
+   "from": "UPS-B",
+   "to": "BMS-SW-02",
+   "kind": "powers",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": "legacy/bms_config.json",
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": "bms_config switches"
+  },
+  {
+   "id": "P27",
+   "from": "lease:NW0101",
+   "to": "tenant:NW0101",
+   "kind": "bills",
+   "delay_min": 0,
+   "weight": 1,
+   "confidence": 1.0,
+   "evidence_file": null,
+   "evidence_line": null,
+   "verified": true,
+   "planted": false,
+   "why": ""
+  }
+ ],
+ "lease_terms": [
+  {
+   "tenant_id": "NW0101",
+   "base_year": 2021,
+   "base_year_in_code": 2019,
+   "cap_type": "none",
+   "cap_pct": 0,
+   "pro_rata_basis": "total_sf",
+   "pro_rata_pct": 6.8333,
+   "gross_up": false,
+   "sla_credit_schedule": null,
+   "amendment_ref": "Amendment No. 2 (2021-06-15)"
+  },
+  {
+   "tenant_id": "AC0200",
+   "base_year": null,
+   "cap_type": null,
+   "cap_pct": null,
+   "pro_rata_basis": null,
+   "pro_rata_pct": null,
+   "gross_up": false,
+   "sla_target_pct": 99.99,
+   "monthly_fee_usd": 185000,
+   "sla_credit_schedule": [
+    {
+     "over_min": 0,
+     "pct": 10
+    },
+    {
+     "over_min": 60,
+     "pct": 20
+    },
+    {
+     "over_min": 240,
+     "pct": 30
+    }
+   ],
+   "sla_cap": "one month's fee",
+   "thermal_limit_c": 27.0,
+   "amendment_ref": null
+  },
+  {
+   "tenant_id": "KV0310",
+   "base_year": 2019,
+   "cap_type": "non-cumulative",
+   "cap_pct": 3.0,
+   "pro_rata_basis": "occupied_sf",
+   "gross_up": false
+  },
+  {
+   "tenant_id": "SG0320",
+   "base_year": 2019,
+   "cap_type": "none",
+   "cap_pct": 0,
+   "pro_rata_basis": "occupied_sf",
+   "gross_up": false,
+   "hvac_band_f": [
+    68,
+    76
+   ]
+  },
+  {
+   "tenant_id": "LL0400",
+   "base_year": 2019,
+   "cap_type": "none",
+   "cap_pct": 0,
+   "pro_rata_basis": "occupied_sf",
+   "gross_up": false,
+   "credit": "12,500 move-in credit first invoice each lease year 2021-2025"
+  },
+  {
+   "tenant_id": "CB0105",
+   "base_year": 2019,
+   "cap_type": "none",
+   "cap_pct": 0,
+   "pro_rata_basis": "total_sf",
+   "gross_up": false
+  }
+ ],
+ "opex_psf_by_year": {
+  "2019": 11.2,
+  "2020": 11.6,
+  "2021": 12.05,
+  "2022": 12.5,
+  "2023": 12.95,
+  "2024": 13.4,
+  "2025": 13.9,
+  "2026": 14.35
+ },
+ "telemetry_points": [
+  {
+   "id": "CHW-SUPPLY-T",
+   "node_id": "CHW-SUPPLY-T",
+   "name": "CHW-SUPPLY-T",
+   "unit": "degC",
+   "scale": 1,
+   "expected_min": 5.5,
+   "expected_max": 8.0,
+   "note": ""
+  },
+  {
+   "id": "CHW-LOOP-FLOW",
+   "node_id": "CHW-LOOP-1",
+   "name": "CHW-LOOP-FLOW",
+   "unit": "L/s",
+   "scale": 1,
+   "expected_min": 40,
+   "expected_max": 75,
+   "note": ""
+  },
+  {
+   "id": "HALL-A-INLET-T",
+   "node_id": "HALL-A-INLET-T",
+   "name": "HALL-A-INLET-T",
+   "unit": "degC",
+   "scale": 10,
+   "expected_min": 180,
+   "expected_max": 270,
+   "note": "stored x10"
+  },
+  {
+   "id": "HALL-A-RETURN-T",
+   "node_id": "HALL-A",
+   "name": "HALL-A-RETURN-T",
+   "unit": "degF",
+   "scale": 1,
+   "expected_min": 80,
+   "expected_max": 100,
+   "note": ""
+  },
+  {
+   "id": "UPS-B-LOAD",
+   "node_id": "UPS-B",
+   "name": "UPS-B-LOAD",
+   "unit": "kW",
+   "scale": 1,
+   "expected_min": 60,
+   "expected_max": 210,
+   "note": ""
+  }
+ ],
+ "incident_scenario": {
+  "name": "UPS-B power event during CH-2 outage",
+  "steps": [
+   {
+    "t_s": 0,
+    "event": "normal",
+    "note": "40 s of normal readings"
+   },
+   {
+    "t_s": 40,
+    "event": "trip",
+    "node": "CH-2",
+    "note": "2 of 3 chillers left, k=2 still met: DEGRADED, no cascade"
+   },
+   {
+    "t_s": 90,
+    "event": "power_event",
+    "node": "UPS-B",
+    "note": "trips CH-1 controls, loop pumps (D6) and CRAH-4 (D7): 1 of 3 chillers, below k=2"
+   },
+   {
+    "t_s": 92,
+    "event": "anomaly_expected",
+    "point": "CHW-SUPPLY-T",
+    "note": "detector should fire here and start the agent"
+   }
+  ],
+  "sensor_fault_traps": [
+   {
+    "point": "HALL-A-INLET-T",
+    "trap": "stored x10: raw 245 means 24.5 C, not 245 C"
+   },
+   {
+    "point": "HALL-A-RETURN-T",
+    "trap": "in degF while every other temp is degC"
+   }
+  ],
+  "thermal_assumption": "Illustrative: about 3 minutes from total cooling loss to shutdown for a 5 kW cabinet (Data Center Knowledge, Rackspace outage writeup); scale faster for higher kW"
+ },
+ "ground_truth_edges": [
+  {
+   "id": "D1",
+   "from": "LEASEBIL",
+   "to": "COOLFLAG.DAT",
+   "kind": "reads"
+  },
+  {
+   "id": "D2",
+   "from": "BMSEXP",
+   "to": "COOLFLAG.DAT",
+   "kind": "writes"
+  },
+  {
+   "id": "D3",
+   "from": "CAMCALC",
+   "to": "LEASECPY",
+   "kind": "shares_layout"
+  },
+  {
+   "id": "D4",
+   "from": "LEASEBIL",
+   "to": "lease:NW0101",
+   "kind": "code_vs_contract"
+  },
+  {
+   "id": "D5",
+   "from": "work_orders",
+   "to": "badge:DC-HALL-A",
+   "kind": "grants"
+  },
+  {
+   "id": "D6",
+   "from": "CHW-LOOP-1",
+   "to": "UPS-B",
+   "kind": "powered_by"
+  },
+  {
+   "id": "D7",
+   "from": "CRAH-4",
+   "to": "UPS-B",
+   "kind": "powered_by"
+  },
+  {
+   "id": "D8",
+   "from": "door:DC-HALL-A",
+   "to": "BMS-SW-02",
+   "kind": "network"
+  },
+  {
+   "id": "D9",
+   "from": "sla:AC0200",
+   "to": "CHW-LOOP-1",
+   "kind": "contractual"
+  },
+  {
+   "id": "D10",
+   "from": "INVBATCH",
+   "to": "BMSEXP",
+   "kind": "schedule"
+  }
+ ],
+ "decoys": [
+  {
+   "id": "X-DEC1",
+   "from": "LEASEBIL",
+   "to": "COOLFLAG.BAK",
+   "why_not": "Only appears in a commented-out JCL step disabled in 2015",
+   "evidence": [
+    {
+     "file": "legacy/INVBATCH.jcl",
+     "line": 21,
+     "snippet": "//* OLD BACKUP STEP, DISABLED 2015. COOLFLAG.BAK NO LONGER WRITTEN."
+    }
+   ]
+  },
+  {
+   "id": "X-DEC2",
+   "from": "CH-3",
+   "to": "UPS-B",
+   "why_not": "Label says CH-3B on UPS-B, but that breaker is a spare; CH-3 runs on UPS-A",
+   "evidence": [
+    {
+     "file": "legacy/bms_config.json",
+     "line": 20,
+     "snippet": "{\"id\": \"CH-3\", \"tons\": 400, \"controls_power\": \"UPS-A\", \"bacnet_device\": 1103, \"label\": \"CH-3B (breaker on UPS-B is a spare, not connected)\"}"
+    }
+   ]
+  },
+  {
+   "id": "X-DEC3",
+   "from": "v_coolflag_history",
+   "to": "COOLFLAG.DAT",
+   "why_not": "View name mentions coolflag but only reads invoices; unused since 2019",
+   "evidence": [
+    {
+     "file": "legacy/schema.sql",
+     "line": 84,
+     "snippet": "CREATE VIEW v_coolflag_history AS SELECT period, sla_credit FROM invoices WHERE sla_credit > 0;"
+    }
+   ]
+  }
+ ],
+ "findings": [
+  {
+   "id": "F1",
+   "kind": "billing_discrepancy",
+   "tenant": "NW0101",
+   "title": "Northwind billed against base year 2019; Amendment No. 2 says 2021",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 51,
+    "snippet": "01  WS-BASE-YEAR                PIC 9(4)   VALUE 2019."
+   },
+   "contract": {
+    "file": "leases/northwind.txt",
+    "line": 13,
+    "snippet": "1. Section 5.2 is amended so that \"Base Year\" means calendar year 2021."
+   },
+   "per_month_code": 1503.33,
+   "per_month_lease": 922.5,
+   "overcharge_per_month": 580.83,
+   "usd_per_year": 6969.96,
+   "golden_case": "T01 (opex_pass column = 1,503.33)"
+  },
+  {
+   "id": "F2",
+   "kind": "billing_discrepancy",
+   "tenant": "NW0101",
+   "title": "CAM share uses occupied SF; Northwind lease 5.4 says total building SF",
+   "code": {
+    "file": "legacy/CAMCALC.cbl",
+    "line": 20,
+    "snippet": "LR-SQFT / LR-BLDG-OCC-SF"
+   },
+   "contract": {
+    "file": "leases/northwind.txt",
+    "line": 10,
+    "snippet": "TOTAL rentable area of the Building (120,000 sf), regardless of occupancy."
+   },
+   "per_month_code": 3784.6,
+   "per_month_lease": 3280.0,
+   "overcharge_per_month": 504.6,
+   "usd_per_year": 6055.2,
+   "note": "Copper Bean's lease has the same total-area language",
+   "golden_case": "T01 (cam column = 3,784.60)"
+  },
+  {
+   "id": "F3",
+   "kind": "hardcoded_value",
+   "title": "Invoice amount fields cannot print $1,000,000 or more",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 91,
+    "snippet": "05  O-TOTAL                 PIC -,---,--9.99."
+   },
+   "detail": "Floating minus edit leaves 6 integer digits; a 7-digit amount loses its leading digit (golden case E12 prints ',055,053.16')",
+   "usd_per_year": null
+  },
+  {
+   "id": "F4",
+   "kind": "hardcoded_value",
+   "title": "CAM charge is truncated, not rounded",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 156,
+    "snippet": "COMPUTE WS-CAM-CHG = LR-CAM-POOL-MO * WS-CAM-SHARE."
+   },
+   "detail": "COMPUTE without ROUNDED drops fractions of a cent (golden cases C01-C04)",
+   "usd_per_year": null
+  },
+  {
+   "id": "F5",
+   "kind": "hardcoded_value",
+   "title": "Two-digit year window pivots at 50",
+   "code": {
+    "file": "legacy/LEASEBIL.cbl",
+    "line": 138,
+    "snippet": "IF LI-START-YY < 50"
+   },
+   "detail": "A lease starting in 2050 or later will be read as 1950s (golden cases E02, E03)",
+   "usd_per_year": null
+  }
+ ],
+ "parity_cases": [
+  {
+   "id": "T01",
+   "note": "Northwind Retail: lease amendment says base year 2021, code uses 2019 (the $6,970/yr finding)",
+   "cool_flag": "N",
+   "input": "NW0101000820003200030019202400000120000010400000480000000000000000+0000000",
+   "expected_output": "NW0101    25,349.46     3,784.60     1,503.33         0.00         0.00    30,637.39"
+  },
+  {
+   "id": "T02",
+   "note": "Acme Cloud data center, normal month",
+   "cool_flag": "N",
+   "input": "AC0200002400004850025016202400000120000010400000480000001850000010+0000000",
+   "expected_output": "AC0200   118,185.08    11,076.91     4,400.00         0.00         0.00   133,661.99"
+  },
+  {
+   "id": "T03",
+   "note": "Acme Cloud data center, COOLFLAG=Y so the SLA credit applies",
+   "cool_flag": "Y",
+   "input": "AC0200002400004850025016202400000120000010400000480000001850000010+0000000",
+   "expected_output": "AC0200   118,185.08    11,076.91     4,400.00    18,500.00         0.00   115,161.99"
+  },
+  {
+   "id": "T04",
+   "note": "Kessler & Vance LLP, cap binds",
+   "cool_flag": "N",
+   "input": "KV0310001450003625030018202403000120000010400000480000000000000000+0000000",
+   "expected_output": "KV0310    52,301.98     6,692.30     2,030.00         0.00         0.00    61,024.28"
+  },
+  {
+   "id": "T05",
+   "note": "Saguaro Family Clinic",
+   "cool_flag": "N",
+   "input": "SG0320000980002975027520202400000120000010400000480000000000000000+0000000",
+   "expected_output": "SG0320    27,080.65     4,523.08     1,796.67         0.00         0.00    33,400.40"
+  },
+  {
+   "id": "T06",
+   "note": "Ledgerline Fintech, negative adjustment (move-in credit)",
+   "cool_flag": "N",
+   "input": "LL0400002100003800030021202400000120000010400000480000000000000000-1250000",
+   "expected_output": "LL0400    72,666.35     9,692.30     3,850.00         0.00   -12,500.00    73,708.65"
+  },
+  {
+   "id": "T07",
+   "note": "Copper Bean Coffee, small retail",
+   "cool_flag": "N",
+   "input": "CB0105000145004100035022202400000120000010400000480000000000000000+0000000",
+   "expected_output": "CB0105     5,307.03       669.21       265.83         0.00         0.00     6,242.07"
+  },
+  {
+   "id": "E01",
+   "note": "two-digit year 98 -> 1998 (26 years of escalation)",
+   "cool_flag": "N",
+   "input": "ED0001001000003000030098202400000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0001    53,914.78     4,615.39     1,833.33         0.00         0.00    60,363.50"
+  },
+  {
+   "id": "E02",
+   "note": "two-digit year 49 -> 2049, bill year before start (no escalation)",
+   "cool_flag": "N",
+   "input": "ED0002001000003000030049202400000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0002    25,000.00     4,615.39     1,833.33         0.00         0.00    31,448.72"
+  },
+  {
+   "id": "E03",
+   "note": "two-digit year 50 -> 1950 (pivot boundary)",
+   "cool_flag": "N",
+   "input": "ED0003001000003000010050202400000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0003    52,206.15     4,615.39     1,833.33         0.00         0.00    58,654.87"
+  },
+  {
+   "id": "E04",
+   "note": "zero square feet",
+   "cool_flag": "N",
+   "input": "ED0004000000003000030019202400000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0004         0.00         0.00         0.00         0.00         0.00         0.00"
+  },
+  {
+   "id": "E05",
+   "note": "zero occupied SF (CAMCALC divide guard)",
+   "cool_flag": "N",
+   "input": "ED0005001000003000030019202400000120000000000000480000000000000000+0000000",
+   "expected_output": "ED0005    28,981.85         0.00     1,833.33         0.00         0.00    30,815.18"
+  },
+  {
+   "id": "E06",
+   "note": "bill year 2019 = base year, zero opex pass-through",
+   "cool_flag": "N",
+   "input": "ED0006001000003000030019201900000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0006    25,000.00     4,615.39         0.00         0.00         0.00    29,615.39"
+  },
+  {
+   "id": "E07",
+   "note": "bill year 2026, last row in OPEX table",
+   "cool_flag": "N",
+   "input": "ED0007001000003000030019202600000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0007    30,746.85     4,615.39     2,625.00         0.00         0.00    37,987.24"
+  },
+  {
+   "id": "E08",
+   "note": "bill year 2027 not in OPEX table -> current opex 0, negative pass-through",
+   "cool_flag": "N",
+   "input": "ED0008001000003000030019202700000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0008    31,669.25     4,615.39    -9,333.33         0.00         0.00    26,951.31"
+  },
+  {
+   "id": "E09",
+   "note": "bill year 2018 not in table and before base",
+   "cool_flag": "N",
+   "input": "ED0009001000003000030015201800000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0009    27,318.18     4,615.39    -9,333.33         0.00         0.00    22,600.24"
+  },
+  {
+   "id": "E10",
+   "note": "negative adjustment bigger than rent",
+   "cool_flag": "N",
+   "input": "ED0010000050003000030019202400000120000010400000480000000000000000-9999999",
+   "expected_output": "ED0010     1,449.09       230.78        91.67         0.00   -99,999.99   -98,228.45"
+  },
+  {
+   "id": "E11",
+   "note": "positive adjustment",
+   "cool_flag": "N",
+   "input": "ED0011001000003000030019202400000120000010400000480000000000000000+0123456",
+   "expected_output": "ED0011    28,981.85     4,615.39     1,833.33         0.00     1,234.56    36,665.13"
+  },
+  {
+   "id": "E12",
+   "note": "overflow: monthly rent exceeds PIC S9(7)V99, no ON SIZE ERROR",
+   "cool_flag": "N",
+   "input": "ED0012999999999999050010202400000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0012  ,926,335.84   295,384.17  ,833,333.15         0.00         0.00  ,055,053.16"
+  },
+  {
+   "id": "E13",
+   "note": "SLA credit at max 99 pct with COOLFLAG=Y",
+   "cool_flag": "Y",
+   "input": "ED0013001000003000030019202400000120000010400000480000099999999999+0000000",
+   "expected_output": "ED0013    28,981.85     4,615.39     1,833.33  ,899,999.99         0.00 -,864,569.42"
+  },
+  {
+   "id": "E14",
+   "note": "SLA pct set but COOLFLAG=N, no credit",
+   "cool_flag": "N",
+   "input": "ED0014001000003000030019202400000120000010400000480000000500000030+0000000",
+   "expected_output": "ED0014    28,981.85     4,615.39     1,833.33         0.00         0.00    35,430.57"
+  },
+  {
+   "id": "E15",
+   "note": "cap set with bill year = base year (cap amount 0 clamps pass-through)",
+   "cool_flag": "N",
+   "input": "ED0015001000003000030019201905000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0015    25,000.00     4,615.39         0.00         0.00         0.00    29,615.39"
+  },
+  {
+   "id": "E16",
+   "note": "occupied SF greater than total (data error)",
+   "cool_flag": "N",
+   "input": "ED0016001000003000030019202400000120000013000000480000000000000000+0000000",
+   "expected_output": "ED0016    28,981.85     3,692.30     1,833.33         0.00         0.00    34,507.48"
+  },
+  {
+   "id": "E17",
+   "note": "tenant SF equals occupied SF (share = 1.000000)",
+   "cool_flag": "N",
+   "input": "ED0017010400003000030019202400000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0017   301,411.26    48,000.00    19,066.67         0.00         0.00   368,477.93"
+  },
+  {
+   "id": "E18",
+   "note": "max escalation 9.99 pct over 30 years",
+   "cool_flag": "N",
+   "input": "ED0018001000003000099994202400000120000010400000480000000000000000+0000000",
+   "expected_output": "ED0018   435,046.89     4,615.39     1,833.33         0.00         0.00   441,495.61"
+  },
+  {
+   "id": "R01",
+   "note": "half-cent boundary on base rent: 0.06 x 1 / 12",
+   "cool_flag": "N",
+   "input": "RB0001000000100006000024202400000120000010400000000000000000000000+0000000",
+   "expected_output": "RB0001         0.01         0.00         0.18         0.00         0.00         0.19"
+  },
+  {
+   "id": "R02",
+   "note": "half-cent boundary on base rent: 1.26 x 1 / 12",
+   "cool_flag": "N",
+   "input": "RB0002000000100126000024202400000120000010400000000000000000000000+0000000",
+   "expected_output": "RB0002         0.11         0.00         0.18         0.00         0.00         0.29"
+  },
+  {
+   "id": "R03",
+   "note": "half-cent boundary on base rent: 12.18 x 5 / 12",
+   "cool_flag": "N",
+   "input": "RB0003000000501218000024202400000120000010400000000000000000000000+0000000",
+   "expected_output": "RB0003         5.08         0.00         0.92         0.00         0.00         6.00"
+  },
+  {
+   "id": "R04",
+   "note": "half-cent boundary on base rent: 25.02 x 3 / 12",
+   "cool_flag": "N",
+   "input": "RB0004000000302502000024202400000120000010400000000000000000000000+0000000",
+   "expected_output": "RB0004         6.26         0.00         0.55         0.00         0.00         6.81"
+  },
+  {
+   "id": "R05",
+   "note": "half-cent boundary on base rent: 7.86 x 7 / 12",
+   "cool_flag": "N",
+   "input": "RB0005000000700786000024202400000120000010400000000000000000000000+0000000",
+   "expected_output": "RB0005         4.59         0.00         1.28         0.00         0.00         5.87"
+  },
+  {
+   "id": "R06",
+   "note": "half-cent boundary on base rent: 100.02 x 9 / 12",
+   "cool_flag": "N",
+   "input": "RB0006000000910002000024202400000120000010400000000000000000000000+0000000",
+   "expected_output": "RB0006        75.02         0.00         1.65         0.00         0.00        76.67"
+  },
+  {
+   "id": "C01",
+   "note": "CAM truncation: 1000.0 x 1/3",
+   "cool_flag": "N",
+   "input": "CT0001000000100000000019202400000120000000000300010000000000000000+0000000",
+   "expected_output": "CT0001         0.00       333.33         0.18         0.00         0.00       333.51"
+  },
+  {
+   "id": "C02",
+   "note": "CAM truncation: 99999.99 x 7/11",
+   "cool_flag": "N",
+   "input": "CT0002000000700000000019202400000120000000001100999999900000000000+0000000",
+   "expected_output": "CT0002         0.00    63,636.39         1.28         0.00         0.00    63,637.67"
+  },
+  {
+   "id": "C03",
+   "note": "CAM truncation: 12345.67 x 333/1000",
+   "cool_flag": "N",
+   "input": "CT0003000033300000000019202400000120000000100000123456700000000000+0000000",
+   "expected_output": "CT0003         0.00     4,111.10        61.05         0.00         0.00     4,172.15"
+  },
+  {
+   "id": "C04",
+   "note": "CAM truncation: 5.55 x 1/2",
+   "cool_flag": "N",
+   "input": "CT0004000000100000000019202400000120000000000200000055500000000000+0000000",
+   "expected_output": "CT0004         0.00         2.77         0.18         0.00         0.00         2.95"
+  },
+  {
+   "id": "F01",
+   "note": "random",
+   "cool_flag": "N",
+   "input": "FZ0001004210502047032505202200000120000008914400689177000000000000+0177148",
+   "expected_output": "FZ0001   123,708.99    32,551.62     4,561.38         0.00     1,771.48   162,593.47"
+  },
+  {
+   "id": "F02",
+   "note": "random",
+   "cool_flag": "N",
+   "input": "FZ0002001452803406030095202500000120000011571300435615900000000030-0176780",
+   "expected_output": "FZ0002   100,088.91     5,469.24     3,268.80         0.00    -1,767.80   107,059.15"
+  },
+  {
+   "id": "F03",
+   "note": "random",
+   "cool_flag": "Y",
+   "input": "FZ0003002249803912015023202300000120000008607800403941800000000030-0254248",
+   "expected_output": "FZ0003    73,343.48    10,557.74     3,280.96         0.00    -2,542.48    84,639.70"
+  },
+  {
+   "id": "F04",
+   "note": "random",
+   "cool_flag": "N",
+   "input": "FZ0004003534202198025095202503000120000010370000561881700250000000+0013747",
+   "expected_output": "FZ0004   135,785.54    19,149.49     5,937.46         0.00       137.47   161,009.96"
+  },
+  {
+   "id": "F05",
+   "note": "random",
+   "cool_flag": "Y",
+   "input": "FZ0005005625403407000012202305000120000010390900230123301400005000-0062852",
+   "expected_output": "FZ0005   159,714.48    12,458.36     8,203.71         0.00      -628.52   179,748.03"
+  },
+  {
+   "id": "F06",
+   "note": "random",
+   "cool_flag": "N",
+   "input": "FZ0006004012007912030021202200000120000011029400403564400000000000+0205384",
+   "expected_output": "FZ0006   272,460.27    14,679.85     4,346.33         0.00     2,053.84   293,540.29"
+  },
+  {
+   "id": "F07",
+   "note": "random",
+   "cool_flag": "Y",
+   "input": "FZ0007005295904333020095202203000120000009393400624350900000000015-0265405",
+   "expected_output": "FZ0007   326,401.28    35,200.21     4,448.56         0.00    -2,654.05   363,396.00"
+  },
+  {
+   "id": "F08",
+   "note": "random",
+   "cool_flag": "N",
+   "input": "FZ0008000935003562030018202305000120000011824200419520401400005030+0299198",
+   "expected_output": "FZ0008    32,174.40     3,317.35     1,363.54         0.00     2,991.98    39,847.27"
+  },
+  {
+   "id": "F09",
+   "note": "random",
+   "cool_flag": "Y",
+   "input": "FZ0009000615709265040095202200000120000010766600577127201400005015-0114486",
+   "expected_output": "FZ0009   137,067.18     3,300.35       667.01    21,000.08    -1,144.86   118,889.60"
+  },
+  {
+   "id": "F10",
+   "note": "random",
+   "cool_flag": "N",
+   "input": "FZ0010003645610441000021202103000120000010229300189241701400005015-0047447",
+   "expected_output": "FZ0010   317,197.58     6,744.34     2,041.54         0.00      -474.47   325,508.99"
+  },
+  {
+   "id": "F11",
+   "note": "random",
+   "cool_flag": "N",
+   "input": "FZ0011003300609334030095202300000120000009001600399131101400005015+0161814",
+   "expected_output": "FZ0011   587,383.50    14,634.86     4,813.38         0.00     1,618.14   608,449.88"
+  },
+  {
+   "id": "F12",
+   "note": "random",
+   "cool_flag": "Y",
+   "input": "FZ0012003222101018020023202300000120000008379600292697300000000005+0025696",
+   "expected_output": "FZ0012    27,334.15    11,254.70     4,698.90         0.00       256.96    43,544.71"
+  }
+ ]
+}

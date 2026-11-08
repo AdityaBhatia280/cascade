@@ -1,0 +1,993 @@
+{
+  "site": "dfw1",
+  "purpose": "Planted defects, conflicts and decoys for accuracy tests ONLY. The application must never load this file.",
+  "numbers": {
+    "hallMeasuredKw": 347.2,
+    "rowCMeasuredKw": 173.5,
+    "chillerCapacityKwEach": 316.5,
+    "note": "Numbers derived from the seed documents by the generator; tests should recompute rather than trust them."
+  },
+  "defects": [
+    {
+      "id": "ab-convergence-halcyon",
+      "rule": "ab-convergence",
+      "subjects": [
+        {
+          "kind": "rpp",
+          "tag": "RPP-4B"
+        },
+        {
+          "kind": "rpp",
+          "tag": "RPP-4A"
+        },
+        {
+          "kind": "pdu",
+          "tag": "PDU-3A"
+        }
+      ],
+      "affectedCabinets": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "customer": "C1156",
+      "why": "Halcyon cabinets E01-E05 have A cords on RPP-4A and B cords on RPP-4B. RPP-4B is labelled B but is fed from PDU-3A SF-3 (a 2023 temporary re-feed that was never reverted), so both paths converge at PDU-3A / UPS-A. Losing PDU-3A or UPS-A drops all five cabinets.",
+      "evidence": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 48,
+          "note": "RPP-4B system B, fed_from PDU-3A SF-3"
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 41,
+          "note": "sub-feed breaker bus PDU-3A"
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 44,
+          "note": "the original B-side breaker, now spare"
+        },
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 84,
+          "note": "E01 B cord on RPP-4B"
+        },
+        {
+          "doc": "docs/maximo_workorders.csv",
+          "line": 5,
+          "note": "the temporary re-feed, closed"
+        },
+        {
+          "doc": "docs/maximo_workorders.csv",
+          "line": 6,
+          "note": "the return to PDU-3B SF-2, cancelled"
+        }
+      ],
+      "consequential": [
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1156"
+          },
+          "why": "order form promises A+B",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1156-halcyon-order-form.txt",
+              "line": 12
+            }
+          ]
+        }
+      ],
+      "fix": {
+        "op": "refeed",
+        "onto": [
+          {
+            "kind": "breaker",
+            "tag": "PDU-3B-SF-2"
+          }
+        ],
+        "why": "Re-feed one Halcyon RPP from the spare PDU-3B SF-2 (the original B-side breaker)."
+      }
+    },
+    {
+      "id": "single-corded-B07",
+      "rule": "single-corded",
+      "subjects": [
+        {
+          "kind": "cabinet",
+          "tag": "B07"
+        }
+      ],
+      "affectedCabinets": [
+        "B07"
+      ],
+      "customer": "C1077",
+      "why": "B07 has only an A cord in the roster. The Pecan Street contract is N (single feed), so this is a redundancy finding but not a contract breach.",
+      "evidence": [
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 34
+        },
+        {
+          "doc": "docs/contracts/C1077-pecan-order-form.txt",
+          "line": 12
+        }
+      ],
+      "consequential": [],
+      "fix": {
+        "op": "add-cord",
+        "onto": [
+          {
+            "kind": "circuit",
+            "tag": "PDU-1B/26"
+          }
+        ],
+        "why": "Dual-PSU cabinet; the B breaker at PDU-1B/26 is installed and spare, only the whip is missing."
+      }
+    },
+    {
+      "id": "single-corded-B08",
+      "rule": "single-corded",
+      "subjects": [
+        {
+          "kind": "cabinet",
+          "tag": "B08"
+        }
+      ],
+      "affectedCabinets": [
+        "B08"
+      ],
+      "customer": "C1077",
+      "why": "B08 has only an A cord in the roster. The Pecan Street contract is N (single feed), so this is a redundancy finding but not a contract breach. Single-PSU appliance: an add-cord fix is not possible.",
+      "evidence": [
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 35
+        },
+        {
+          "doc": "docs/contracts/C1077-pecan-order-form.txt",
+          "line": 12
+        }
+      ],
+      "consequential": [],
+      "fix": {
+        "op": null,
+        "onto": [],
+        "why": "Single-PSU appliance: a second cord has nothing to plug into."
+      }
+    },
+    {
+      "id": "single-corded-D06-ab-contract",
+      "rule": "single-corded",
+      "subjects": [
+        {
+          "kind": "cabinet",
+          "tag": "D06"
+        }
+      ],
+      "affectedCabinets": [
+        "D06"
+      ],
+      "customer": "C1129",
+      "why": "D06 has only an A cord (B whip never installed) while the Trinity order form promises A+B power, and its committed-power table lists D06 as A+B.",
+      "evidence": [
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 74
+        },
+        {
+          "doc": "docs/contracts/C1129-trinity-order-form.txt",
+          "line": 12
+        },
+        {
+          "doc": "docs/contracts/C1129-trinity-order-form.txt",
+          "line": 21
+        }
+      ],
+      "consequential": [
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1129"
+          },
+          "why": "A+B promised, D06 single-corded",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1129-trinity-order-form.txt",
+              "line": 12
+            }
+          ]
+        }
+      ],
+      "fix": {
+        "op": "add-cord",
+        "onto": [
+          {
+            "kind": "circuit",
+            "tag": "RPP-3B/31"
+          }
+        ],
+        "why": "Pull the B whip to the spare breaker at RPP-3B/31 (UPS-B path, diverse from RPP-3A)."
+      }
+    },
+    {
+      "id": "failover-overload-pdu2",
+      "rule": "failover-overload",
+      "subjects": [
+        {
+          "kind": "pdu",
+          "tag": "PDU-2A"
+        },
+        {
+          "kind": "pdu",
+          "tag": "PDU-2B"
+        }
+      ],
+      "affectedCabinets": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C09",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "customer": "C1102",
+      "why": "Row C (Caddo AI, 12 cabinets) draws 173.5 kW split across PDU-2A and PDU-2B (each ~87 kW, about 64% of 150 kVA at pf 0.9). Losing either side puts 173.5 kW on the survivor, above its 150 kVA rating at any power factor. PDU-2B's rating is itself conflicted (register 150 kVA vs BMS 225 kVA), so the loss-of-PDU-2A direction is contingent; loss of PDU-2B overloading PDU-2A (150 kVA, unconflicted) is definite.",
+      "evidence": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 35
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 36
+        },
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 40,
+          "note": "per-cabinet measured kW column cab_kw_meas"
+        }
+      ],
+      "consequential": [],
+      "fix": {
+        "op": "rehome-cord",
+        "onto": [
+          {
+            "kind": "circuit",
+            "tag": "PDU-1A/61"
+          },
+          {
+            "kind": "circuit",
+            "tag": "PDU-1A/67"
+          },
+          {
+            "kind": "circuit",
+            "tag": "PDU-1A/73"
+          },
+          {
+            "kind": "circuit",
+            "tag": "PDU-1A/79"
+          }
+        ],
+        "why": "Move enough row C A cords (three of the heaviest) onto the 60A spares on PDU-1A that losing PDU-2B no longer overloads PDU-2A. The contingent PDU-2B direction is left for the rating conflict to settle."
+      }
+    },
+    {
+      "id": "circuit-overcommit-B03",
+      "rule": "circuit-overcommit",
+      "subjects": [
+        {
+          "kind": "circuit",
+          "tag": "PDU-1A/10"
+        },
+        {
+          "kind": "circuit",
+          "tag": "PDU-1B/10"
+        },
+        {
+          "kind": "cabinet",
+          "tag": "B03"
+        }
+      ],
+      "affectedCabinets": [
+        "B03"
+      ],
+      "customer": "C1041",
+      "why": "B03 was upgraded to 8.0 kW committed (CR-2291) but its circuits stayed 30A/208V single-phase: 6.24 kVA nameplate, 4.99 kW at the 80% continuous limit (pf 1.0). On failover one circuit must carry the committed 8.0 kW.",
+      "evidence": [
+        {
+          "doc": "docs/contracts/C1041-mesquite-order-form.txt",
+          "line": 28
+        },
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 26
+        },
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 27
+        }
+      ],
+      "consequential": [],
+      "fix": {
+        "op": null,
+        "onto": [],
+        "why": "Needs both whips upsized to 3-phase (a circuit upgrade), which is not a cord move; no spare is planted for it."
+      }
+    },
+    {
+      "id": "cooling-common-cause-mcc-b",
+      "rule": "cooling-common-cause",
+      "subjects": [
+        {
+          "kind": "chiller",
+          "tag": "CH-2"
+        },
+        {
+          "kind": "chiller",
+          "tag": "CH-3"
+        },
+        {
+          "kind": "breaker",
+          "tag": "SWGR-B-CB-3"
+        },
+        {
+          "kind": "header",
+          "tag": "CHWS-HDR-2"
+        }
+      ],
+      "affectedCabinets": "all",
+      "customer": null,
+      "why": "The loop is documented N+1 (3 x 90 TR, 2 required). Standby CH-3 was moved onto MCC-B in 2022, so it shares SWGR-B CB-3 (and header CHWS-HDR-2) with duty chiller CH-2. Losing SWGR-B CB-3, SWGR-B or ATS-B leaves only CH-1 (316.5 kW) against ~347.2 kW of IT heat. N+1 by unit count, not by failure domain.",
+      "evidence": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 53
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 52
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 56
+        },
+        {
+          "doc": "docs/bms_points.json",
+          "line": 41
+        },
+        {
+          "doc": "docs/bms_points.json",
+          "line": 40
+        },
+        {
+          "doc": "docs/maximo_workorders.csv",
+          "line": 2,
+          "note": "WO-22-0418: CH-3 re-fed from MCC-B"
+        }
+      ],
+      "consequential": [
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1041"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1041-mesquite-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1102"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1102-caddo-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1129"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1129-trinity-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1156"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1156-halcyon-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1183"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1183-lonestar-order-form.txt",
+              "line": 13
+            }
+          ]
+        }
+      ],
+      "fix": {
+        "op": null,
+        "onto": [],
+        "why": "Cooling: move CH-3 back to an A-side MCC. Not a power cord move."
+      }
+    },
+    {
+      "id": "contract-2n-lonestar",
+      "rule": "contract-topology-mismatch",
+      "subjects": [
+        {
+          "kind": "contract",
+          "tag": "DFW-MSA-1183"
+        },
+        {
+          "kind": "rpp",
+          "tag": "RPP-5B"
+        }
+      ],
+      "affectedCabinets": [
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E10"
+      ],
+      "customer": "C1183",
+      "why": "Lone Star Genomics bought 2N (two independent UPS systems). E06-E10 A cords are on RPP-5A (PDU-3A, UPS-A); B cords are on RPP-5B, fed from SWGR-B CB-6 through a transformer with no UPS. The paths are independent, so there is no A/B convergence, but only one UPS path exists.",
+      "evidence": [
+        {
+          "doc": "docs/contracts/C1183-lonestar-order-form.txt",
+          "line": 12
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 50
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 20
+        }
+      ],
+      "consequential": [],
+      "fix": {
+        "op": null,
+        "onto": [],
+        "why": "Needs a second UPS path for RPP-5B (new equipment), not a cord move."
+      }
+    }
+  ],
+  "spares": [
+    {
+      "circuit": {
+        "kind": "circuit",
+        "tag": "RPP-3B/31"
+      },
+      "rating": "30A/208V/3ph",
+      "note": "D06 B position; breaker installed, whip not pulled (ticket 88213)",
+      "evidence": [
+        {
+          "doc": "docs/bms_points.json",
+          "line": 239
+        }
+      ]
+    },
+    {
+      "circuit": {
+        "kind": "circuit",
+        "tag": "PDU-1B/26"
+      },
+      "rating": "30A/208V/1ph",
+      "note": "B07 B position; breaker installed, no whip (single feed per order)",
+      "evidence": [
+        {
+          "doc": "docs/bms_points.json",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "circuit": {
+        "kind": "circuit",
+        "tag": "PDU-1A/61"
+      },
+      "rating": "60A/208V/3ph",
+      "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)",
+      "evidence": [
+        {
+          "doc": "docs/bms_points.json",
+          "line": 242
+        }
+      ]
+    },
+    {
+      "circuit": {
+        "kind": "circuit",
+        "tag": "PDU-1A/67"
+      },
+      "rating": "60A/208V/3ph",
+      "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)",
+      "evidence": [
+        {
+          "doc": "docs/bms_points.json",
+          "line": 243
+        }
+      ]
+    },
+    {
+      "circuit": {
+        "kind": "circuit",
+        "tag": "PDU-1A/73"
+      },
+      "rating": "60A/208V/3ph",
+      "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)",
+      "evidence": [
+        {
+          "doc": "docs/bms_points.json",
+          "line": 244
+        }
+      ]
+    },
+    {
+      "circuit": {
+        "kind": "circuit",
+        "tag": "PDU-1A/79"
+      },
+      "rating": "60A/208V/3ph",
+      "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)",
+      "evidence": [
+        {
+          "doc": "docs/bms_points.json",
+          "line": 245
+        }
+      ]
+    }
+  ],
+  "conflicts": [
+    {
+      "id": "conflict-D03-B-circuit",
+      "entity": {
+        "kind": "cord",
+        "tag": "D03/B"
+      },
+      "field": "circuit",
+      "sources": [
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 69,
+          "value": "RPP-3B/13"
+        },
+        {
+          "doc": "docs/bms_points.json",
+          "line": 228,
+          "value": "RPP-3A/26"
+        }
+      ],
+      "stakes": "If the BMS is right both D03 cords are on RPP-3A, so D03 is single-path (convergence at RPP-3A)."
+    },
+    {
+      "id": "conflict-PDU-2B-rating",
+      "entity": {
+        "kind": "pdu",
+        "tag": "PDU-2B"
+      },
+      "field": "rating",
+      "sources": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 36,
+          "value": {
+            "unit": "kva",
+            "kva": 150
+          }
+        },
+        {
+          "doc": "docs/bms_points.json",
+          "line": 191,
+          "value": {
+            "unit": "kva",
+            "kva": 225
+          }
+        }
+      ],
+      "stakes": "At 225 kVA PDU-2B could carry all of row C after losing PDU-2A; at 150 kVA it cannot."
+    },
+    {
+      "id": "conflict-SWGR-B-CB-1-rating",
+      "entity": {
+        "kind": "breaker",
+        "tag": "SWGR-B-CB-1"
+      },
+      "field": "rating",
+      "sources": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 15,
+          "value": {
+            "unit": "amps",
+            "amps": 1200,
+            "volts": 480,
+            "phases": 3
+          }
+        },
+        {
+          "doc": "docs/bms_points.json",
+          "line": 212,
+          "value": {
+            "unit": "amps",
+            "amps": 1600,
+            "volts": 480,
+            "phases": 3
+          }
+        }
+      ],
+      "stakes": "Low: either rating carries UPS-B (750 kVA). A correct ranking puts this below the other two."
+    }
+  ],
+  "workOrders": {
+    "doc": "docs/maximo_workorders.csv",
+    "exportedAt": "2026-11-08T00:00",
+    "note": "Times are site-local wall clock as Maximo printed them. expectedGrade is the risk grade (highest / high / medium / low, docs/research/03 §1) derived by hand from the register and contracts.",
+    "week": [
+      {
+        "wonum": "WO-26-1227",
+        "line": 185,
+        "assetNum": "EQ-010664",
+        "asset": {
+          "kind": "crah",
+          "tag": "CRAH-05"
+        },
+        "schedStart": "2026-11-09T08:00",
+        "status": "WSCH",
+        "expectedGrade": "medium",
+        "why": "MP-B (SWGR-B CB-4) feeds CRAH-02/04/06/08, so with CRAH-05 stopped one CB-4 trip leaves CRAH-01/03/07, at most 315 kW, for ~347.2 kW of IT heat; every cabinet keeps both cords."
+      },
+      {
+        "wonum": "WO-26-1230",
+        "line": 186,
+        "assetNum": "EQ-010475",
+        "asset": {
+          "kind": "pdu",
+          "tag": "PDU-3A"
+        },
+        "schedStart": "2026-11-10T14:00",
+        "status": "APPR",
+        "expectedGrade": "highest",
+        "why": "RPP-4B was re-fed from PDU-3A SF-3 under MOP-0117 and never returned (step 31 cancelled), so a PDU-3A shutdown takes both paths to Halcyon E01-E05."
+      },
+      {
+        "wonum": "WO-26-1235",
+        "line": 187,
+        "assetNum": "EQ-010580",
+        "asset": {
+          "kind": "chiller",
+          "tag": "CH-2"
+        },
+        "schedStart": "2026-11-11T07:00",
+        "status": "APPR",
+        "expectedGrade": "medium",
+        "why": "With CH-2 offline, the remaining chillers are CH-1 (MCC-A) and standby CH-3, which shares SWGR-B CB-3 / MCC-B with CH-2: one more fault on the B side leaves CH-1 alone. No power path changes."
+      },
+      {
+        "wonum": "WO-26-1241",
+        "line": 188,
+        "assetNum": "EQ-010384",
+        "asset": {
+          "kind": "ups",
+          "tag": "UPS-A"
+        },
+        "schedStart": "2026-11-12T22:00",
+        "status": "APPR",
+        "expectedGrade": "high",
+        "why": "Halcyon E01-E05 draw both cords from PDU-3A (RPP-4A and RPP-4B), so with UPS-A on maintenance bypass their only source is SWGR-A CB-2: one trip drops them."
+      },
+      {
+        "wonum": "WO-26-1242",
+        "line": 189,
+        "assetNum": "EQ-010244",
+        "asset": {
+          "kind": "generator",
+          "tag": "GEN-1"
+        },
+        "schedStart": "2026-11-13T09:00",
+        "status": "APPR",
+        "expectedGrade": "high",
+        "why": "GEN-1 is the only alternate on ATS-A, and Halcyon E01-E05 draw both cords from the A side, so during the test a UTIL-1 loss leaves them only UPS-A battery (8 min)."
+      }
+    ],
+    "paperTrail": [
+      {
+        "key": "ch3-mcc-move",
+        "wonum": "WO-22-0418",
+        "line": 2,
+        "status": "CLOSE",
+        "description": "CH-3 MCC-A BUCKET FAILURE - REFEED CH-3 FROM MCC-B SPARE BUCKET"
+      },
+      {
+        "key": "mop-0117",
+        "wonum": "WO-23-0497",
+        "line": 4,
+        "status": "CLOSE",
+        "description": "PDU-3B REPLACEMENT PER MOP-0117 - VERTIV"
+      },
+      {
+        "key": "mop-0117-step12",
+        "wonum": "WO-23-0498",
+        "line": 5,
+        "status": "CLOSE",
+        "description": "TEMP RE-FEED RPP-4B FROM PDU-3A SF-3 (MOP-0117 STEP 12)"
+      },
+      {
+        "key": "mop-0117-step31",
+        "wonum": "WO-23-0499",
+        "line": 6,
+        "status": "CAN",
+        "description": "RETURN RPP-4B TO PDU-3B SF-2 (MOP-0117 STEP 31)"
+      },
+      {
+        "key": "d03-retermination",
+        "wonum": "WO-25-0293",
+        "line": 10,
+        "status": "CLOSE",
+        "description": "D03 B CORD TERMINATION HOT SPOT - RE-TERMINATE - RPP-3B"
+      },
+      {
+        "key": "b03-upgrade",
+        "wonum": "WO-25-0686",
+        "line": 26,
+        "status": "CLOSE",
+        "description": "B03 CONTRACT KW 4.0 TO 8.0 PER CR-2291 - CIRCUITS UNCHANGED"
+      },
+      {
+        "key": "xfmr-5b",
+        "wonum": "WO-24-0090",
+        "line": 7,
+        "status": "CLOSE",
+        "description": "INSTALL XFMR-5B 75KVA + SWGR-B CB-6 FOR LSG EXPANSION"
+      },
+      {
+        "key": "caddo-prepull",
+        "wonum": "WO-25-1030",
+        "line": 52,
+        "status": "CLOSE",
+        "description": "PRE-PULL 4X 60A 3P WHIPS PDU-1A CB61-79 TO ROW C TRAY - CR-2410"
+      },
+      {
+        "key": "d06-whip",
+        "wonum": "WO-26-1056",
+        "line": 170,
+        "status": "WMATL",
+        "description": "PULL D06 B WHIP TO RPP-3B CB31 - TICKET 88213"
+      },
+      {
+        "key": "ch2-trip",
+        "wonum": "WO-26-0971",
+        "line": 164,
+        "status": "CLOSE",
+        "description": "CH-2 HIGH DISCHARGE PRESSURE TRIP - AMBIENT 108F"
+      },
+      {
+        "key": "ch2-coil",
+        "wonum": "WO-26-0972",
+        "line": 165,
+        "status": "CLOSE",
+        "description": "CH-2 CONDENSER COIL CLEANING - TRANE"
+      }
+    ],
+    "unresolvedAssets": [
+      {
+        "wonum": "WO-24-0090",
+        "line": 7,
+        "assetNum": "EQ-010377",
+        "tag": "XFMR-5B",
+        "why": "register class \"Transformer\" is not part of the model"
+      },
+      {
+        "wonum": "WO-26-0120",
+        "line": 99,
+        "assetNum": "EQ-010699",
+        "tag": "FACP-1",
+        "why": "register class \"Fire Alarm Panel\" is not part of the model"
+      }
+    ]
+  },
+  "history": {
+    "docs": [
+      "docs/desigo_event_log_2026-05-01_2026-11-07.csv",
+      "docs/desigo_trend_2026-08-22_2026-08-26.csv",
+      "docs/desigo_trend_2026-11-01_2026-11-07.csv",
+      "docs/pme_event_history_2026-05-01_2026-11-07.csv",
+      "docs/pme_data_export_2026-08-22_2026-08-26.csv",
+      "docs/pme_data_export_2026-11-01_2026-11-07.csv"
+    ],
+    "note": "Site-local wall clock. The CH-2 trip is one event across the BMS, the power monitoring system and Maximo, in this order.",
+    "ch2Trip": [
+      {
+        "doc": "docs/desigo_event_log_2026-05-01_2026-11-07.csv",
+        "line": 149,
+        "entity": {
+          "kind": "chiller",
+          "tag": "CH-2"
+        },
+        "what": "High Discharge Pressure raised"
+      },
+      {
+        "doc": "docs/pme_event_history_2026-05-01_2026-11-07.csv",
+        "line": 166,
+        "entity": {
+          "kind": "breaker",
+          "tag": "SWGR-B CB-3"
+        },
+        "what": "MCC-B feeder Under Current pick up (CH-2 is fed from SWGR-B CB-3)"
+      },
+      {
+        "doc": "docs/maximo_workorders.csv",
+        "line": 164,
+        "entity": {
+          "kind": "chiller",
+          "tag": "CH-2"
+        },
+        "what": "WO-26-0971 emergency work order"
+      }
+    ],
+    "unresolvedSources": [
+      {
+        "system": "bms",
+        "source": "DFW1.Bldg1.CHW_Plant.OAT",
+        "why": "outdoor air sensor; no register asset"
+      }
+    ]
+  },
+  "decoys": [
+    {
+      "id": "decoy-shared-utility",
+      "looksLike": "ab-convergence",
+      "subjects": [
+        {
+          "kind": "utility",
+          "tag": "UTIL-1"
+        },
+        {
+          "kind": "ats",
+          "tag": "ATS-A"
+        },
+        {
+          "kind": "ats",
+          "tag": "ATS-B"
+        }
+      ],
+      "why": "Both ATS normal inputs come from UTIL-1. Expected: each side has its own generator (GEN-1, GEN-2) and UPS battery (8 min) covers the 10 s transfer, so UTIL-1 is not a single point of failure.",
+      "evidence": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 6
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "id": "decoy-normally-open-tie",
+      "looksLike": "ab-convergence",
+      "subjects": [
+        {
+          "kind": "breaker",
+          "tag": "SWGR-A-CB-5"
+        }
+      ],
+      "why": "SWGR-A CB-5 is a tie to SWGR-B, normally open and kirk-key interlocked. Nothing is fed from it; it does not join the A and B paths.",
+      "evidence": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "id": "decoy-3ph-A08",
+      "looksLike": "circuit-overcommit",
+      "subjects": [
+        {
+          "kind": "cabinet",
+          "tag": "A08"
+        },
+        {
+          "kind": "circuit",
+          "tag": "PDU-1A/29"
+        },
+        {
+          "kind": "circuit",
+          "tag": "PDU-1B/29"
+        }
+      ],
+      "why": "A08 is committed 7.5 kW on 30A circuits, which looks over the 4.99 kW single-phase limit, but the A08 whips are 3-phase: 30A x 208V x sqrt(3) = 10.8 kVA, 8.6 kW at 80% (7.8 kW at pf 0.9).",
+      "evidence": [
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 16
+        },
+        {
+          "doc": "docs/contracts/C1041-mesquite-order-form.txt",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "id": "decoy-tag-spellings",
+      "looksLike": "conflict",
+      "subjects": [
+        {
+          "kind": "pdu",
+          "tag": "PDU-2A"
+        },
+        {
+          "kind": "crah",
+          "tag": "CRAH-5"
+        }
+      ],
+      "why": "PDU-2A is written \"PDU-2A\" (register), \"PDU 2A\" (BMS) and \"PDU2A\" (roster); CRAH-05 is \"CRAH-5\" in the BMS. Each set is one device after tag normalization, not a conflict and not extra equipment.",
+      "evidence": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 35
+        },
+        {
+          "doc": "docs/bms_points.json",
+          "line": 183
+        },
+        {
+          "doc": "docs/circuit_roster.csv",
+          "line": 40
+        },
+        {
+          "doc": "docs/bms_points.json",
+          "line": 115
+        }
+      ]
+    }
+  ]
+}

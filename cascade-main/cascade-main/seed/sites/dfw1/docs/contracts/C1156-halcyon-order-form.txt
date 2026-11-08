@@ -1,0 +1,23 @@
+ORDER FORM OF-1156-02
+Issued under Master Services Agreement No. DFW-MSA-1156
+Customer: Halcyon Health Partners    Account: C1156    Cage: CG-130
+Order Date: 2021-11-02    Term: 36 months    Site: DFW1 / Data Hall DH-1
+
+1. PRICING
+1.1 Monthly Recurring Charge (MRC): $7,850.00
+1.2 Non-Recurring Charge (NRC): waived
+
+2. SPACE AND POWER
+2.1 Licensed Cabinets: E01-E05
+2.2 Power Redundancy: A+B - dual power feeds from diverse PDUs/RPPs
+2.3 Cooling Redundancy: N+1 (chilled water plant and CRAH units)
+2.4 Committed Power per cabinet (kW, contracted maximum average draw):
+      Cabinet   Circuits (each feed)          Committed
+      E01       30A/208V/3ph A+B              6.0 kW
+      E02       30A/208V/3ph A+B              6.0 kW
+      E03       30A/208V/3ph A+B              6.0 kW
+      E04       30A/208V/3ph A+B              6.0 kW
+      E05       30A/208V/3ph A+B              6.0 kW
+
+3. SPECIAL TERMS
+3.1 None.

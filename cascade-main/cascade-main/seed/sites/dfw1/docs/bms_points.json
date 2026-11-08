@@ -1,0 +1,251 @@
+{
+  "bms_system": { "system_id": "DFW1-BMS-01", "protocol": "BACnet/IP", "vendor": "Siemens Desigo CC", "export_date": "2026-10-28", "polling_interval_sec": 15 },
+  "chillers": [
+    {
+      "object_id": "DEV:1100",
+      "name": "CH-1",
+      "description": "Air-cooled chiller 1",
+      "chiller_role": "DUTY",
+      "power_source": "SWGR-A-CB3 (MCC-A)",
+      "header": "CHWS HDR-1",
+      "capacity_tons": 90,
+      "location": "Central plant pad",
+      "points": [
+        { "object_id": "AI:1101", "name": "CH-1.CHWS.Temp", "units": "degF", "alarm_high": 50 },
+        { "object_id": "AI:1102", "name": "CH-1.CHWR.Temp", "units": "degF" },
+        { "object_id": "AI:1103", "name": "CH-1.kW", "units": "kW" },
+        { "object_id": "BI:1104", "name": "CH-1.RunStatus", "values": { "0": "OFF", "1": "RUN" } }
+      ]
+    },
+    {
+      "object_id": "DEV:1200",
+      "name": "CH-2",
+      "description": "Air-cooled chiller 2",
+      "chiller_role": "DUTY",
+      "power_source": "SWGR-B-CB3 (MCC-B)",
+      "header": "CHWS HDR-2",
+      "capacity_tons": 90,
+      "location": "Central plant pad",
+      "points": [
+        { "object_id": "AI:1201", "name": "CH-2.CHWS.Temp", "units": "degF", "alarm_high": 50 },
+        { "object_id": "AI:1202", "name": "CH-2.CHWR.Temp", "units": "degF" },
+        { "object_id": "AI:1203", "name": "CH-2.kW", "units": "kW" },
+        { "object_id": "BI:1204", "name": "CH-2.RunStatus", "values": { "0": "OFF", "1": "RUN" } }
+      ]
+    },
+    {
+      "object_id": "DEV:1300",
+      "name": "CH-3",
+      "description": "Air-cooled chiller 3",
+      "chiller_role": "STANDBY",
+      "power_source": "SWGR-B-CB3 (MCC-B)",
+      "header": "CHWS HDR-2",
+      "capacity_tons": 90,
+      "location": "Central plant pad",
+      "points": [
+        { "object_id": "AI:1301", "name": "CH-3.CHWS.Temp", "units": "degF", "alarm_high": 50 },
+        { "object_id": "AI:1302", "name": "CH-3.CHWR.Temp", "units": "degF" },
+        { "object_id": "AI:1303", "name": "CH-3.kW", "units": "kW" },
+        { "object_id": "BI:1304", "name": "CH-3.RunStatus", "values": { "0": "OFF", "1": "RUN" } }
+      ]
+    }
+  ],
+  "pumps": [
+    {
+      "object_id": "DEV:1400",
+      "name": "CHWP-1",
+      "power_source": "SWGR-A CB-3",
+      "loop": "CHW LOOP 1",
+      "points": [ { "object_id": "AI:1401", "name": "CHWP-1.VFD.Hz", "units": "Hz" }, { "object_id": "AI:1402", "name": "CHWP-1.DP", "units": "psi" } ]
+    },
+    {
+      "object_id": "DEV:1410",
+      "name": "CHWP-2",
+      "power_source": "SWGR-B CB-3",
+      "loop": "CHW LOOP 1",
+      "points": [ { "object_id": "AI:1411", "name": "CHWP-2.VFD.Hz", "units": "Hz" }, { "object_id": "AI:1412", "name": "CHWP-2.DP", "units": "psi" } ]
+    },
+    {
+      "object_id": "DEV:1420",
+      "name": "CHWP-3",
+      "power_source": "SWGR-A CB-3",
+      "loop": "CHW LOOP 1",
+      "points": [ { "object_id": "AI:1421", "name": "CHWP-3.VFD.Hz", "units": "Hz" }, { "object_id": "AI:1422", "name": "CHWP-3.DP", "units": "psi" } ]
+    }
+  ],
+  "crahs": [
+    {
+      "object_id": "DEV:2101",
+      "name": "CRAH-01",
+      "power_source": "SWGR-A CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2201", "name": "CRAH-01.SAT", "units": "degF" }, { "object_id": "AI:2301", "name": "CRAH-01.ValvePos", "units": "%" } ]
+    },
+    {
+      "object_id": "DEV:2102",
+      "name": "CRAH-02",
+      "power_source": "SWGR-B CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2202", "name": "CRAH-02.SAT", "units": "degF" }, { "object_id": "AI:2302", "name": "CRAH-02.ValvePos", "units": "%" } ]
+    },
+    {
+      "object_id": "DEV:2103",
+      "name": "CRAH-03",
+      "power_source": "SWGR-A CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2203", "name": "CRAH-03.SAT", "units": "degF" }, { "object_id": "AI:2303", "name": "CRAH-03.ValvePos", "units": "%" } ]
+    },
+    {
+      "object_id": "DEV:2104",
+      "name": "CRAH-04",
+      "power_source": "SWGR-B CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2204", "name": "CRAH-04.SAT", "units": "degF" }, { "object_id": "AI:2304", "name": "CRAH-04.ValvePos", "units": "%" } ]
+    },
+    {
+      "object_id": "DEV:2105",
+      "name": "CRAH-5",
+      "power_source": "SWGR-A CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2205", "name": "CRAH-5.SAT", "units": "degF" }, { "object_id": "AI:2305", "name": "CRAH-5.ValvePos", "units": "%" } ]
+    },
+    {
+      "object_id": "DEV:2106",
+      "name": "CRAH-06",
+      "power_source": "SWGR-B CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2206", "name": "CRAH-06.SAT", "units": "degF" }, { "object_id": "AI:2306", "name": "CRAH-06.ValvePos", "units": "%" } ]
+    },
+    {
+      "object_id": "DEV:2107",
+      "name": "CRAH-07",
+      "power_source": "SWGR-A CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2207", "name": "CRAH-07.SAT", "units": "degF" }, { "object_id": "AI:2307", "name": "CRAH-07.ValvePos", "units": "%" } ]
+    },
+    {
+      "object_id": "DEV:2108",
+      "name": "CRAH-08",
+      "power_source": "SWGR-B CB-4",
+      "loop": "CHW-LOOP-1",
+      "zone": "DH-1",
+      "net_sensible_kw": 105,
+      "points": [ { "object_id": "AI:2208", "name": "CRAH-08.SAT", "units": "degF" }, { "object_id": "AI:2308", "name": "CRAH-08.ValvePos", "units": "%" } ]
+    }
+  ],
+  "ups": [
+    {
+      "object_id": "DEV:3000",
+      "name": "UPS-A",
+      "kva_rating": 750,
+      "battery_runtime_min": 8,
+      "points": [ { "object_id": "AI:3010", "name": "UPS-A.LoadPct", "units": "%" }, { "object_id": "BI:3011", "name": "UPS-A.OnBypass" } ]
+    },
+    {
+      "object_id": "DEV:3001",
+      "name": "UPS-B",
+      "kva_rating": 750,
+      "battery_runtime_min": 8,
+      "points": [ { "object_id": "AI:3020", "name": "UPS-B.LoadPct", "units": "%" }, { "object_id": "BI:3021", "name": "UPS-B.OnBypass" } ]
+    }
+  ],
+  "pdus": [
+    {
+      "object_id": "DEV:3100",
+      "name": "PDU-1A",
+      "kva_rating": 150,
+      "fed_from": "UPS-A OB-1",
+      "points": [ { "object_id": "AI:3110", "name": "PDU-1A.kW", "units": "kW" } ]
+    },
+    {
+      "object_id": "DEV:3101",
+      "name": "PDU-1B",
+      "kva_rating": 150,
+      "fed_from": "UPS-B OB-1",
+      "points": [ { "object_id": "AI:3111", "name": "PDU-1B.kW", "units": "kW" } ]
+    },
+    {
+      "object_id": "DEV:3102",
+      "name": "PDU 2A",
+      "kva_rating": 150,
+      "fed_from": "UPS-A OB-2",
+      "points": [ { "object_id": "AI:3112", "name": "PDU-2A.kW", "units": "kW" } ]
+    },
+    {
+      "object_id": "DEV:3103",
+      "name": "PDU 2B",
+      "kva_rating": 225,
+      "fed_from": "UPS-B OB-2",
+      "points": [ { "object_id": "AI:3113", "name": "PDU-2B.kW", "units": "kW" } ]
+    },
+    {
+      "object_id": "DEV:3104",
+      "name": "PDU-3A",
+      "kva_rating": 150,
+      "fed_from": "UPS-A OB-3",
+      "points": [ { "object_id": "AI:3114", "name": "PDU-3A.kW", "units": "kW" } ]
+    },
+    {
+      "object_id": "DEV:3105",
+      "name": "PDU-3B",
+      "kva_rating": 150,
+      "fed_from": "UPS-B OB-3",
+      "points": [ { "object_id": "AI:3115", "name": "PDU-3B.kW", "units": "kW" } ]
+    }
+  ],
+  "electrical_meters": [
+    { "object_id": "AI:4001", "name": "SWGR-A.CB1.Amps", "breaker": "SWGR-A CB-1", "trip_rating_a": 1200, "volts": 480, "phases": 3 },
+    { "object_id": "AI:4002", "name": "SWGR-B.CB1.Amps", "breaker": "SWGR-B CB-1", "trip_rating_a": 1600, "volts": 480, "phases": 3 },
+    { "object_id": "AI:4003", "name": "SWGR-A.Main.kW", "units": "kW" },
+    { "object_id": "AI:4004", "name": "SWGR-B.Main.kW", "units": "kW" }
+  ],
+  "branch_circuit_monitoring": {
+    "RPP-3A": [
+      { "object_id": "AI:510001", "name": "RPP-3A.CB01.kW", "serves": "D01-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510007", "name": "RPP-3A.CB07.kW", "serves": "D02-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510013", "name": "RPP-3A.CB13.kW", "serves": "D03-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510019", "name": "RPP-3A.CB19.kW", "serves": "D04-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510025", "name": "RPP-3A.CB25.kW", "serves": "D05-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510031", "name": "RPP-3A.CB31.kW", "serves": "D06-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510037", "name": "RPP-3A.CB37.kW", "serves": "D07-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510002", "name": "RPP-3A.CB02.kW", "serves": "D08-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510008", "name": "RPP-3A.CB08.kW", "serves": "D09-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510014", "name": "RPP-3A.CB14.kW", "serves": "D10-A", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:510026", "name": "RPP-3A.CB26.kW", "serves": "D03-B", "trip_a": 30, "volts": 208, "phases": 3 }
+    ],
+    "RPP-3B": [
+      { "object_id": "AI:520001", "name": "RPP-3B.CB01.kW", "serves": "D01-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520007", "name": "RPP-3B.CB07.kW", "serves": "D02-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520019", "name": "RPP-3B.CB19.kW", "serves": "D04-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520025", "name": "RPP-3B.CB25.kW", "serves": "D05-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520037", "name": "RPP-3B.CB37.kW", "serves": "D07-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520002", "name": "RPP-3B.CB02.kW", "serves": "D08-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520008", "name": "RPP-3B.CB08.kW", "serves": "D09-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520014", "name": "RPP-3B.CB14.kW", "serves": "D10-B", "trip_a": 30, "volts": 208, "phases": 3 },
+      { "object_id": "AI:520031", "name": "RPP-3B.CB31.kW", "serves": "SPARE", "trip_a": 30, "volts": 208, "phases": 3, "note": "D06 B position; breaker installed, whip not pulled (ticket 88213)" }
+    ],
+    "PDU-1A": [
+      { "object_id": "AI:530061", "name": "PDU-1A.CB61.kW", "serves": "SPARE", "trip_a": 60, "volts": 208, "phases": 3, "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)" },
+      { "object_id": "AI:530067", "name": "PDU-1A.CB67.kW", "serves": "SPARE", "trip_a": 60, "volts": 208, "phases": 3, "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)" },
+      { "object_id": "AI:530073", "name": "PDU-1A.CB73.kW", "serves": "SPARE", "trip_a": 60, "volts": 208, "phases": 3, "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)" },
+      { "object_id": "AI:530079", "name": "PDU-1A.CB79.kW", "serves": "SPARE", "trip_a": 60, "volts": 208, "phases": 3, "note": "Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)" }
+    ],
+    "PDU-1B": [
+      { "object_id": "AI:540026", "name": "PDU-1B.CB26.kW", "serves": "SPARE", "trip_a": 30, "volts": 208, "phases": 1, "note": "B07 B position; breaker installed, no whip (single feed per order)" }
+    ]
+  }
+}

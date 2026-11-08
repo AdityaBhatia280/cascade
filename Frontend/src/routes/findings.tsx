@@ -68,9 +68,14 @@ function FindingCard({ f }: { f: Finding }) {
               <div><p className="label-text flex items-center gap-1.5">Annual difference <Illustrative /></p><p className="font-semibold tnum text-critical">{usd(diff * 12, 2)}</p></div>
             </div>
           )}
-          <Link to="/modernization" className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-            Generate verified replacement <ArrowRight className="size-4" />
-          </Link>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link to="/modernization" className="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+              Generate verified replacement <ArrowRight className="size-4" />
+            </Link>
+            <Link to="/parity" className="inline-flex h-10 items-center gap-2 rounded-md border border-border bg-card px-4 text-sm font-medium text-foreground hover:bg-secondary">
+              Compare 47-case parity & contract fix <ArrowRight className="size-4" />
+            </Link>
+          </div>
         </>
       )}
     </article>

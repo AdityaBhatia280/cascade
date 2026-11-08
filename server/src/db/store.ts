@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type {
   SourceFile,
   Node,
@@ -17,6 +20,9 @@ import type {
   GroundTruthEdge,
   Assumptions,
 } from './schema.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DB_FILE_PATH = path.resolve(__dirname, '../../data/cascade-db.json');
 
 export const DEFAULT_ASSUMPTIONS: Assumptions = {
   version: 1,
@@ -49,6 +55,7 @@ class Store {
   parityResults: ParityResult[] = [];
   groundTruthEdges: GroundTruthEdge[] = [];
   assumptions: Assumptions = structuredClone(DEFAULT_ASSUMPTIONS);
+  injectedFaults: Set<string> = new Set();
 
   // ── Node helpers ──
 
@@ -126,6 +133,7 @@ class Store {
 
   addIncident(incident: Incident): void {
     this.incidents.push(incident);
+    this.saveToDisk();
   }
 
   getIncident(id: string): Incident | undefined {
@@ -142,6 +150,7 @@ class Store {
     const idx = this.simulations.findIndex((s) => s.id === sim.id);
     if (idx >= 0) this.simulations[idx] = sim;
     else this.simulations.push(sim);
+    this.saveToDisk();
   }
 
   getSimulation(id: string): Simulation | undefined {
@@ -158,6 +167,7 @@ class Store {
 
   addAgentRun(run: AgentRun): void {
     this.agentRuns.push(run);
+    this.saveToDisk();
   }
 
   getAgentRun(id: string): AgentRun | undefined {
@@ -180,6 +190,7 @@ class Store {
 
   addAction(action: Action): void {
     this.actions.push(action);
+    this.saveToDisk();
   }
 
   getAction(id: string): Action | undefined {
@@ -188,6 +199,68 @@ class Store {
 
   getPendingActions(): Action[] {
     return this.actions.filter((a) => a.status === 'pending');
+  }
+
+  // ── Disk Persistence (server/data/cascade-db.json) ──
+
+  saveToDisk(): void {
+    try {
+      const dir = path.dirname(DB_FILE_PATH);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const payload = {
+        updated_at: new Date().toISOString(),
+        incidents: this.incidents,
+        actions: this.actions,
+        simulations: this.simulations,
+        assumptions: this.assumptions,
+        injectedFaults: Array.from(this.injectedFaults),
+        nodeStatuses: Object.fromEntries(this.nodes.map((n) => [n.id, n.status])),
+      };
+      fs.writeFileSync(DB_FILE_PATH, JSON.stringify(payload, null, 2), 'utf-8');
+    } catch {
+      // Ignore disk write errors in read-only environments
+    }
+  }
+
+  loadFromDisk(): void {
+    try {
+      if (!fs.existsSync(DB_FILE_PATH)) return;
+      const raw = fs.readFileSync(DB_FILE_PATH, 'utf-8');
+      const data = JSON.parse(raw) as {
+        incidents?: Incident[];
+        actions?: Action[];
+        simulations?: Simulation[];
+        assumptions?: Assumptions;
+      };
+      if (Array.isArray(data.incidents) && data.incidents.length > 0) {
+        for (const inc of data.incidents) {
+          if (!this.incidents.some((x) => x.id === inc.id)) {
+            this.incidents.push(inc);
+          }
+        }
+      }
+      if (Array.isArray(data.actions) && data.actions.length > 0) {
+        for (const act of data.actions) {
+          if (!this.actions.some((x) => x.id === act.id)) {
+            this.actions.push(act);
+          }
+        }
+      }
+      if (Array.isArray(data.simulations) && data.simulations.length > 0) {
+        for (const sim of data.simulations) {
+          if (!this.simulations.some((x) => x.id === sim.id)) {
+            this.simulations.push(sim);
+          }
+        }
+      }
+      if (data.assumptions) {
+        this.assumptions = data.assumptions;
+      }
+    } catch {
+      // Ignore corrupt or missing disk db
+    }
   }
 
   // ── Parity helpers ──
@@ -222,6 +295,7 @@ class Store {
     this.parityResults = [];
     this.groundTruthEdges = [];
     this.assumptions = structuredClone(DEFAULT_ASSUMPTIONS);
+    this.injectedFaults.clear();
   }
 }
 

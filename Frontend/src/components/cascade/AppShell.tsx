@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
 import {
-  Bell, Boxes, ClipboardCheck, Code2, FileSearch, GitCompareArrows, LayoutDashboard, Menu, Mic,
+  Bell, Box, Boxes, ClipboardCheck, Code2, FileSearch, GitCompareArrows, LayoutDashboard, Menu, Mic,
   Network, Play, Settings2, Siren, Target, Wrench,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ const NAV: { group: string; items: Item[] }[] = [
   { group: 'Infrastructure', items: [
     { to: '/intelligence', label: 'System intelligence', icon: Network },
     { to: '/equipment', label: 'Equipment', icon: Boxes },
+    { to: '/dynamic', label: 'Dynamic view (3D)', icon: Box },
   ] },
   { group: 'Operations', items: [
     { to: '/incidents', label: 'Incidents', icon: Siren },
@@ -78,10 +79,22 @@ function NavList({ compact, onNavigate }: { compact?: boolean; onNavigate?: () =
 
 function Brand({ compact }: { compact?: boolean }) {
   return (
-    <div className={cn('flex h-16 items-center gap-2.5 border-b border-border px-5', compact && 'justify-center px-0')}>
-      <div className="flex size-7 items-center justify-center rounded-sm bg-foreground text-sm font-bold text-background">C</div>
-      <span className={cn('text-[15px] font-semibold tracking-tight', compact && 'sr-only')}>Cascade</span>
-    </div>
+    <Link
+      to="/"
+      className={cn(
+        'flex h-16 items-center gap-2.5 border-b border-border px-5 transition-opacity hover:opacity-90',
+        compact && 'justify-center px-0',
+      )}
+    >
+      <img
+        src="/ogicon.png"
+        alt="Cascade logo"
+        className="size-8 shrink-0 rounded-sm object-contain"
+      />
+      <span className={cn('text-[16px] font-bold tracking-tight text-foreground', compact && 'sr-only')}>
+        CASCADE
+      </span>
+    </Link>
   );
 }
 
@@ -126,14 +139,17 @@ export function AppShell({ children }: { children: ReactNode }) {
               {mode === 'replay' && <span className="inline-flex h-6 items-center rounded-sm border border-border bg-secondary px-2 text-xs font-medium">Replay</span>}
               <div role="radiogroup" aria-label="Scenario mode" className="hidden h-10 items-center rounded-md border border-border bg-secondary p-0.5 lg:flex">
                 {(['live', 'replay'] as const).map((m) => (
-                  <button key={m} role="radio" aria-checked={mode === m} onClick={() => setMode(m)}
+                  <button key={m} role="radio" aria-checked={mode === m} onClick={() => {
+                    setMode(m);
+                    if (m === 'replay') void runScenario('replay');
+                  }}
                     className={cn('h-full rounded-[6px] px-3 text-xs font-medium capitalize transition-colors', mode === m ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
                     {m}
                   </button>
                 ))}
               </div>
-              <Button onClick={runScenario} disabled={scenarioRunning}>
-                <Play /> <span className="hidden sm:inline">{scenarioRunning ? 'Scenario running…' : 'Run incident scenario'}</span>
+              <Button onClick={() => void runScenario(mode)}>
+                <Play /> <span className="hidden sm:inline">{scenarioRunning ? (mode === 'replay' ? 'Replaying… (click to restart)' : 'Scenario running…') : (mode === 'replay' ? 'Replay incident scenario' : 'Run incident scenario')}</span>
               </Button>
               <Button variant="secondary" size="icon" className="relative" onClick={() => setApprovalOpen(true)} aria-label={`Pending approvals: ${pendingCount}`}>
                 <Bell />

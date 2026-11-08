@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Mic } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useCascade } from '@/lib/store';
 import { dateTime, usd } from '@/lib/format';
@@ -48,8 +48,20 @@ function IncidentDetail() {
         <div className="space-y-6">
           <div className="rounded-lg border border-border bg-card p-6">
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <h1 className="section-title">{incident.title}</h1>
-              <StatusBadge status={incident.status} />
+              <div>
+                <span className="inline-flex items-center rounded border border-border bg-secondary px-2 py-0.5 font-mono text-xs font-semibold text-foreground">
+                  {incident.id}
+                </span>
+                <h1 className="section-title mt-2">{incident.title}</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button asChild size="sm" variant="secondary">
+                  <Link to="/voice" search={{ incident: incident.id }}>
+                    <Mic className="size-3.5" /> Voice briefing
+                  </Link>
+                </Button>
+                <StatusBadge status={incident.status} />
+              </div>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">Root <Mono>{incident.root_node}</Mono> · Opened <span className="tnum">{dateTime(incident.opened_at)}</span></p>
           </div>

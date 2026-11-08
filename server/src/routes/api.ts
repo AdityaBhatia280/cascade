@@ -1,4 +1,8 @@
 import { Router } from 'express';
+import { spawn, type ChildProcess } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   seedPortfolio,
   getOverview,
@@ -11,12 +15,18 @@ import {
   startTelemetryLoop,
   triggerScenario,
 } from '../services/telemetry.js';
-import { simulateFailure, rankRisk } from '../services/simulation.js';
+import {
+  simulateFailure,
+  rankRisk,
+  applyCustomFaults,
+  getCurrentWhatIf,
+} from '../services/simulation.js';
 import { streamAgent } from '../services/agent.js';
 import {
   getModernizationStages,
   runParity,
   getEvalReport,
+  getRealWorldBenchmarks,
 } from '../services/modernization.js';
 import {
   createAction,
@@ -24,6 +34,13 @@ import {
   rejectPendingAction,
   getActions,
   createRetellWebCall,
+  createRetellPhoneCall,
+  getRetellCallStatus,
+  syncLatestRetellCalls,
+  handleRetellWebhook,
+  buildIcsAttachment,
+  clearActions,
+  deduplicateStoreHistory,
 } from '../services/actions.js';
 import { repriceSimulations } from '../engines/cost.js';
 import { store } from '../db/store.js';
@@ -75,13 +92,34 @@ apiRouter.post('/simulate', (req, res) => {
   res.json(sim);
 });
 
+apiRouter.get('/what-if', (_req, res) => {
+  res.json(getCurrentWhatIf());
+});
+
+apiRouter.post('/what-if', (req, res) => {
+  const body = (req.body ?? {}) as { faults?: string[] };
+  const faults = Array.isArray(body.faults) ? body.faults : [];
+  res.json(applyCustomFaults(faults));
+});
+
 // ── Incidents & Scenario ──
 
 apiRouter.get('/incidents', (_req, res) => {
+  deduplicateStoreHistory();
   const sorted = [...store.incidents].sort((a, b) =>
     b.opened_at.localeCompare(a.opened_at),
   );
   res.json(sorted);
+});
+
+apiRouter.post('/incidents/clear', (req, res) => {
+  const onlyResolved = req.query['resolved'] === 'true';
+  if (onlyResolved) {
+    store.incidents = store.incidents.filter((i) => i.status !== 'resolved');
+  } else {
+    store.incidents = [];
+  }
+  res.json(store.incidents);
 });
 
 apiRouter.get('/incidents/:id', (req, res) => {
@@ -118,8 +156,14 @@ apiRouter.get('/findings', (_req, res) => {
 // ── Actions & Work Orders ──
 
 apiRouter.get('/actions', (req, res) => {
+  deduplicateStoreHistory();
   const status = req.query['status'] as string | undefined;
   res.json(getActions(status as any));
+});
+
+apiRouter.post('/actions/clear', (req, res) => {
+  const onlyPending = req.query['pending'] === 'true';
+  res.json(clearActions(onlyPending));
 });
 
 apiRouter.post('/actions/:id/approve', async (req, res) => {
@@ -139,6 +183,21 @@ apiRouter.post('/actions/:id/reject', (req, res) => {
     return;
   }
   res.json(updated);
+});
+
+apiRouter.get('/actions/:id/ics', (req, res) => {
+  const action = store.getAction(req.params['id'] ?? '');
+  if (!action) {
+    res.status(404).json({ error: 'Action not found' });
+    return;
+  }
+  const ics = buildIcsAttachment(
+    `Cascade Maintenance — ${action.recipient_display}`,
+    action.content,
+  );
+  res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="cascade-${action.id}.ics"`);
+  res.send(ics);
 });
 
 apiRouter.post('/work-orders', (req, res) => {
@@ -165,12 +224,17 @@ apiRouter.get('/modernization', (_req, res) => {
   res.json(getModernizationStages());
 });
 
-apiRouter.post('/parity/run', (_req, res) => {
-  res.json(runParity());
+apiRouter.post('/parity/run', (req, res) => {
+  const mode = req.query['mode'] === 'patched' ? 'patched' : 'strict';
+  res.json(runParity(mode));
 });
 
 apiRouter.get('/eval', (_req, res) => {
   res.json(getEvalReport());
+});
+
+apiRouter.get('/benchmarks', (_req, res) => {
+  res.json(getRealWorldBenchmarks());
 });
 
 // ── Assumptions ──
@@ -219,15 +283,142 @@ apiRouter.get('/agent/stream', (req, res) => {
   streamAgent(req, res);
 });
 
-// ── Voice Web Call (Retell AI) ──
+// ── Voice Web Call & Outbound Phone Call (Retell AI) ──
 
-apiRouter.post('/voice/web-call', async (_req, res) => {
+apiRouter.post('/voice/web-call', async (req, res) => {
   try {
-    const token = await createRetellWebCall();
+    const incidentId =
+      typeof (req.body as { incident_id?: unknown })?.incident_id === 'string'
+        ? (req.body as { incident_id: string }).incident_id
+        : undefined;
+    const token = await createRetellWebCall(incidentId);
     res.json(token);
   } catch (err) {
     res.status(503).json({ error: (err as Error).message });
   }
+});
+
+apiRouter.post('/voice/phone-call', async (req, res) => {
+  try {
+    const body = (req.body ?? {}) as { to_number?: unknown; incident_id?: unknown };
+    const toNumber = typeof body.to_number === 'string' ? body.to_number : undefined;
+    const incidentId = typeof body.incident_id === 'string' ? body.incident_id : undefined;
+    const result = await createRetellPhoneCall(toNumber, incidentId);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+});
+
+apiRouter.get('/voice/call/:callId', async (req, res) => {
+  try {
+    const status = await getRetellCallStatus(req.params.callId);
+    res.json(status);
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+});
+
+apiRouter.get('/voice/latest-call', async (_req, res) => {
+  try {
+    const latest = await syncLatestRetellCalls();
+    res.json(latest ?? { call_id: null, call_status: 'idle', transcript: [] });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+});
+
+apiRouter.post('/retell/webhook', async (req, res) => {
+  try {
+    const result = await handleRetellWebhook((req.body ?? {}) as Record<string, unknown>);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+});
+
+// ── Dynamic View (cascade-main 3D Floor Sub-App) ──
+
+let dynamicProc: ChildProcess | null = null;
+let dynamicState: 'stopped' | 'installing' | 'starting' | 'running' | 'error' = 'stopped';
+let dynamicError: string | null = null;
+
+async function probeDynamicUrl(): Promise<boolean> {
+  try {
+    const res = await fetch('http://127.0.0.1:5174', { method: 'GET' });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+apiRouter.get('/dynamic-view/status', async (_req, res) => {
+  const live = await probeDynamicUrl();
+  if (live) dynamicState = 'running';
+  res.json({
+    state: dynamicState,
+    url: 'http://127.0.0.1:5174/site?cam=3d',
+    api_url: 'http://127.0.0.1:5002/api',
+    error: dynamicError,
+  });
+});
+
+apiRouter.post('/dynamic-view/start', async (_req, res) => {
+  if (await probeDynamicUrl()) {
+    dynamicState = 'running';
+    res.json({ state: 'running', url: 'http://127.0.0.1:5174/site?cam=3d' });
+    return;
+  }
+
+  if (dynamicState === 'installing' || dynamicState === 'starting') {
+    res.json({ state: dynamicState, url: 'http://127.0.0.1:5174/site?cam=3d' });
+    return;
+  }
+
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const cascadeMainDir = path.resolve(__dirname, '../../../cascade-main/cascade-main');
+  if (!fs.existsSync(cascadeMainDir)) {
+    res.status(404).json({ error: 'cascade-main/cascade-main directory not found' });
+    return;
+  }
+
+  dynamicError = null;
+  const hasNodeModules = fs.existsSync(path.join(cascadeMainDir, 'node_modules'));
+
+  const launchDev = () => {
+    dynamicState = 'starting';
+    dynamicProc = spawn('npm', ['run', 'dev'], {
+      cwd: cascadeMainDir,
+      shell: true,
+      env: { ...process.env, DYNAMIC_PORT: '5002' },
+      stdio: 'ignore',
+    });
+    dynamicProc.on('error', (err) => {
+      dynamicState = 'error';
+      dynamicError = err.message;
+    });
+  };
+
+  if (!hasNodeModules) {
+    dynamicState = 'installing';
+    const installProc = spawn('npm', ['install'], {
+      cwd: cascadeMainDir,
+      shell: true,
+      stdio: 'ignore',
+    });
+    installProc.on('close', (code) => {
+      if (code === 0) {
+        launchDev();
+      } else {
+        dynamicState = 'error';
+        dynamicError = `npm install exited with code ${code}`;
+      }
+    });
+  } else {
+    launchDev();
+  }
+
+  res.json({ state: dynamicState, url: 'http://127.0.0.1:5174/site?cam=3d' });
 });
 
 // ── Health ──

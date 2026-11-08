@@ -12,7 +12,7 @@ const nodeRows: N[] = [
   ['CH-3', 'Chiller 3', 'system', 'cooling', 1, 1, 0, 99.99, 0.7],
   ['cooling_loop', 'Chilled water loop', 'system', 'cooling', 2, 3, 0, 99.99, 0.95],
   ['CRAH-4', 'CRAH unit 4', 'system', 'cooling', 1, 1, 0, 99.99, 0.65],
-  ['hall_200', 'Data hall 200 (Acme Cloud)', 'tenant', 'tenant', 1, 1, 45000, 99.99, 0.95],
+  ['hall_200', 'Data hall 200 (Acme Cloud)', 'tenant', 'tenant', 2, 2, 45000, 99.99, 0.95],
   ['acme_sla', 'Acme 99.99% cooling SLA', 'sla', 'tenant', 1, 1, 45000, 99.99, 0.9],
   ['COOLFLAG.DAT', 'COOLFLAG.DAT', 'module', 'data', 1, 1, 0, 99.0, 0.85],
   ['LEASEBIL', 'LEASEBIL.cbl', 'module', 'legacy', 1, 1, 0, 99.9, 0.92],

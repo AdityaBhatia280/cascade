@@ -1,0 +1,11 @@
+COLOCATION AGREEMENT EXCERPT: ACME CLOUD INC. (TENANT ID AC0200)
+Premises: Data Hall A, 24,000 sf, 1.8 MW critical load. Commencement: January 1, 2016.
+
+Section 7.1 Environmental SLA. Landlord shall maintain cold-aisle inlet temperature in Data Hall A at or
+below 27.0 C (80.6 F), consistent with ASHRAE recommended ranges, 99.99% of each calendar month.
+Landlord's obligation depends on the chilled water plant serving Data Hall A.
+
+Section 7.3 Service Credits. If the Environmental SLA is missed, Tenant receives a credit against the
+Monthly Colocation Fee ($185,000): 10% for any miss, 20% if cumulative excursion exceeds 60 minutes,
+30% if it exceeds 240 minutes. Credits are capped at one month's fee and are tenant's sole remedy.
+One credit per root cause event. Scheduled maintenance with 10 days' notice is excluded.

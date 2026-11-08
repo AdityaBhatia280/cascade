@@ -182,6 +182,31 @@ export interface EvalReport {
   items: { id: string; from: string; to: string; kind: string; is_decoy: boolean; matched: boolean }[];
 }
 
+export interface RealBenchmarks {
+  carddemo: {
+    source: string;
+    stats: {
+      cobol_programs: number;
+      cobol_lines: number;
+      copybooks: number;
+      jcl_jobs: number;
+      nodes: number;
+      edges: number;
+    };
+    most_shared_copybooks: { copybook: string; used_by: string[]; blast_radius: number }[];
+  } | null;
+  bdg2: {
+    source: string;
+    buildings: {
+      building: string;
+      hours: number;
+      alerts: number;
+      sensor_faults: number;
+      alert_rate_per_month: number;
+    }[];
+  } | null;
+}
+
 export interface ModernizationStage {
   stage: Stage;
   status: 'pending' | 'running' | 'done' | 'failed';
@@ -195,4 +220,12 @@ export interface Assumptions {
   emergency_response_usd: number;
   hardware_damage_usd: number;
   thermal_rise_c_per_min: number;
+}
+
+export interface WhatIfResult {
+  faults: string[];
+  statuses: Record<string, NodeStatus>;
+  reasons: Record<string, string>;
+  impacts: TenantImpact[];
+  total_usd: number;
 }

@@ -1,0 +1,30 @@
+ORDER FORM OF-1102-02
+Issued under Master Services Agreement No. DFW-MSA-1102
+Customer: Caddo AI Corp    Account: C1102    Cage: CG-110
+Order Date: 2024-06-27    Term: 36 months    Site: DFW1 / Data Hall DH-1
+
+1. PRICING
+1.1 Monthly Recurring Charge (MRC): $32,400.00
+1.2 Non-Recurring Charge (NRC): waived
+
+2. SPACE AND POWER
+2.1 Licensed Cabinets: C01-C12
+2.2 Power Redundancy: A+B - dual power feeds from diverse PDUs/RPPs
+2.3 Cooling Redundancy: N+1 (chilled water plant and CRAH units)
+2.4 Committed Power per cabinet (kW, contracted maximum average draw):
+      Cabinet   Circuits (each feed)          Committed
+      C01       60A/208V/3ph A+B              15.0 kW
+      C02       60A/208V/3ph A+B              15.0 kW
+      C03       60A/208V/3ph A+B              15.0 kW
+      C04       60A/208V/3ph A+B              15.0 kW
+      C05       60A/208V/3ph A+B              15.0 kW
+      C06       60A/208V/3ph A+B              15.0 kW
+      C07       60A/208V/3ph A+B              15.0 kW
+      C08       60A/208V/3ph A+B              15.0 kW
+      C09       60A/208V/3ph A+B              15.0 kW
+      C10       60A/208V/3ph A+B              15.0 kW
+      C11       60A/208V/3ph A+B              15.0 kW
+      C12       60A/208V/3ph A+B              15.0 kW
+
+3. SPECIAL TERMS
+3.1 None.

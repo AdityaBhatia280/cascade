@@ -1,0 +1,23 @@
+ORDER FORM OF-1183-01
+Issued under Master Services Agreement No. DFW-MSA-1183
+Customer: Lone Star Genomics    Account: C1183    Cage: CG-131
+Order Date: 2024-03-05    Term: 36 months    Site: DFW1 / Data Hall DH-1
+
+1. PRICING
+1.1 Monthly Recurring Charge (MRC): $9,275.00
+1.2 Non-Recurring Charge (NRC): waived
+
+2. SPACE AND POWER
+2.1 Licensed Cabinets: E06-E10
+2.2 Power Redundancy: 2N - two (2) independent UPS systems, each capable of carrying the full Customer load
+2.3 Cooling Redundancy: N+1 (chilled water plant and CRAH units)
+2.4 Committed Power per cabinet (kW, contracted maximum average draw):
+      Cabinet   Circuits (each feed)          Committed
+      E06       30A/208V/3ph A+B              7.0 kW
+      E07       30A/208V/3ph A+B              7.0 kW
+      E08       30A/208V/3ph A+B              7.0 kW
+      E09       30A/208V/3ph A+B              7.0 kW
+      E10       30A/208V/3ph A+B              7.0 kW
+
+3. SPECIAL TERMS
+3.1 Expansion cabinets E06-E10 delivered on new RPP-5A/RPP-5B (2024).

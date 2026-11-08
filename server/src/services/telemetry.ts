@@ -153,12 +153,11 @@ export function triggerScenario(mode: 'live' | 'replay'): void {
   for (const t of activeScenarioTimer) clearTimeout(t);
   activeScenarioTimer = [];
 
-  // Reset node statuses to healthy before starting
+  // Reset node statuses and injected faults to healthy before starting
   clearPointOverrides();
+  store.injectedFaults.clear();
   for (const n of store.nodes) {
-    if (n.status !== 'healthy') {
-      emitNodeStatus(n.id, 'healthy');
-    }
+    emitNodeStatus(n.id, 'healthy');
   }
 
   // Delegate the staged scenario + agent loop to agent service

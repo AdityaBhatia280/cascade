@@ -102,6 +102,18 @@ export interface Simulation {
   assumptions_version: number;
 }
 
+export interface WhatIfResult {
+  faults: string[];
+  statuses: Record<string, NodeStatus>;
+  reasons: Record<string, string>;
+  timeline: TimelineEntry[];
+  impacts: TenantImpact[];
+  total_usd: number;
+  failed_count: number;
+  degraded_count: number;
+  assumptions_version: number;
+}
+
 export interface Incident {
   id: string;
   title: string;
