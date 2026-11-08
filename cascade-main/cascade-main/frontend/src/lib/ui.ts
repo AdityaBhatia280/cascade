@@ -6,10 +6,12 @@ interface Ui {
   companionOpen: boolean;
   /** Entities the companion pointed at, pulsing calm on the floor until the next answer. */
   highlight: ReadonlySet<string>;
+  /** The ring pulses once when the site's files have just been read. */
+  greet: boolean;
 }
 
 const initialOpen = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("co") === "1";
-let ui: Ui = { companionOpen: initialOpen, highlight: new Set() };
+let ui: Ui = { companionOpen: initialOpen, highlight: new Set(), greet: false };
 const listeners = new Set<() => void>();
 
 export const uiStore = {

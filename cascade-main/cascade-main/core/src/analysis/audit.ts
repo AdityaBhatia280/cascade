@@ -410,6 +410,8 @@ export const RULES: { readonly [R in RuleId]: Rule<R> } = {
         ]),
         ...[...g.halls].map(([id, p]): [AnyId, AnyId[], Id<'cabinet'>[]] => [id, p.crahs.map((m) => m.id), p.cabinets.map((c) => c.id as Id<'cabinet'>)]),
       ];
+      // A CRAH whose chilled-water loop is the failed component cools nothing, however it is powered.
+      const drawsFrom = new Map([...g.halls.values()].flatMap((h) => h.crahs.map((c) => [c.id, c.loops] as const)));
       for (const [pool, members, cabinets] of pools) {
         const qualifying = new Map<AnyId, { tr: Transition; down: AnyId[] }>();
         for (const [x, run] of spofs.runs) {
@@ -418,7 +420,7 @@ export const RULES: { readonly [R in RuleId]: Rule<R> } = {
           if (!tr || tr.cause.kind !== 'thermal' || RANK[tr.state] < RANK.unknown) continue;
           const down = members.filter((m) => {
             const t = run.final.get(m);
-            return !!t && RANK[t.state] >= RANK.unknown;
+            return (!!t && RANK[t.state] >= RANK.unknown) || (drawsFrom.get(m)?.includes(x) ?? false);
           });
           if (down.length < 2) continue;
           if (kindOf(pool) === 'hall') {

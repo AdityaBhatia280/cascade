@@ -317,7 +317,7 @@ export function plan(an: Analysis, goal: FixGoal): FixOutcome {
               const label = g.sideLabel.get(panel);
               const labelPenalty = label && derivedSideOf(g, powerChain(g, b)) !== label ? 1 : 0;
               const ov: Overrides = { parent: new Map([[panel, b]]), extra: new Map() };
-              const op: PatchOp = { op: 'refeed', device: panel as Id<'pdu' | 'rpp'>, from: from as Id<'ups' | 'breaker'>, to: b as Id<'ups' | 'breaker'> };
+              const op: PatchOp = { op: 'refeed', device: panel as Id<'pdu' | 'rpp'>, from: from as Id<'ups' | 'breaker' | 'transformer'>, to: b as Id<'ups' | 'breaker'> };
               offer({ key: canonical([op]), ops: [op], cost: MOVE_COST.refeed, covers: coveredUnder(ov), deltas: refeedDeltas(panel, from, b), uses: new Set([panel, b]), labelPenalty, why: t.id });
             }
           }

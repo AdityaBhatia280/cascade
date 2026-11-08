@@ -1,10 +1,12 @@
-import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
-import { Outlet, createRootRouteWithContext, useRouterState } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { QueryClientProvider, useQuery, type QueryClient } from "@tanstack/react-query";
+import { Outlet, createRootRouteWithContext, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Floor } from "@/components/floor/Floor";
 import { Menubar } from "@/components/Menubar";
 import { Companion } from "@/components/Companion";
 import { useServerEvents } from "@/lib/events";
 import { useSite } from "@/lib/queries";
+import { inFlight, siteStatusQuery, useUploadSession } from "@/lib/uploads";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: RootComponent,
@@ -15,24 +17,39 @@ function ServerEvents() {
   return null;
 }
 
-/** The menubar, the one floor and the companion stay mounted; only the view over the floor changes. */
+/**
+ * The menubar, the one floor and the companion stay mounted; only the view over the floor changes.
+ * Ingest is the screen only while the site is empty or a batch is being read; once the batch lands
+ * (and the site holds something), the screen moves on to Site.
+ */
 function Shell() {
   const { site, error } = useSite();
+  const status = useQuery(siteStatusQuery);
+  const session = useUploadSession();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const empty = status.data?.empty ?? false;
+  const firstRun = empty || inFlight(session);
+  const ingest = path === "/ingest";
+
+  useEffect(() => {
+    if (empty && !ingest) void navigate({ to: "/ingest", replace: true });
+    else if (status.data && !firstRun && ingest) void navigate({ to: "/site", replace: true });
+  }, [empty, ingest, firstRun, status.data, navigate]);
+
+  const ready = site && (!empty || ingest);
   return (
     <div className="app">
-      <Menubar />
-      {site ? (
-        <>
-          <Floor site={site} />
-          <div className="view" key={path}>
-            <Outlet />
-          </div>
-          <Companion site={site} />
-        </>
+      <Menubar locked={firstRun} />
+      {site && <Floor site={site} />}
+      {ready || ingest ? (
+        <div className="view" key={path}>
+          <Outlet />
+        </div>
       ) : (
         <div className="boot">{error ? <div className="panel">{error.message}</div> : null}</div>
       )}
+      {site && !firstRun && <Companion site={site} />}
     </div>
   );
 }

@@ -339,6 +339,10 @@
           "tag": "CH-3"
         },
         {
+          "kind": "panel",
+          "tag": "MCC-B"
+        },
+        {
           "kind": "breaker",
           "tag": "SWGR-B-CB-3"
         },
@@ -362,14 +366,6 @@
         {
           "doc": "docs/equipment_register.csv",
           "line": 56
-        },
-        {
-          "doc": "docs/bms_points.json",
-          "line": 41
-        },
-        {
-          "doc": "docs/bms_points.json",
-          "line": 40
         },
         {
           "doc": "docs/maximo_workorders.csv",
@@ -456,6 +452,115 @@
       }
     },
     {
+      "id": "cooling-common-cause-chw-loop",
+      "rule": "cooling-common-cause",
+      "subjects": [
+        {
+          "kind": "loop",
+          "tag": "CHW-LOOP-1"
+        }
+      ],
+      "affectedCabinets": "all",
+      "customer": null,
+      "why": "All eight CRAHs in DH-1 draw chilled water from CHW-LOOP-1, the only loop. Its \"Design N+1\" counts chillers (3 x 90 TR, 2 required); the loop itself has no second path, so a loop loss (a pipe break, a drain-down for valve work) leaves no CRAH able to remove the ~347.2 kW of IT heat.",
+      "evidence": [
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 56
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 60,
+          "note": "system CHW-LOOP-1, as for CRAH-02..08"
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 54
+        },
+        {
+          "doc": "docs/equipment_register.csv",
+          "line": 55
+        }
+      ],
+      "consequential": [
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1041"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1041-mesquite-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1102"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1102-caddo-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1129"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1129-trinity-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1156"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1156-halcyon-order-form.txt",
+              "line": 13
+            }
+          ]
+        },
+        {
+          "rule": "contract-topology-mismatch",
+          "subject": {
+            "kind": "contract",
+            "tag": "DFW-MSA-1183"
+          },
+          "why": "order form promises N+1 cooling",
+          "evidence": [
+            {
+              "doc": "docs/contracts/C1183-lonestar-order-form.txt",
+              "line": 13
+            }
+          ]
+        }
+      ],
+      "fix": {
+        "op": null,
+        "onto": [],
+        "why": "Cooling: a second chilled-water path (a loop or cross-connect with isolation valves). Not a power cord move."
+      }
+    },
+    {
       "id": "contract-2n-lonestar",
       "rule": "contract-topology-mismatch",
       "subjects": [
@@ -510,7 +615,7 @@
       "evidence": [
         {
           "doc": "docs/bms_points.json",
-          "line": 239
+          "line": 155
         }
       ]
     },
@@ -524,7 +629,7 @@
       "evidence": [
         {
           "doc": "docs/bms_points.json",
-          "line": 248
+          "line": 160
         }
       ]
     },
@@ -538,7 +643,7 @@
       "evidence": [
         {
           "doc": "docs/bms_points.json",
-          "line": 242
+          "line": 156
         }
       ]
     },
@@ -552,7 +657,7 @@
       "evidence": [
         {
           "doc": "docs/bms_points.json",
-          "line": 243
+          "line": 157
         }
       ]
     },
@@ -566,7 +671,7 @@
       "evidence": [
         {
           "doc": "docs/bms_points.json",
-          "line": 244
+          "line": 158
         }
       ]
     },
@@ -580,7 +685,7 @@
       "evidence": [
         {
           "doc": "docs/bms_points.json",
-          "line": 245
+          "line": 159
         }
       ]
     }
@@ -601,7 +706,7 @@
         },
         {
           "doc": "docs/bms_points.json",
-          "line": 228,
+          "line": 146,
           "value": "RPP-3A/26"
         }
       ],
@@ -625,7 +730,7 @@
         },
         {
           "doc": "docs/bms_points.json",
-          "line": 191,
+          "line": 129,
           "value": {
             "unit": "kva",
             "kva": 225
@@ -654,7 +759,7 @@
         },
         {
           "doc": "docs/bms_points.json",
-          "line": 212,
+          "line": 135,
           "value": {
             "unit": "amps",
             "amps": 1600,
@@ -818,13 +923,6 @@
     ],
     "unresolvedAssets": [
       {
-        "wonum": "WO-24-0090",
-        "line": 7,
-        "assetNum": "EQ-010377",
-        "tag": "XFMR-5B",
-        "why": "register class \"Transformer\" is not part of the model"
-      },
-      {
         "wonum": "WO-26-0120",
         "line": 99,
         "assetNum": "EQ-010699",
@@ -969,7 +1067,7 @@
           "tag": "CRAH-5"
         }
       ],
-      "why": "PDU-2A is written \"PDU-2A\" (register), \"PDU 2A\" (BMS) and \"PDU2A\" (roster); CRAH-05 is \"CRAH-5\" in the BMS. Each set is one device after tag normalization, not a conflict and not extra equipment.",
+      "why": "PDU-2A is written \"PDU-2A\" (register), \"PDU 2A\" (BMS equipment) and \"PDU2A\" (roster); CRAH-05 is \"CRAH-5\" in the BMS. Each set is one device after tag normalization, not a conflict and not extra equipment.",
       "evidence": [
         {
           "doc": "docs/equipment_register.csv",
@@ -977,7 +1075,7 @@
         },
         {
           "doc": "docs/bms_points.json",
-          "line": 183
+          "line": 128
         },
         {
           "doc": "docs/circuit_roster.csv",
@@ -985,7 +1083,7 @@
         },
         {
           "doc": "docs/bms_points.json",
-          "line": 115
+          "line": 100
         }
       ]
     }

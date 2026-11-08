@@ -7,13 +7,13 @@ import express from 'express';
 import type { HandoffDto, MessageDto, NoticeSetDto } from '@cascade/core/contract';
 import { apiRouter } from './api.js';
 import { resendMailer, type Mailer } from './mail.js';
-import { dfw1, logLines } from './testing.js';
+import { dfw1, logLines, testUploads } from './testing.js';
 
 const AS_OF = '2026-11-08T18:00';
 
 async function serve(mailer?: (file: string) => Mailer) {
   const { ws, file } = await dfw1(mailer);
-  const server = express().use(express.json()).use('/api', apiRouter(ws, null)).listen(0, '127.0.0.1');
+  const server = express().use(express.json()).use('/api', apiRouter(ws, testUploads(ws), null)).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api`;
   const get = async <T>(p: string) => (await fetch(`${base}${p}`)).json() as Promise<T>;

@@ -103,9 +103,14 @@ function readCapacityKw(text: string): Read<number> {
   return undefined;
 }
 
-/** A reference cell: the leading tag, ignoring "(via MCC-B)" asides and "X via Y" routing notes. */
+/**
+ * A reference cell: the device it names nearest the subject. "SWGR-B CB-3 (via MCC-B)",
+ * "SWGR-A CB-4 (MP-A)" and "SWGR-B CB-6 via XFMR-5B" route through the tag in the aside, so that
+ * is the feeder; any other parenthetical is a remark.
+ */
 function readRef(text: string): Read<string> {
-  const head = text.replace(/\(.*?\)/g, '').split(/\s+via\s+/i)[0]!.trim();
+  const through = /\(\s*(?:via\s+)?([A-Z][A-Z0-9]*-[A-Z0-9-]+)\s*\)|\s+via\s+(\S+)\s*$/i.exec(text);
+  const head = through ? (through[1] ?? through[2]!) : text.replace(/\(.*?\)/g, '').trim();
   if (!head || /^(n\/?a|none|-+)$/i.test(head)) return undefined;
   return normalizeTag(head);
 }
@@ -260,6 +265,8 @@ const ASSET_CLASS: readonly (readonly [RegExp, EntityKind])[] = [
   [/^ats\b|automatic transfer/i, 'ats'],
   [/switchgear|switchboard/i, 'switchgear'],
   [/breaker|^acb\b|^mccb\b/i, 'breaker'],
+  [/motor control|^mcc\b|panelboard|mech(?:anical)? panel/i, 'panel'],
+  [/transformer|^xfmr\b/i, 'transformer'],
   [/^ups\b/i, 'ups'],
   [/^pdu\b|power distribution unit/i, 'pdu'],
   [/^rpp\b|remote power panel/i, 'rpp'],
@@ -287,7 +294,9 @@ const REGISTER_FIELDS: { readonly [K in EntityKind]?: ColumnRules } = {
   breaker: [['rating', 'rating', readRating], ['fed_from', 'bus', readRef]],
   ups: [['rating', 'rating', readRating], ['fed_from', 'input', readRef], ['alt_source', 'bypass', readNullableRef], ['notes', 'batteryMin', readBatteryMin], ...sideFromSystem],
   pdu: [['rating', 'rating', readRating], ['fed_from', 'input', readRef], ['location', 'placement', readPlacement], ...sideFromSystem],
+  transformer: [['rating', 'rating', readRating], ['fed_from', 'input', readRef]],
   rpp: [['rating', 'rating', readRating], ['fed_from', 'input', readRef], ['location', 'placement', readPlacement], ...sideFromSystem],
+  panel: [['rating', 'rating', readRating], ['fed_from', 'input', readRef]],
   chiller: [['rating', 'capacityKw', readCapacityKw], ['fed_from', 'power', readRef], ['system', 'header', readRef], ['notes', 'role', readRole]],
   header: [['system', 'loop', readRef]],
   loop: [['notes', 'intent', readIntent]],
@@ -295,6 +304,12 @@ const REGISTER_FIELDS: { readonly [K in EntityKind]?: ColumnRules } = {
   crah: [['rating', 'capacityKw', readCapacityKw], ['fed_from', 'power', readRef], ['system', 'loop', readRef], ['location', 'hall', readHallPrefix], ['location', 'placement', readPlacement]],
   hall: [['notes', 'dimensionsM', readDimensions], ['notes', 'coolingIntent', readCoolingIntent], ['notes', 'maxInletC', readMaxInletC]],
 };
+
+/**
+ * A panel with no register row of its own, named in its feeder breaker's notes
+ * ("MP-A mech panel: CRAH-01/03/05/07"). The units' fed_from cells route through it.
+ */
+const readPanelInNote = regexReader(/^\s*([A-Z][A-Z0-9]*-[A-Z0-9]+)\s+(?:mech(?:anical)?\s+panel|panelboard)\b/i, (m) => normalizeTag(m[1]!));
 
 /** Free-text columns are parsed by regex; an unreadable one is not worth a warning. */
 const FREE_TEXT_COLUMNS = new Set(['notes', 'location']);
@@ -337,6 +352,8 @@ const equipmentRegister: Parser = {
         }
         out.emit(kind, tag, field, value);
       }
+      const panel = kind === 'breaker' ? readPanelInNote(r.cells.get('notes') ?? '') : undefined;
+      if (panel) out.emit('panel', panel, 'input', tag);
     }
     return { statements: out.statements, ...NO_RECORDS, skipped: out.skipped };
   },
@@ -459,39 +476,32 @@ const circuitRoster: Parser = {
   },
 };
 
-// ───────────────────────────── BMS point list (JSON) ─────────────────────────────
+// ───────────────────────────── BMS point table (JSON) ─────────────────────────────
+// A Desigo CC point table: one row per BACnet object, named by its designation (the name the event
+// log and trends print), with the equipment it belongs to, object type and instance, units and alarm
+// limits. Nameplate and topology are not point properties. The facts it states are the ones its
+// labels carry: which cord a branch-circuit channel meters (or SPARE) and the breaker size, and a
+// rating an integrator typed into a description ("PDU 2B Output kW (225 kVA)").
 
 type Json = null | boolean | number | string | Json[] | { [k: string]: Json };
 
 const isObj = (j: Json | undefined): j is { [k: string]: Json } => typeof j === 'object' && j !== null && !Array.isArray(j);
 const asArray = (j: Json | undefined): readonly Json[] => (Array.isArray(j) ? j : []);
 
-/** How one BMS property maps to an entity field. `read` gets the property's source text (string or number). */
-type PropRule = readonly [prop: string, field: string, read: CellReader];
-
-const readKva = (t: string): Read<RawRating> => {
-  const n = readNumber(t);
-  return n === undefined ? undefined : { unit: 'kva', kva: n };
+/** The point table's equipment types the model represents. Others (outdoor air, plant) carry telemetry only. */
+const BMS_EQUIPMENT_KIND: Readonly<Record<string, EntityKind>> = {
+  chiller: 'chiller', pump: 'pump', crah: 'crah', 'chw loop': 'loop', 'data hall': 'hall',
+  ups: 'ups', pdu: 'pdu', rpp: 'rpp', switchboard: 'switchgear', breaker: 'breaker',
 };
-const readTons = (t: string): Read<number> => {
-  const n = readNumber(t);
-  return n === undefined ? undefined : round1(n * TR_TO_KW);
-};
-
-/** Equipment sections of the point list: which kind each holds and which properties are static facts. */
-const BMS_SECTIONS: readonly (readonly [section: string, kind: EntityKind, rules: readonly PropRule[]])[] = [
-  ['chillers', 'chiller', [['chiller_role', 'role', readRole], ['power_source', 'power', readRef], ['header', 'header', readRef], ['capacity_tons', 'capacityKw', readTons]]],
-  ['pumps', 'pump', [['power_source', 'power', readRef], ['loop', 'loop', readRef]]],
-  ['crahs', 'crah', [['power_source', 'power', readRef], ['loop', 'loop', readRef], ['zone', 'hall', readHallPrefix], ['net_sensible_kw', 'capacityKw', readNumber]]],
-  ['ups', 'ups', [['kva_rating', 'rating', readKva], ['battery_runtime_min', 'batteryMin', readNumber]]],
-  ['pdus', 'pdu', [['kva_rating', 'rating', readKva], ['fed_from', 'input', readRef]]],
-];
-
-const IGNORED_BMS_SECTIONS = new Set(['bms_system']);
+/** Kinds whose rating a description label states, and the unit it must be stated in. */
+const LABELLED_RATING: { readonly [K in EntityKind]?: RawRating['unit'] } = { ups: 'kva', pdu: 'kva', breaker: 'amps' };
+/** Panels whose branch-circuit channels are named "CB<n>_..." in the designation's last part. */
+const PANEL_KINDS: ReadonlySet<EntityKind> = new Set(['pdu', 'rpp']);
+const BMS_SECTIONS = new Set(['export', 'devices', 'points']);
 
 const bmsPoints: Parser = {
   id: 'bms-points',
-  accepts: (doc) => doc.format === 'json' && /"(chillers|crahs|branch_circuit_monitoring|electrical_meters)"\s*:/.test(doc.text),
+  accepts: (doc) => doc.format === 'json' && /"points"\s*:/.test(doc.text) && /"object_type"\s*:/.test(doc.text),
   parse(doc) {
     const out = emitter('bms-points');
     let root: Json;
@@ -502,98 +512,56 @@ const bmsPoints: Parser = {
     }
     if (!isObj(root)) return { statements: [], ...NO_RECORDS, skipped: [{ where: 'document', why: 'top level is not an object' }] };
 
-    const propText = (j: Json | undefined): string | null => (typeof j === 'string' ? j : typeof j === 'number' ? String(j) : null);
     const limits: AlarmLimit[] = [];
-
-    for (const [section, kind, rules] of BMS_SECTIONS) {
-      asArray(root[section]).forEach((entry, idx) => {
-        const base = `/${section}/${idx}`;
-        if (!isObj(entry) || typeof entry['name'] !== 'string') {
-          out.skipped.push({ where: base, why: 'entry has no name' });
-          return;
-        }
-        const rawName = entry['name'];
-        const tag = normalizeTag(rawName);
-        out.exists(kind, tag);
-        for (const [prop, field, read] of rules) {
-          const t = propText(entry[prop]);
-          if (t === null) continue;
-          const value = read(t);
-          if (value === undefined) {
-            out.skipped.push({ where: `${base}/${prop}`, why: `${rawName}: cannot read ${field} from "${t}"` });
-            continue;
-          }
-          out.emit(kind, tag, field, value);
-        }
-        for (const point of asArray(entry['points'])) {
-          if (!isObj(point) || typeof point['name'] !== 'string') continue;
-          for (const bound of ['high', 'low'] as const) {
-            const value = point[`alarm_${bound}`];
-            if (typeof value !== 'number') continue;
-            const unit = typeof point['units'] === 'string' ? point['units'] : '';
-            limits.push({ system: 'bms', source: point['name'], bound, value, unit });
-          }
-        }
-      });
-    }
-
-    asArray(root['electrical_meters']).forEach((m, idx) => {
-      if (!isObj(m)) return;
-      const breaker = typeof m['breaker'] === 'string' ? m['breaker'] : null;
-      if (!breaker) {
-        out.skipped.push({ where: `/electrical_meters/${idx}`, why: `${String(m['name'])}: telemetry meter with no breaker identity` });
+    asArray(root['points']).forEach((p, idx) => {
+      const where = `/points/${idx}`;
+      if (!isObj(p) || typeof p['designation'] !== 'string' || typeof p['equipment'] !== 'string') {
+        out.skipped.push({ where, why: 'point has no designation or equipment' });
         return;
       }
-      const tag = normalizeTag(breaker);
-      out.exists('breaker', tag);
-      const a = propText(m['trip_rating_a']);
-      const v = propText(m['volts']);
-      const ph = propText(m['phases']);
-      if (a && v && (ph === '1' || ph === '3')) out.emit('breaker', tag, 'rating', { unit: 'amps', amps: num(a), volts: num(v), phases: ph === '1' ? 1 : 3 });
+      const designation = p['designation'];
+      const description = typeof p['description'] === 'string' ? p['description'] : '';
+      const unit = typeof p['units'] === 'string' ? p['units'] : '';
+      for (const bound of ['high', 'low'] as const) {
+        const value = p[`${bound}_limit`];
+        if (typeof value === 'number') limits.push({ system: 'bms', source: designation, bound, value, unit });
+      }
+
+      const kind = BMS_EQUIPMENT_KIND[String(p['equipment_type'] ?? '').trim().toLowerCase()];
+      if (!kind) return;
+      const tag = normalizeTag(p['equipment']);
+      out.exists(kind, tag);
+
+      const channel = PANEL_KINDS.has(kind) ? /^CB(\d+)_/i.exec(designation.split('.').pop()!) : null;
+      if (!channel) {
+        const rating = LABELLED_RATING[kind] ? readRating(description) : undefined;
+        if (rating && rating.unit === LABELLED_RATING[kind]) out.emit(kind, tag, 'rating', rating);
+        return;
+      }
+      const circuit = circuitTag(p['equipment'], Number(channel[1]));
+      out.emit('circuit', circuit, 'panel', tag);
+      out.emit('circuit', circuit, 'position', String(Number(channel[1])));
+      const rating = readRating(description);
+      if (rating?.unit === 'amps') out.emit('circuit', circuit, 'rating', rating);
+      const cord = /\bCab(?:inet)?\s+([A-Z]\d{2})\s+Cord\s+([AB])\b/i.exec(description);
+      if (cord) {
+        const side = cord[2]!.toUpperCase() === 'A' ? 'A' : 'B';
+        out.emit('cord', cordTag(cord[1]!, side), 'labelledSide', side);
+        out.emit('cord', cordTag(cord[1]!, side), 'circuit', circuit);
+      } else if (!/\bSPARE\b/i.test(description)) {
+        out.skipped.push({ where, why: `${circuit}: "${description}" names no cabinet cord and is not marked SPARE` });
+      }
     });
 
-    const bcm = root['branch_circuit_monitoring'];
-    if (isObj(bcm)) {
-      for (const [panelName, points] of Object.entries(bcm)) {
-        asArray(points).forEach((p, idx) => {
-          const ptr = `/branch_circuit_monitoring/${panelName}/${idx}`;
-          if (!isObj(p)) return;
-          const name = typeof p['name'] === 'string' ? p['name'] : '';
-          const serves = typeof p['serves'] === 'string' ? p['serves'] : '';
-          const cb = /^(.+?)\.CB(\d+)\b/i.exec(name);
-          const sv = /^([A-Z]\d{2})-([AB])$/i.exec(serves.trim());
-          if (!cb || normalizeTag(cb[1]!) !== normalizeTag(panelName)) {
-            out.skipped.push({ where: ptr, why: `point "${name}" does not name a breaker in ${panelName}` });
-            return;
-          }
-          const circuit = circuitTag(cb[1]!, Number(cb[2]));
-          out.emit('circuit', circuit, 'panel', normalizeTag(cb[1]!));
-          out.emit('circuit', circuit, 'position', String(Number(cb[2])));
-          const a = propText(p['trip_a']);
-          const v = propText(p['volts']);
-          const ph = propText(p['phases']);
-          if (a && v && (ph === '1' || ph === '3')) out.emit('circuit', circuit, 'rating', { unit: 'amps', amps: num(a), volts: num(v), phases: ph === '1' ? 1 : 3 });
-          if (!sv) {
-            out.skipped.push({ where: ptr, why: `${circuit}: serves "${serves}" is not a cabinet cord` });
-            return;
-          }
-          const side = sv[2]!.toUpperCase() === 'A' ? 'A' : 'B';
-          const cord = cordTag(sv[1]!, side);
-          out.emit('cord', cord, 'labelledSide', side);
-          out.emit('cord', cord, 'circuit', circuit);
-        });
-      }
-    }
-
-    const known = new Set([...BMS_SECTIONS.map(([s]) => s), 'electrical_meters', 'branch_circuit_monitoring', ...IGNORED_BMS_SECTIONS]);
-    for (const key of Object.keys(root)) if (!known.has(key)) out.skipped.push({ where: `/${key}`, why: 'section not understood by bms-points' });
+    for (const key of Object.keys(root)) if (!BMS_SECTIONS.has(key)) out.skipped.push({ where: `/${key}`, why: 'section not understood by bms-points' });
     return { statements: out.statements, ...NO_RECORDS, limits, skipped: out.skipped };
   },
 };
 
 // ───────────────────────────── Contract clauses (MSA / order form text) ─────────────────────────────
 // Deliberately conservative: a clause is read only when the whole statement sits on one line in a
-// recognized form. Anything else (wrapped clauses, prose variants) is not read.
+// recognized form. Anything else (wrapped clauses, prose variants) is not read. A PDF's text layer
+// reads the same way: its extractor puts each paragraph and table row on one line, under a letterhead.
 
 type RawTerm =
   | { readonly term: 'power-redundancy'; readonly level: '2N' | 'A+B' | 'N+1' | 'N' }
@@ -602,7 +570,8 @@ type RawTerm =
   | { readonly term: 'availability'; readonly pct: number; readonly excludesMaintenance: boolean }
   | { readonly term: 'maintenance-notice'; readonly businessDays: number };
 
-function expandCabinets(list: string): Read<string[]> {
+/** "A01-A10; B01" (hyphen, en dash, "through" or "to") → normalized cabinet tags; undefined when any part is not a cabinet or range. */
+export function expandCabinets(list: string): Read<string[]> {
   const out: string[] = [];
   for (const part of list.split(/[;,]/).map((s) => s.trim()).filter(Boolean)) {
     const range = /^([A-Z])(\d+)\s*(?:-|–|through|to)\s*([A-Z])(\d+)$/i.exec(part);
@@ -619,6 +588,9 @@ function expandCabinets(list: string): Read<string[]> {
 }
 
 const CONTRACT_ID = [/^\s*MASTER SERVICES AGREEMENT\s+No\.?\s*([A-Z0-9-]+)/i, /under Master Services Agreement\s+No\.?\s*([A-Z0-9-]+)/i];
+/** The agreement number sits in the first lines, below a letterhead when there is one. */
+const HEADER_LINES = 12;
+const headerOf = (text: string) => text.split(/\r?\n/).slice(0, HEADER_LINES);
 
 interface ClauseRule {
   readonly re: RegExp;
@@ -641,7 +613,7 @@ const CLAUSES: readonly ClauseRule[] = [
     make: (m) => ({ term: 'cooling-redundancy', level: m[1]!.toUpperCase() as 'N+1' | 'N' }) satisfies RawTerm,
   },
   {
-    re: /^\s+([A-Z]\d{2})\s{2,}\S.*?\s(\d+(?:\.\d+)?)\s*kW\s*$/,
+    re: /^\s*([A-Z]\d{2})\s{2,}\S.*?\s(\d+(?:\.\d+)?)\s*kW\s*$/,
     field: 'terms',
     make: (m) => ({ term: 'committed-kw', cabinet: normalizeTag(m[1]!), kw: num(m[2]!) }) satisfies RawTerm,
   },
@@ -659,12 +631,12 @@ const CLAUSES: readonly ClauseRule[] = [
 
 const contractClauses: Parser = {
   id: 'contract-clauses',
-  accepts: (doc) => doc.format === 'text' && CONTRACT_ID.some((re) => re.test(doc.text.split(/\r?\n/).slice(0, 5).join('\n'))),
+  accepts: (doc) => (doc.format === 'text' || doc.format === 'pdf') && headerOf(doc.text).some((line) => CONTRACT_ID.some((re) => re.test(line))),
   parse(doc) {
     const out = emitter('contract-clauses');
     const lines = doc.text.split(/\r?\n/);
     let contract: string | null = null;
-    for (let i = 0; i < Math.min(lines.length, 5) && !contract; i++) {
+    for (let i = 0; i < Math.min(lines.length, HEADER_LINES) && !contract; i++) {
       for (const re of CONTRACT_ID) {
         const m = re.exec(lines[i]!);
         if (m) contract = normalizeTag(m[1]!);

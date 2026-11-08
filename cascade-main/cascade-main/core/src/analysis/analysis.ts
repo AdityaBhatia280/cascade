@@ -27,8 +27,16 @@ export interface ScenarioResult {
   readonly scenario: Scenario;
   readonly revision: Revision;
   readonly timeline: readonly Transition[];
-  readonly customers: readonly CustomerImpact[];
+  /** One per distinct minute of the timeline, ascending. */
+  readonly moments: readonly ScenarioMoment[];
+  /** Every cabinet affected by the end of the timeline, in any state. */
   readonly revenueExposed: Usd;
+}
+
+/** The cabinets hit as of `tMin`, priced per customer and state. */
+export interface ScenarioMoment {
+  readonly tMin: number;
+  readonly customers: readonly CustomerImpact[];
 }
 
 export interface CordPath {
@@ -168,14 +176,20 @@ export function analyze(f: Facility): Analysis {
     audit,
     whatIf(scenario) {
       const p = propagate(graph, scenario.events, { timed: true });
-      const affected = new Map<Id<'cabinet'>, Transition>();
-      for (const [id, tr] of p.final) if (kindOf(id) === 'cabinet' && tr.state !== 'up') affected.set(id as Id<'cabinet'>, tr);
+      const hit = p.timeline.filter((tr) => kindOf(tr.id) === 'cabinet' && tr.state !== 'up');
+      const moments = [...new Set(p.timeline.map((tr) => tr.tMin))]
+        .sort((a, b) => a - b)
+        .map((tMin) => {
+          const at = new Map<Id<'cabinet'>, Transition>();
+          for (const tr of hit) if (tr.tMin <= tMin) at.set(tr.id as Id<'cabinet'>, tr);
+          return { tMin, customers: impacts(f, book, at) };
+        });
       return {
         scenario,
         revision: f.revision,
         timeline: p.timeline,
-        customers: impacts(f, book, affected),
-        revenueExposed: book.exposed(affected.keys()),
+        moments,
+        revenueExposed: book.exposed(hit.map((tr) => tr.id as Id<'cabinet'>)),
       };
     },
     paths,
@@ -207,23 +221,20 @@ export function analyze(f: Facility): Analysis {
   return an;
 }
 
-/** Customers touched by a set of cabinet outcomes, worst state per customer. */
+/** Customers touched by a set of cabinet outcomes: one entry per customer and state, priced over that state's cabinets. */
 export function impacts(f: Facility, book: RevenueBook, cabinets: ReadonlyMap<Id<'cabinet'>, { readonly state: Transition['state'] }>): CustomerImpact[] {
-  const order = { up: 0, exposed: 1, unknown: 2, down: 3 } as const;
-  const byCustomer = new Map<Id<'customer'>, { cabinets: Id<'cabinet'>[]; state: Transition['state'] }>();
+  const groups = new Map<string, { customer: Id<'customer'>; state: Transition['state']; cabinets: Id<'cabinet'>[] }>();
   for (const [cab, { state }] of [...cabinets].sort(([x], [y]) => (x < y ? -1 : 1))) {
     const owner = f.get(cab).customer;
     if (owner.kind === 'missing') continue;
-    const cur = byCustomer.get(owner.value);
-    if (!cur) byCustomer.set(owner.value, { cabinets: [cab], state });
-    else {
-      cur.cabinets.push(cab);
-      if (order[state] > order[cur.state]) cur.state = state;
-    }
+    const key = `${owner.value} ${state}`;
+    const cur = groups.get(key);
+    if (cur) cur.cabinets.push(cab);
+    else groups.set(key, { customer: owner.value, state, cabinets: [cab] });
   }
-  return [...byCustomer]
-    .sort(([x], [y]) => (x < y ? -1 : 1))
-    .map(([customer, v]) => ({ customer, cabinets: v.cabinets, state: v.state, revenueExposed: book.exposed(v.cabinets) }));
+  return [...groups.values()]
+    .sort((x, y) => (x.customer < y.customer ? -1 : x.customer > y.customer ? 1 : RANK[y.state] - RANK[x.state]))
+    .map((g) => ({ ...g, revenueExposed: book.exposed(g.cabinets) }));
 }
 
 // ───────────────────────────── SPOF matrix ─────────────────────────────
@@ -251,7 +262,8 @@ function mechanism(final: ReadonlyMap<AnyId, Transition>, id: AnyId, seen = new 
 
 /**
  * Single points of failure by brute-force removal, using the ONE engine. For every component in
- * the union of the cabinets' upstream cones (power and cooling), fail it with timing off and record
+ * the union of the cabinets' upstream cones (power and cooling, chilled-water loops included; a hall
+ * is a space, not something that fails), fail it with timing off and record
  * every cabinet whose state got worse than its normal-operation state. This is a dominator
  * computation for the AND/OR supply graph, done by removal because capacity effects (overload
  * SPOFs) are not graph-structural and dominator trees cannot see them.
@@ -267,7 +279,7 @@ export function spofMatrix(g: SupplyGraph): SpofMatrix {
     visited.add(id);
     const n = g.nodes.get(id);
     if (!n) continue;
-    if (n.supply.rule !== 'any-cord' && n.supply.rule !== 'pool') cone.add(id);
+    if (n.supply.rule !== 'any-cord' && !(n.supply.rule === 'pool' && n.supply.pool === 'hall')) cone.add(id);
     for (const { edge } of n.upstream) for (const t of edge.to) stack.push(t);
   }
   const byCabinet = new Map<Id<'cabinet'>, SpofEntry[]>(cabinets.map((c) => [c, []]));

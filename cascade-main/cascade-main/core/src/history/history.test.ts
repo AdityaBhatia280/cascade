@@ -59,10 +59,12 @@ test('every event and trend source resolves to a model entity through the regist
   assert.equal(entityOf('DFW1.Bldg1.DH-1.Row_C.Cold_Aisle_Temp'), 'hall:DH-1');
   assert.equal(entityOf('DFW1.Bldg1.CHW_Plant.CHW-LOOP-1.CHWS_Temp'), 'loop:CHW-LOOP-1');
 
-  const unmodeled = historyOf([...docs.documents, sourceDocument({ path: 'x.csv', format: 'csv', text: 'Timestamp UTC,Timestamp,Value,Source,Measurement,Unit\n8/1/2026 5:00:00 PM,8/1/2026 12:00:00 PM,1.5,DFW1.MCC-B,Active Power,kW\n' })], facility);
-  const mcc = unmodeled.unresolved.find((u) => u.source === 'DFW1.MCC-B');
-  assert.deepEqual(mcc && { system: mcc.system, source: mcc.source, records: mcc.records }, { system: 'epms', source: 'DFW1.MCC-B', records: 1 });
-  assert.match(mcc!.why, /Motor Control Center/);
+  const extra = (source: string) =>
+    historyOf([...docs.documents, sourceDocument({ path: 'x.csv', format: 'csv', text: `Timestamp UTC,Timestamp,Value,Source,Measurement,Unit\n8/1/2026 5:00:00 PM,8/1/2026 12:00:00 PM,1.5,${source},Active Power,kW\n` })], facility);
+  assert.equal(extra('DFW1.MCC-B').trends.find((s) => s.source === 'DFW1.MCC-B')?.entity, 'panel:MCC-B');
+  const facp = extra('DFW1.FACP-1').unresolved.find((u) => u.source === 'DFW1.FACP-1');
+  assert.deepEqual(facp && { system: facp.system, source: facp.source, records: facp.records }, { system: 'epms', source: 'DFW1.FACP-1', records: 1 });
+  assert.match(facp!.why, /Fire Alarm Panel/);
 });
 
 test('outdoor air in the trend export is NOAA KDFW interpolated between the :53 observations, LST moved to site time', () => {

@@ -4,6 +4,7 @@ import { RULE_IDS } from '../contract.js';
 import { BASE, BMS, fixture, setRow, type Row } from '../testing/fixture.js';
 import { analyze } from './analysis.js';
 import type { Finding } from './audit.js';
+import { kindOf } from '../facility/ids.js';
 
 const audit = (rows: readonly Row[] = BASE, bms: readonly Row[] = BMS) => {
   const { facility } = fixture(rows, bms);
@@ -80,15 +81,35 @@ test('redundant cooling units sharing one breaker are a common cause', () => {
   const rows = ['CRAH-1', 'CRAH-2', 'CRAH-3'].reduce((acc, c) => setRow(acc, 'crah', c, 'capacityKw', '20'), BASE as readonly Row[]);
   const { findings } = audit(rows);
   const ccc = of(findings, 'cooling-common-cause');
-  assert.deepEqual(ccc.map((x) => x.detail.sharedPoint), ['breaker:SWGR-A-M']);
+  // Every CRAH also draws from the one loop CHW-1.
+  assert.deepEqual(ccc.map((x) => x.detail.sharedPoint), ['breaker:SWGR-A-M', 'loop:CHW-1']);
   assert.deepEqual([...ccc[0]!.detail.members].sort(), ['crah:CRAH-1', 'crah:CRAH-3']);
   assert.equal(of(findings, 'cooling-capacity').length, 0);
   assert.ok(of(findings, 'contract-topology-mismatch').some((x) => x.detail.actual === 'no-cooling-spare'));
 });
 
+test('one chilled-water loop under every CRAH is a common cause; a second loop that carries the heat is not', () => {
+  // DH-1: 5 cabinets x 6 kW = 30 kW of heat; CRAH-1..3 are 30 kW each, all on CHW-1.
+  const one = of(audit().findings, 'cooling-common-cause').find((x) => x.detail.sharedPoint === 'loop:CHW-1');
+  assert.ok(one);
+  assert.equal(one.detail.pool, 'hall:DH-1');
+  assert.deepEqual(one.detail.members, ['crah:CRAH-1', 'crah:CRAH-2', 'crah:CRAH-3']);
+  assert.equal(one.certainty, 'definite');
+  // CRAH-2 moved onto its own loop CHW-2 (one 100 kW chiller): losing CHW-1 leaves CRAH-2's 30 kW for 30 kW of heat.
+  const two: Row[] = [
+    ...setRow(BASE, 'crah', 'CRAH-2', 'loop', 'CHW-2'),
+    ['loop', 'CHW-2', 'intent', 'N'],
+    ['header', 'HDR-3', 'loop', 'CHW-2'],
+    ['chiller', 'CH-3', 'header', 'HDR-3'],
+    ['chiller', 'CH-3', 'power', 'SWGR-B-M'],
+    ['chiller', 'CH-3', 'capacityKw', '100'],
+  ];
+  assert.deepEqual(of(audit(two).findings, 'cooling-common-cause').filter((x) => kindOf(x.detail.sharedPoint) === 'loop'), []);
+});
+
 test('contracts promising A+B are checked against topology', () => {
   const ct = of(audit().findings, 'contract-topology-mismatch');
-  const acme = ct.find((x) => x.subject === 'contract:MSA-ACME')!;
+  const acme = ct.find((x) => x.subject === 'contract:MSA-ACME' && x.detail.term.term === 'power-redundancy')!;
   assert.deepEqual(acme.detail.cabinets, ['cabinet:C12']);
   assert.equal(acme.detail.actual, 'converged');
   assert.ok(!ct.some((x) => x.subject === 'contract:MSA-INITECH'));

@@ -90,6 +90,9 @@ test('DFW1 accuracy: planted defects found, decoys not flagged', () => {
   assert.deepEqual(falseFlags, []);
   assert.deepEqual(extra.map((x) => x.id), []);
   assert.ok(findings.some((x) => x.id === D03 && x.certainty === 'definite'));
+  // The loop defect by its own finding: CHW-LOOP-1 as the point all eight DH-1 CRAHs share.
+  const loop = findings.find((x) => x.id === 'cooling-common-cause:hall:DH-1:loop:CHW-LOOP-1');
+  assert.ok(loop?.rule === 'cooling-common-cause' && loop.certainty === 'definite' && loop.detail.members.length === 8);
 });
 
 test('DFW1 fix plan re-feeds the Halcyon B panel and re-verifies clean', () => {
@@ -174,4 +177,19 @@ test("DFW1 work orders: the engine grades each of this week's work orders as the
   const all = workOrdersOf(docs.documents, facility);
   const graded = new Map(assessWorkOrders(an, upcomingWorkOrders(all, truth.workOrders.exportedAt), all).map((x) => [x.workOrder.wonum, x.assessed ? x.grade : null]));
   for (const w of truth.workOrders.week) assert.equal(graded.get(w.wonum), w.expectedGrade, `${w.wonum}: ${w.why}`);
+});
+
+test('DFW1 scenario: PDU-3A maintenance prices dark and backup cabinets apart, per customer', () => {
+  const r = an.whatIf({ events: [{ target: 'pdu:PDU-3A' as never, how: 'maintenance', atMin: 0 }] });
+  const end = r.moments.at(-1)!.customers;
+  const sum = (states: readonly string[]) => end.filter((c) => states.includes(c.state)).reduce((s, c) => s + c.revenueExposed, 0);
+  assert.equal(sum(['down', 'unknown']), 10550);
+  assert.equal(sum(['exposed']), 20075);
+  assert.equal(r.revenueExposed, 30625);
+  const owner = end.find((c) => c.cabinets.includes('cabinet:D03' as never))!.customer;
+  const trinity = end.filter((c) => c.customer === owner);
+  assert.deepEqual(
+    trinity.map((c) => [c.state, c.cabinets.length, c.revenueExposed]),
+    [['down', 2, 2700], ['exposed', 8, 10800]],
+  );
 });

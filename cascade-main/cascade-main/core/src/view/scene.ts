@@ -85,7 +85,7 @@ export function deriveScene(an: Analysis): SceneDto {
     tierMemo.set(id, t);
     return t;
   };
-  const PHYSICAL = new Set(['utility', 'generator', 'ats', 'switchgear', 'ups', 'pdu', 'rpp']);
+  const PHYSICAL = new Set(['utility', 'generator', 'ats', 'switchgear', 'ups', 'pdu', 'transformer', 'rpp', 'panel']);
   const physMemo = new Map<AnyId, number>();
   const physTier = (id: AnyId, stack = new Set<AnyId>()): number => {
     const hit = physMemo.get(id);
@@ -297,7 +297,7 @@ export function deriveScene(an: Analysis): SceneDto {
 
   // ── 2D one-line.
   const pos2 = new Map<AnyId, Vec2>();
-  const powerKinds = new Set(['utility', 'generator', 'ats', 'switchgear', 'breaker', 'ups', 'pdu', 'rpp', 'circuit']);
+  const powerKinds = new Set(['utility', 'generator', 'ats', 'switchgear', 'breaker', 'ups', 'pdu', 'transformer', 'rpp', 'circuit', 'panel']);
   const elec = entities.filter((e) => powerKinds.has(e.kind)).map((e) => e.id);
   const maxTier = Math.max(0, ...elec.map(tierOf));
   const lanes: Record<0 | 1 | 2, Map<number, AnyId[]>> = { 0: new Map(), 1: new Map(), 2: new Map() };

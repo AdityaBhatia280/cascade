@@ -12,7 +12,9 @@
 
 export const ENTITY_KINDS = [
   // electrical chain, upstream → downstream
-  'utility', 'generator', 'ats', 'switchgear', 'breaker', 'ups', 'pdu', 'rpp', 'circuit', 'cord',
+  'utility', 'generator', 'ats', 'switchgear', 'breaker', 'ups', 'pdu', 'transformer', 'rpp', 'circuit', 'cord',
+  // mechanical distribution: a motor control center or mechanical panelboard feeding cooling units
+  'panel',
   // IT space
   'hall', 'row', 'cabinet',
   // cooling plant
@@ -127,7 +129,10 @@ export interface CustomerImpactDto {
   customer: string;
   customerName: string;
   cabinets: string[];
+  /** The cabinets as operators write them: "E01–E05", "D03, D06". */
+  cabinetsLabel: string;
   state: SupplyState | 'exposed';
+  /** Monthly revenue of `cabinets`, the ones in `state`. */
   revenueExposedUsd: number;
 }
 
@@ -173,8 +178,15 @@ export interface ScenarioResultDto {
   revision: string;
   events: ScenarioEventDto[];
   timeline: TimelineEventDto[];
-  customers: CustomerImpactDto[];
+  /** One per distinct minute of the timeline, ascending. */
+  moments: ScenarioMomentDto[];
   revenueExposedUsd: number;
+}
+
+/** The cabinets hit as of `tMin`: one entry per customer and state, priced over that state's cabinets only. */
+export interface ScenarioMomentDto {
+  tMin: number;
+  customers: CustomerImpactDto[];
 }
 
 export interface PathDto {
@@ -669,10 +681,48 @@ export interface CompanionReply {
   actions: CompanionAction[];
 }
 
+// ───────────────────────────── Uploads ─────────────────────────────
+
+/** What an uploaded file is. Every kind but `unknown` has a parser; `unknown` files are rejected. */
+export const UPLOAD_KINDS = [
+  'equipment-register', 'bms-points', 'circuit-roster', 'maximo-workorders', 'bms-event-log', 'bms-trend', 'pme-export', 'pme-event-history',
+  'contract-order-form', 'contract-msa', 'unknown',
+] as const;
+export type UploadKind = (typeof UPLOAD_KINDS)[number];
+
+/** queued → reading (text extraction, classification, contract reading) → classified → ingested | rejected. */
+export type UploadStatus = 'queued' | 'reading' | 'classified' | 'ingested' | 'rejected';
+
+export interface UploadFileDto {
+  id: string;
+  name: string;
+  kind: UploadKind;
+  status: UploadStatus;
+  /** Plain words, e.g. "Equipment register" or "Contract · Halcyon Health Partners"; the file name until classified. */
+  title: string;
+  /** Plain words, e.g. "68 assets" or "$7,850/mo · E01–E05 · A+B power"; empty until ingested. */
+  detail: string;
+  /** The customer a contract belongs to; null for other kinds. */
+  customer: string | null;
+  /** Why the file was rejected; null otherwise. */
+  reason: string | null;
+}
+
+/** Files in processing order: register first, then monitoring, roster, contracts, work orders. */
+export interface UploadBatchDto {
+  batchId: string;
+  files: UploadFileDto[];
+  done: boolean;
+}
+
 /** Workspace change notifications on GET /events (SSE event name == `type`). Sent so clients refetch; they carry no state. */
 export type ServerEventDto =
   | { type: 'model-changed'; revision: string }
-  | { type: 'proposal-changed'; id: string };
+  | { type: 'proposal-changed'; id: string }
+  /** One file changed status. */
+  | { type: 'upload-file'; batchId: string; file: UploadFileDto }
+  /** Every file in the batch is ingested or rejected. */
+  | { type: 'upload-done'; batchId: string; revision: string };
 
 // ───────────────────────────── HTTP route table ─────────────────────────────
 // One list of endpoints. The server registers handlers via `registerAll(api, handlers)`, a total map typed against
@@ -682,7 +732,16 @@ export type ServerEventDto =
 export interface ApiRoutes {
   'GET /model': { query: { view?: ModelView }; body: null; res: ModelSummaryDto };
   'GET /entities/:id': { query: { view?: ModelView }; body: null; res: EntityDto };
-  'POST /documents': { query: Record<string, never>; body: { path: string }; res: { revision: string; valuesRead: number; valuesRejected: number } };
+  /**
+   * multipart/form-data with the files in field `files` (repeat it per file). Returns at once with every
+   * file `queued`; reading and ingesting continue in the background (poll GET /uploads/:batchId or follow
+   * `upload-file` events). A repeated Idempotency-Key returns the first batch.
+   */
+  'POST /uploads': { query: Record<string, never>; body: FormData; res: UploadBatchDto };
+  'GET /uploads/:batchId': { query: Record<string, never>; body: null; res: UploadBatchDto };
+  /** Empties the site: no documents, an empty model, no proposals. A repeated Idempotency-Key replays the first result. */
+  'POST /site/reset': { query: Record<string, never>; body: Record<string, never>; res: { revision: string } };
+  'GET /site/status': { query: Record<string, never>; body: null; res: { empty: boolean; documents: number; revision: string } };
   'GET /audit': { query: { view?: ModelView }; body: null; res: AuditDto };
   'GET /scenario': { query: { view?: ModelView; e: string[] }; body: null; res: ScenarioResultDto };
   'GET /exposure': { query: { view?: ModelView; customer?: string }; body: null; res: CustomerExposureDto[] };
@@ -732,7 +791,7 @@ export type ApiRouteKey = keyof ApiRoutes;
 
 /**
  * Server-sent event streams, keyed like ApiRoutes; the value is the event payload and each SSE event name is its `type`.
- * - GET /events: model-changed on connect, then every workspace change.
+ * - GET /events: model-changed on connect, then every workspace change and every upload status change.
  */
 export interface SseRoutes {
   'GET /events': ServerEventDto;

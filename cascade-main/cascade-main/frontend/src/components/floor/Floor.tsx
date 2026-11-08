@@ -1,14 +1,17 @@
 // The site floor: one React Three Fiber canvas that stays mounted under every view. At rest it is a
 // straight-down plan; 3D tilts it about 50 degrees. Boxes, cables and rings are built imperatively from
 // the layout (a few hundred objects, recoloured every frame), labels are DOM over the canvas, decluttered
-// by priority so no two overlap.
+// by priority so no two overlap. When the site grows (its files being read), new rooms fade in, new
+// equipment rises in layer by layer (plant, power, panels, cabinets, then customer tints), and what
+// was already there glides to its new place on the replanned floor.
 
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { cabinetRevenue, depthFrom, labelOf, revenueBehind, SELECTABLE, type Site } from "@/lib/site";
+import { depthFrom, downCabinets, labelOf, SELECTABLE, type Site } from "@/lib/site";
 import { floorBus, floorStore, type FloorPaint, type Insets, type Look } from "@/lib/floor";
-import { usd } from "@/lib/format";
+import { plural } from "@/lib/format";
+import type { EntityKind } from "@cascade/core/contract";
 import { FH, FW, buildLayout, type Box, type FloorLayout } from "./layout";
 
 const C = {
@@ -64,6 +67,52 @@ const MODES: Record<"2d" | "3d", Mode> = {
 };
 const FLIGHT_MS = 600;
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const easeOut = (t: number) => 1 - (1 - t) ** 3;
+const RISE_MS = 380;
+const GLIDE_MS = 420;
+const ROOM_MS = 360;
+
+/** Where a box last stood and how it looked, so the next build of a growing site starts from there. */
+interface Ghost {
+  X: number;
+  Z: number;
+  w: number;
+  d: number;
+  H: number;
+  customer: string | null;
+  fill: THREE.Color;
+  edge: THREE.Color;
+}
+interface History {
+  built: boolean;
+  boxes: Map<string, Ghost>;
+  rooms: Set<string>;
+}
+
+/** Entrance order: plant, then the power chain, then panels, then cabinets, then customer tints. */
+const STAGE: Partial<Record<EntityKind, number>> = { utility: 0, generator: 0, ats: 0, chiller: 0, pump: 0, header: 0, loop: 0, switchgear: 1, ups: 1, pdu: 2, rpp: 2, crah: 2, cabinet: 3 };
+const TINT_STAGE = 4;
+
+/** Milliseconds each new or newly owned box waits. Stages that bring nothing take no time. */
+function entrance(layout: FloorLayout, before: History): Map<string, number> {
+  const stages: Box[][] = [[], [], [], [], []];
+  for (const b of layout.boxes.values()) {
+    const g = before.boxes.get(b.id);
+    if (!g) stages[STAGE[b.kind] ?? 2]!.push(b);
+    else if (g.customer !== b.customer) stages[TINT_STAGE]!.push(b);
+  }
+  stages[TINT_STAGE]!.sort((a, b) => (a.customer ?? "").localeCompare(b.customer ?? "") || a.X - b.X);
+  const out = new Map<string, number>();
+  let t = 0;
+  stages.forEach((g, i) => {
+    if (!g.length) return;
+    if (i !== TINT_STAGE) g.sort((a, b) => a.X - b.X || a.Z - b.Z);
+    const step = Math.min(14, 420 / g.length);
+    g.forEach((b, k) => out.set(b.id, t + k * step));
+    t += 200 + g.length * step * 0.5;
+  });
+  return out;
+}
 
 function roundRect(w: number, h: number, r: number): THREE.Shape {
   const s = new THREE.Shape();
@@ -86,6 +135,17 @@ interface Item {
   mat: THREE.MeshLambertMaterial;
   emat: THREE.LineBasicMaterial;
   mesh: THREE.Mesh;
+  edges: THREE.LineSegments;
+  /** Gliding from where the previous build put it. */
+  move: { from: Ghost; t0: number } | null;
+  /** When it starts to rise in (0: standing). */
+  born: number;
+  /** Where it stands this frame. */
+  cx: number;
+  cz: number;
+  sx: number;
+  sy: number;
+  sz: number;
   label: HTMLDivElement;
   fill: THREE.Color;
   edge: THREE.Color;
@@ -114,6 +174,36 @@ function disposeTree(o: THREE.Object3D) {
   });
 }
 
+/** Sets a box's transform for this moment of its glide and rise. */
+function place(it: Item, now: number) {
+  const b = it.box;
+  let X = b.X;
+  let Z = b.Z;
+  let sx = 1;
+  let sy = 1;
+  let sz = 1;
+  if (it.move) {
+    const f = it.move.from;
+    const k = ease(Math.max(0, Math.min(1, (now - it.move.t0) / GLIDE_MS)));
+    X = f.X + (b.X - f.X) * k;
+    Z = f.Z + (b.Z - f.Z) * k;
+    sx = f.w / b.w + (1 - f.w / b.w) * k;
+    sy = f.H / b.H + (1 - f.H / b.H) * k;
+    sz = f.d / b.d + (1 - f.d / b.d) * k;
+    if (k >= 1) it.move = null;
+  }
+  if (it.born) {
+    const k = Math.max(0, Math.min(1, (now - it.born) / RISE_MS));
+    sy *= Math.max(0.001, easeOut(k));
+    if (k >= 1) it.born = 0;
+  }
+  Object.assign(it, { cx: X, cz: Z, sx, sy, sz });
+  for (const o of [it.mesh, it.edges]) {
+    o.position.set(X, (b.H * sy) / 2, Z);
+    o.scale.set(sx, sy, sz);
+  }
+}
+
 interface WorldProps {
   site: Site;
   layout: FloorLayout;
@@ -132,9 +222,17 @@ function World({ site, layout, labels, tip }: WorldProps) {
   const insets = useRef<Insets>({ ...floorStore.get().insets });
   const paintRef = useRef<FloorPaint>(floorStore.get().paint);
   const dragging = useRef(false);
+  const history = useRef<History>({ built: false, boxes: new Map(), rooms: new Set() });
+  /** Rooms fading in. */
+  const rooms = useRef<{ mats: THREE.Material[]; t0: number }[]>([]);
 
   // Static scene: lights, rooms, boxes, labels.
   useEffect(() => {
+    const before = history.current;
+    const now = performance.now();
+    const grow = before.built;
+    const delay = grow ? entrance(layout, before) : new Map<string, number>();
+    rooms.current = [];
     gl.setClearColor(C.bg);
     const root = new THREE.Group();
     root.add(new THREE.HemisphereLight(0xffffff, 0xd9dee4, 2.3));
@@ -162,43 +260,81 @@ function World({ site, layout, labels, tip }: WorldProps) {
       const [c, d] = layout.at(z.x1, z.z1);
       const w = c - a;
       const h = d - b;
-      const m = new THREE.Mesh(new THREE.ShapeGeometry(roundRect(w, h, 10)), new THREE.MeshBasicMaterial({ color: z.fill }));
+      const fresh = grow && !before.rooms.has(z.id);
+      const m = new THREE.Mesh(new THREE.ShapeGeometry(roundRect(w, h, 10)), new THREE.MeshBasicMaterial({ color: z.fill, transparent: fresh, opacity: fresh ? 0 : 1 }));
       m.rotation.x = -Math.PI / 2;
       m.position.set(a + w / 2, 0, b + h / 2);
       root.add(m);
       const pts = roundRect(w, h, 10).getPoints(8).map((p) => new THREE.Vector3(a + w / 2 + p.x, 0.4, b + h / 2 - p.y));
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pts),
-        z.dashed ? new THREE.LineDashedMaterial({ color: z.edge, dashSize: 5, gapSize: 5 }) : new THREE.LineBasicMaterial({ color: z.edge }),
+        z.dashed
+          ? new THREE.LineDashedMaterial({ color: z.edge, dashSize: 5, gapSize: 5, transparent: fresh, opacity: fresh ? 0 : 1 })
+          : new THREE.LineBasicMaterial({ color: z.edge, transparent: fresh, opacity: fresh ? 0 : 1 }),
       );
       if (z.dashed) line.computeLineDistances();
       root.add(line);
+      if (fresh) rooms.current.push({ mats: [m.material, line.material as THREE.Material], t0: now });
     }
     const host = labels.current!;
     const map = new Map<string, Item>();
     for (const box of layout.boxes.values()) {
       const s = styleOf(box, undefined, floorStore.get().paint, box.customer ? site.customers.get(box.customer)?.tint : undefined);
-      const mat = new THREE.MeshLambertMaterial({ color: s.fill });
+      const g = before.boxes.get(box.id);
+      const wait = now + (delay.get(box.id) ?? 0);
+      const born = grow && !g ? wait : 0;
+      const mat = new THREE.MeshLambertMaterial({ color: g ? g.fill : born ? C.bg : s.fill });
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(box.w, box.H, box.d), mat);
-      mesh.position.set(box.X, box.H / 2, box.Z);
       mesh.castShadow = true;
       mesh.userData["id"] = box.id;
       root.add(mesh);
-      const emat = new THREE.LineBasicMaterial({ color: s.edge });
+      const emat = new THREE.LineBasicMaterial({ color: g ? g.edge : born ? C.bg : s.edge });
       const edges = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), emat);
-      edges.position.copy(mesh.position);
       root.add(edges);
       const label = document.createElement("div");
       label.className = box.cab ? "l3 cab" : "l3";
       label.textContent = box.label;
+      if (born) label.style.opacity = "0";
       host.appendChild(label);
-      map.set(box.id, { box, mat, emat, mesh, label, fill: new THREE.Color(s.fill), edge: new THREE.Color(s.edge), t0: 0, lw: 0, lh: 0, cls: label.className, rank: 0, shown: true, pos: "" });
+      const moved = !!g && (g.X !== box.X || g.Z !== box.Z || g.w !== box.w || g.d !== box.d || g.H !== box.H);
+      const it: Item = {
+        box,
+        mat,
+        emat,
+        mesh,
+        edges,
+        move: moved ? { from: g, t0: now } : null,
+        born,
+        cx: box.X,
+        cz: box.Z,
+        sx: 1,
+        sy: born ? 0.001 : 1,
+        sz: 1,
+        label,
+        fill: new THREE.Color(s.fill),
+        edge: new THREE.Color(s.edge),
+        t0: grow ? wait : 0,
+        lw: 0,
+        lh: 0,
+        cls: label.className,
+        rank: 0,
+        shown: !born,
+        pos: "",
+      };
+      place(it, now);
+      map.set(box.id, it);
     }
     items.current = map;
     scene.add(root);
     const remeasure = () => map.forEach((it) => (it.lw = 0));
     void document.fonts?.ready.then(remeasure);
     return () => {
+      const ghosts = new Map<string, Ghost>();
+      for (const it of map.values()) {
+        const b = it.box;
+        ghosts.set(b.id, { X: it.cx, Z: it.cz, w: b.w * it.sx, d: b.d * it.sz, H: b.H * it.sy, customer: b.customer, fill: it.mat.color.clone(), edge: it.emat.color.clone() });
+      }
+      history.current = { built: true, boxes: ghosts, rooms: new Set(layout.zones.map((z) => z.id)) };
       scene.remove(root);
       sun.dispose();
       disposeTree(root);
@@ -406,7 +542,8 @@ function World({ site, layout, labels, tip }: WorldProps) {
       if (!id) return void (t.style.opacity = "0");
       const n = site.node.get(id);
       const owner = n?.customer ? site.customers.get(n.customer) : undefined;
-      const num = n?.kind === "cabinet" ? `${owner?.name ?? ""} · ${usd(cabinetRevenue(site, id))}` : revenueBehind(site, id) ? usd(revenueBehind(site, id)) : "";
+      const behind = n?.kind === "cabinet" ? 0 : downCabinets(site, id).size;
+      const num = n?.kind === "cabinet" ? (owner?.name ?? "") : behind ? `${behind} ${plural(behind, "cabinet")}` : "";
       t.replaceChildren();
       const b = document.createElement("b");
       b.textContent = labelOf(site, id);
@@ -526,10 +663,16 @@ function World({ site, layout, labels, tip }: WorldProps) {
 
     const k = 1 - Math.exp(-dt / 110);
     for (const it of items.current.values()) {
+      if (it.move || it.born) place(it, now);
       if (now < it.t0) continue;
       it.mat.color.lerp(it.fill, k);
       it.emat.color.lerp(it.edge, k);
     }
+    rooms.current = rooms.current.filter((r) => {
+      const q = Math.min(1, (now - r.t0) / ROOM_MS);
+      for (const m of r.mats) m.opacity = q;
+      return q < 1;
+    });
     for (const f of fx.current) f.tick(now);
     for (const f of cableFx.current) f.tick(now);
 
@@ -542,7 +685,9 @@ function World({ site, layout, labels, tip }: WorldProps) {
     const order = [...items.current.values()].sort((p, q) => q.rank - p.rank);
     for (const it of order) {
       const b = it.box;
-      const p = b.cab ? project(b.X, b.H, b.Z) : b.labelAbove ? project(b.X, b.H, b.Z - b.d / 2) : project(b.X, 0, b.Z + b.d / 2);
+      const H = b.H * it.sy;
+      const d = b.d * it.sz;
+      const p = b.cab ? project(it.cx, H, it.cz) : b.labelAbove ? project(it.cx, H, it.cz - d / 2) : project(it.cx, 0, it.cz + d / 2);
       if (!it.lw) {
         it.lw = it.label.offsetWidth;
         it.lh = it.label.offsetHeight || 12;
@@ -551,7 +696,7 @@ function World({ site, layout, labels, tip }: WorldProps) {
       const y = p.y + (b.cab ? -6 : b.labelAbove ? -18 : 6);
       const rect: [number, number, number, number] = [x - 2, y - 1, x + it.lw + 2, y + it.lh + 1];
       const clash = placed.some((r) => r[0] < rect[2] && rect[0] < r[2] && r[1] < rect[3] && rect[1] < r[3]);
-      const show = !clash;
+      const show = !clash && !it.born;
       if (show) placed.push(rect);
       if (show !== it.shown) {
         it.label.style.opacity = show ? "" : "0";
@@ -564,10 +709,10 @@ function World({ site, layout, labels, tip }: WorldProps) {
       }
     }
     floorBus.project = (id, top) => {
-      const b = items.current.get(id)?.box;
-      return b ? project(b.X, top ? b.H : b.H / 2, b.Z) : null;
+      const it = items.current.get(id);
+      return it ? project(it.cx, top ? it.box.H : it.box.H / 2, it.cz) : null;
     };
-    floorBus.litPoints = () => [...items.current.values()].filter((i) => /\b(dark|backup|serviced|cand)\b/.test(i.cls)).map((i) => project(i.box.X, i.box.H, i.box.Z));
+    floorBus.litPoints = () => [...items.current.values()].filter((i) => /\b(dark|backup|serviced|cand)\b/.test(i.cls)).map((i) => project(i.cx, i.box.H, i.cz));
     for (const f of floorBus.frame) f();
   });
   return null;

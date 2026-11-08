@@ -27,6 +27,27 @@ test('first boot from an empty log registers every DFW1 document and the audit f
   await again.close();
 });
 
+test('reset empties the site and survives a restart; a default boot preloads the seed again, an empty one does not', async () => {
+  const { ws, file } = await dfw1();
+  const docs = ws.documentCount();
+  const sub = await ws.submit(planFor(ws, D06), 'add the missing B cord', { kind: 'playbook', name: 'test' }, 'k-submit');
+  assert.ok(sub.ok);
+  const reset = await ws.reset({ kind: 'human', name: 'tester' }, 'k-reset');
+  assert.ok(reset.ok);
+  assert.deepEqual([ws.documentCount(), ws.proposals().length, ws.analysis().facility.list('cabinet').length, ws.workOrders().length], [0, 0, 0, 0]);
+  const again = await ws.reset({ kind: 'human', name: 'tester' }, 'k-reset-2');
+  assert.deepEqual(again, reset, 'resetting an empty site changes nothing');
+  assert.equal((await logLines(file)).filter((l) => l.payload.event.type === 'site-reset').length, 1);
+  await ws.close();
+
+  const empty = await openAt(file, undefined, false);
+  assert.equal(empty.documentCount(), 0, 'the reset is in the log');
+  await empty.close();
+  const preloaded = await openAt(file);
+  assert.equal(preloaded.documentCount(), docs);
+  await preloaded.close();
+});
+
 test('approve is idempotent: same key replays, a repeat approve is a noop, the patch applies once', async () => {
   const { ws, file } = await dfw1();
   const sub = await ws.submit(planFor(ws, D06), 'add the missing B cord', { kind: 'playbook', name: 'test' }, 'k-submit');

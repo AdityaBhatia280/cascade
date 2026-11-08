@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import type { RiskGrade } from "@cascade/core/contract";
 import type { Impact } from "@/lib/impact";
 import type { Site } from "@/lib/site";
@@ -18,9 +19,16 @@ export interface InfoProps {
 
 const markOf = (impact: Impact): RiskGrade => (impact.grade === "red" ? "highest" : impact.grade === "amber" ? "high" : "low");
 
-/** The floating panel: what goes dark, whose, what it costs a month, and the way to a fix. */
+/** The floating panel: which cabinets go dark or lose backup, whose, the way to a fix, and, folded away, what it costs a month. */
 export function InfoPanel({ site, impact, name, window, grade, shift, onScrub, fix }: InfoProps) {
   const hit = new Map(impact?.customers.map((c) => [c.id, c]) ?? []);
+  const [money, setMoney] = useState(false);
+  const fold = useRef<HTMLDivElement>(null);
+  if (!impact && site.customerOrder.length === 0) return null;
+  const toggle = () => {
+    setMoney(!money);
+    if (!money) setTimeout(() => fold.current?.scrollIntoView({ block: "end", behavior: "smooth" }), 230);
+  };
   return (
     <aside className={`info panel${shift ? " shift" : ""}`}>
       {impact && name && (
@@ -30,20 +38,14 @@ export function InfoPanel({ site, impact, name, window, grade, shift, onScrub, f
             <span className="nm">{name}</span>
             {window && <span className="tm">{window}</span>}
           </div>
-          <div className={`num ${impact.darkRevenue > 0 ? "red" : "gray"}`}>
-            {usd(impact.darkRevenue)}
-            <small>/mo</small>
+          <div className={`num ${impact.darkCabinets > 0 ? "red" : "gray"}`}>
+            {impact.darkCabinets}
+            <small>{plural(impact.darkCabinets, "cabinet")} dark</small>
           </div>
           <div className="counts">
-            <span className="cd">
-              <i />
-              <b>{impact.dark}</b> {plural(impact.dark, "customer")} dark
-              {impact.dark > 0 && <em>{usd(impact.darkRevenue)}</em>}
-            </span>
             <span className="cb">
               <i />
-              <b>{impact.backup}</b> losing backup
-              {impact.backup > 0 && <em>{usd(impact.backupRevenue)}</em>}
+              <b>{impact.backupCabinets}</b> losing backup
             </span>
           </div>
           {impact.times.length > 1 && (
@@ -80,8 +82,11 @@ export function InfoPanel({ site, impact, name, window, grade, shift, onScrub, f
           return (
             <div key={id} className={impact && !h ? "fade" : ""}>
               <span className="sw" style={sw} />
-              {c.name}
-              {h && <span className="rk">{usd(h.risk)}</span>}
+              <span className="cn">
+                {c.name}
+                {h?.dark && <small className="cd">{h.dark.label} dark</small>}
+                {h?.backup && <small className="cb">{h.backup.label} losing backup</small>}
+              </span>
             </div>
           );
         })}
@@ -91,6 +96,31 @@ export function InfoPanel({ site, impact, name, window, grade, shift, onScrub, f
           <button disabled={fix.disabled} onClick={fix.run}>
             {fix.label}
           </button>
+        </div>
+      )}
+      {impact && impact.customers.length > 0 && (
+        <div ref={fold} className={`money${money ? " open" : ""}`}>
+          <button className="toggle" aria-expanded={money} onClick={toggle}>
+            Revenue
+            <i />
+          </button>
+          <div className="fold">
+            <div>
+              <div className="tot cd">
+                Dark<b>{usd(impact.darkRevenue)}/mo</b>
+              </div>
+              <div className="tot cb">
+                Losing backup<b>{usd(impact.backupRevenue)}/mo</b>
+              </div>
+              {impact.customers.map((h) => (
+                <div key={h.id} className="row">
+                  <span>{h.name}</span>
+                  <em className="cd">{h.dark && usd(h.dark.usd)}</em>
+                  <em className="cb">{h.backup && usd(h.backup.usd)}</em>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </aside>

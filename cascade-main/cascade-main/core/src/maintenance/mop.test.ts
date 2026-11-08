@@ -104,10 +104,10 @@ test("the last work step leaves customers exactly where the assessment's scenari
   }
 });
 
-test('CH-2 offline: start standby CH-3 first, never open the breaker CH-2 shares with it, and stop on any chiller trip', () => {
+test('CH-2 offline: start standby CH-3 first, never open the MCC CH-2 shares with it, and stop on any chiller trip', () => {
   const m = week.find((x) => x.workOrder.wonum === 'WO-26-1235')!;
   assert.ok(m.prechecks.some((l) => /Start standby CH-3/.test(l)));
-  assert.ok(m.prechecks.some((l) => /Do not open SWGR-B-CB-3: it also feeds CH-3/.test(l)));
+  assert.ok(m.prechecks.some((l) => /Do not open MCC-B: it also feeds CH-3/.test(l)));
   assert.ok(m.stopConditions.some((l) => /CH-1, CH-3/.test(l)));
   assert.ok(m.stopConditions.some((l) => /80\.6 °F/.test(l)));
   assert.deepEqual(m.steps.map((s) => s.text), ['Take CH-2 out of service (offline) and lock out → Chillers N+1 → N']);
@@ -137,7 +137,7 @@ test('CH-1 tripping during the CH-2 job: the hall crosses 80.6 °F within the ha
 
   assert.match(r.actions[0]!, /^Start CH-3 now/);
   assert.ok(r.actions.some((a) => /return CH-2 to service: with it running, DH-1 has no cooling deficit/.test(a)));
-  assert.ok(r.actions.some((a) => /without opening SWGR-B-CB-3: CH-3 is on the same feed/.test(a)));
+  assert.ok(r.actions.some((a) => /without opening MCC-B: CH-3 is on the same feed/.test(a)));
   const who = r.affected;
   assert.equal(who.length, 6, 'all six DH-1 customers lose cooling margin');
   assert.ok(r.parameters.some((p) => p.basis === 'modeled' && /06-cooling-physics/.test(p.source)));

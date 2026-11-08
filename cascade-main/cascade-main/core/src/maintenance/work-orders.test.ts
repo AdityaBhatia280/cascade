@@ -46,10 +46,11 @@ test('the MOP-0117 return-to-normal work order was cancelled, and the temporary 
 });
 
 test('assets the model does not include are reported with the reason, not dropped', () => {
+  const facp = orders.find((o) => o.asset?.assetNum === 'EQ-010699');
+  assert.ok(facp?.asset && !facp.asset.resolved);
+  assert.match(facp.asset.why, /Fire Alarm Panel/);
   const xfmr = orders.find((o) => o.description.startsWith('INSTALL XFMR-5B'));
-  assert.ok(xfmr?.asset && !xfmr.asset.resolved);
-  assert.deepEqual([xfmr.asset.resolved, xfmr.asset.assetNum], [false, 'EQ-010377']);
-  assert.match(xfmr.asset.why, /Transformer/);
+  assert.deepEqual(xfmr?.asset?.resolved && xfmr.asset.entity, 'transformer:XFMR-5B');
   const unknown = workOrdersOf(
     [sourceDocument({ path: 'wo.csv', format: 'csv', text: 'WONUM,STATUS,WORKTYPE,REPORTDATE,ASSETNUM\nWO-1,APPR,CM,11/02/2026 09:00 AM,EQ-999999\n' })],
     facility,

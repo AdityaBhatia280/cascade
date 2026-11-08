@@ -4,7 +4,7 @@ import type { AddressInfo } from 'node:net';
 import express from 'express';
 import type { AuditDto, EntityDto, EntityHistoryDto, FixOutcomeDto, ModelSummaryDto, MopDto, ProposalDto, ReplanDto, ScenarioResultDto, SceneDto, WorkAssessmentDto, WorkOrderDto } from '@cascade/core/contract';
 import { apiRouter } from './api.js';
-import { dfw1 } from './testing.js';
+import { dfw1, testUploads } from './testing.js';
 
 /** Reads SSE frames until `done` says stop (or the stream ends). */
 async function readSse(url: string, done: (events: { event: string; data: unknown }[]) => boolean, timeoutMs = 10_000) {
@@ -38,7 +38,7 @@ async function readSse(url: string, done: (events: { event: string; data: unknow
 
 test('HTTP: model, scene, audit, scenario, plans → proposal → idempotent approval, SSE', async () => {
   const { ws } = await dfw1();
-  const app = express().use(express.json()).use('/api', apiRouter(ws, null));
+  const app = express().use(express.json()).use('/api', apiRouter(ws, testUploads(ws), null));
   const server = app.listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api`;
@@ -126,7 +126,7 @@ test('HTTP: model, scene, audit, scenario, plans → proposal → idempotent app
 
 test("HTTP: the week's work orders come back in schedule order, each linked to an entity", async () => {
   const { ws } = await dfw1();
-  const server = express().use('/api', apiRouter(ws, null)).listen(0, '127.0.0.1');
+  const server = express().use('/api', apiRouter(ws, testUploads(ws), null)).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api`;
   try {
@@ -156,7 +156,7 @@ test("HTTP: the week's work orders come back in schedule order, each linked to a
 
 test("HTTP: this week's assessment is five work orders in schedule order with engine risk grades; PDU-3A explains the RPP-4B feed", async () => {
   const { ws } = await dfw1();
-  const server = express().use('/api', apiRouter(ws, null)).listen(0, '127.0.0.1');
+  const server = express().use('/api', apiRouter(ws, testUploads(ws), null)).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api`;
   try {
@@ -192,7 +192,7 @@ test("HTTP: this week's assessment is five work orders in schedule order with en
 
 test("HTTP: CH-2's history on 2026-08-24 puts the BMS alarm, the feeder event and the work order on one timeline", async () => {
   const { ws } = await dfw1();
-  const server = express().use('/api', apiRouter(ws, null)).listen(0, '127.0.0.1');
+  const server = express().use('/api', apiRouter(ws, testUploads(ws), null)).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api`;
   try {
@@ -222,7 +222,7 @@ test("HTTP: CH-2's history on 2026-08-24 puts the BMS alarm, the feeder event an
 
 test('HTTP: the PDU-3A MOP re-feeds RPP-4B first and flags the late Halcyon notice; the CH-2 replan counts down to 80.6 °F', async () => {
   const { ws } = await dfw1();
-  const server = express().use('/api', apiRouter(ws, null)).listen(0, '127.0.0.1');
+  const server = express().use('/api', apiRouter(ws, testUploads(ws), null)).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api`;
   try {

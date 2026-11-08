@@ -13,6 +13,7 @@ import { Route as WeekRouteImport } from './routes/week'
 import { Route as HandoffRouteImport } from './routes/handoff'
 import { Route as ProceduresRouteImport } from './routes/procedures'
 import { Route as ApprovalsRouteImport } from './routes/approvals'
+import { Route as IngestRouteImport } from './routes/ingest'
 
 const IndexRoute = IndexRouteImport.update({ id: '/', path: '/', getParentRoute: () => rootRouteImport } as any)
 const SiteRoute = SiteRouteImport.update({ id: '/site', path: '/site', getParentRoute: () => rootRouteImport } as any)
@@ -20,8 +21,9 @@ const WeekRoute = WeekRouteImport.update({ id: '/week', path: '/week', getParent
 const HandoffRoute = HandoffRouteImport.update({ id: '/handoff', path: '/handoff', getParentRoute: () => rootRouteImport } as any)
 const ProceduresRoute = ProceduresRouteImport.update({ id: '/procedures', path: '/procedures', getParentRoute: () => rootRouteImport } as any)
 const ApprovalsRoute = ApprovalsRouteImport.update({ id: '/approvals', path: '/approvals', getParentRoute: () => rootRouteImport } as any)
+const IngestRoute = IngestRouteImport.update({ id: '/ingest', path: '/ingest', getParentRoute: () => rootRouteImport } as any)
 
-type Paths = '/' | '/site' | '/week' | '/handoff' | '/procedures' | '/approvals'
+type Paths = '/' | '/site' | '/week' | '/handoff' | '/procedures' | '/approvals' | '/ingest'
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -30,6 +32,7 @@ export interface FileRoutesByFullPath {
   '/handoff': typeof HandoffRoute
   '/procedures': typeof ProceduresRoute
   '/approvals': typeof ApprovalsRoute
+  '/ingest': typeof IngestRoute
 }
 export interface FileRoutesByTo extends FileRoutesByFullPath {}
 export interface FileRoutesById extends FileRoutesByFullPath {
@@ -50,6 +53,7 @@ export interface RootRouteChildren {
   HandoffRoute: typeof HandoffRoute
   ProceduresRoute: typeof ProceduresRoute
   ApprovalsRoute: typeof ApprovalsRoute
+  IngestRoute: typeof IngestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -60,6 +64,7 @@ declare module '@tanstack/react-router' {
     '/handoff': { id: '/handoff'; path: '/handoff'; fullPath: '/handoff'; preLoaderRoute: typeof HandoffRouteImport; parentRoute: typeof rootRouteImport }
     '/procedures': { id: '/procedures'; path: '/procedures'; fullPath: '/procedures'; preLoaderRoute: typeof ProceduresRouteImport; parentRoute: typeof rootRouteImport }
     '/approvals': { id: '/approvals'; path: '/approvals'; fullPath: '/approvals'; preLoaderRoute: typeof ApprovalsRouteImport; parentRoute: typeof rootRouteImport }
+    '/ingest': { id: '/ingest'; path: '/ingest'; fullPath: '/ingest'; preLoaderRoute: typeof IngestRouteImport; parentRoute: typeof rootRouteImport }
   }
 }
 
@@ -70,5 +75,6 @@ const rootRouteChildren: RootRouteChildren = {
   HandoffRoute: HandoffRoute,
   ProceduresRoute: ProceduresRoute,
   ApprovalsRoute: ApprovalsRoute,
+  IngestRoute: IngestRoute,
 }
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()

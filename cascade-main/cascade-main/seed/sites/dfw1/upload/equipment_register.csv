@@ -1,0 +1,69 @@
+asset_id,tag,asset_class,manufacturer_model,rating,fed_from,alt_source,system,location,status,notes
+EQ-010230,UTIL-1,Utility Service,Oncor 12.47kV svc / pad xfmr T1,2500 kVA,,,,Utility yard,Active,Primary service. Feeds ATS-A and ATS-B normal side. Oncor acct 10443-221
+EQ-010237,UTIL-2,Utility Service,Oncor 480V house service,300 kVA,,,,Utility yard,Active,Office / house loads only (HP-1). Not in critical path
+EQ-010244,GEN-1,Generator,Caterpillar 3516C,"2,000 kW",,,A,Gen yard,Active,Standby rating. start/transfer 10 s. 4000 gal belly tank
+EQ-010251,GEN-2,Generator,Caterpillar 3516C,2000kW,,,B,Gen yard,Active,Standby rating. start/transfer 10 s. 4000 gal belly tank
+EQ-010258,ATS-A,Automatic Transfer Switch,ASCO 7000 Series,3000A 480V 3PH,UTIL-1,GEN-1,A,Elec Rm 1,Active,Open transition
+EQ-010265,ATS-B,ATS,ASCO 7000 Series,3000 A 480V 3PH,UTIL 1,GEN-2,B,Elec Rm 2,Active,Open transition
+EQ-010272,SWGR-A,Switchgear,Square D QED-2,3000A 480V 3PH,ATS-A,,A,Elec Rm 1,Active,Main switchboard A
+EQ-010279,SWGR-B,Switchgear,Square D QED-2,3000A 480V 3PH,ATS-B,,B,Elec Rm 2,Active,Main switchboard B
+EQ-010286,SWGR-A CB-1,LV Breaker (ACB),Masterpact NW12,1200 A @ 480V 3P,SWGR-A,,A,Elec Rm 1,Active,UPS-A input
+EQ-010293,SWGR-A CB-2,LV Breaker (ACB),Masterpact NW12,1200 A @ 480V 3P,SWGR-A,,A,Elec Rm 1,Active,UPS-A maint. bypass
+EQ-010300,SWGR-A CB-3,LV Breaker (ACB),Masterpact NW08,800 A @ 480V 3P,SWGR-A,,A,Elec Rm 1,Active,"MCC-A (CH-1, CHWP-1, CHWP-3)"
+EQ-010307,SWGR-A CB-4,MCCB,PowerPact R,400A 480V 3P,SWGR-A,,A,Elec Rm 1,Active,MP-A mech panel: CRAH-01/03/05/07
+EQ-010314,SWGR-A CB-5,LV Breaker (ACB),Masterpact NW30,3000A 480V 3P,SWGR-A,,,Elec Rm 1,Active,"TIE to SWGR-B. NORMALLY OPEN, kirk-key interlocked with ATS-A/ATS-B mains"
+EQ-010321,SWGR-B CB-1,LV Breaker (ACB),Masterpact NW12,1200 A @ 480V 3P,SWGR-B,,B,Elec Rm 2,Active,UPS-B input
+EQ-010328,SWGR-B CB-2,LV Breaker (ACB),Masterpact NW12,1200 A @ 480V 3P,SWGR-B,,B,Elec Rm 2,Active,UPS-B maint. bypass
+EQ-010335,SWGR-B CB-3,LV Breaker (ACB),Masterpact NW08,800 A @ 480V 3P,SWGR-B,,B,Elec Rm 2,Active,"MCC-B (CH-2, CH-3, CHWP-2)"
+EQ-010342,SWGR-B CB-4,MCCB,PowerPact R,400A 480V 3P,SWGR-B,,B,Elec Rm 2,Active,MP-B mech panel: CRAH-02/04/06/08
+EQ-010349,SWGR-B CB-5,LV Breaker (ACB),Masterpact NW08,800 A @ 480V 3P,SWGR-B,,B,Elec Rm 2,Spare,Spare
+EQ-010356,SWGR-B CB-6,MCCB,PowerPact H,100A 480V 3P,SWGR-B,,B,Elec Rm 2,Active,Feeds RPP-5B via XFMR-5B (75kVA 480-208/120). Installed 2024 for LSG expansion
+EQ-010363,MCC-A,Motor Control Center,Square D Model 6,800A 480V 3PH,SWGR-A CB-3,,A,Central plant,Active,"Buckets: CH-1, CHWP-1, CHWP-3"
+EQ-010370,MCC-B,Motor Control Center,Square D Model 6,800A 480V 3PH,SWGR-B CB-3,,B,Central plant,Active,"Buckets: CH-2, CH-3, CHWP-2"
+EQ-010377,XFMR-5B,Transformer,Square D EX 75kVA,75 kVA,SWGR-B CB-6,,B,DH-1 Row E mid,Active,480-208/120V K-13
+EQ-010384,UPS-A,UPS,Eaton 9395P-750,750 kVA,SWGR-A CB-1,SWGR-A CB-2,A,UPS Rm A,Active,"Batt: 8 min @ full load (VRLA, 2 strings). Static + maint bypass"
+EQ-010391,UPS-B,UPS,Eaton 9395P-750,750kVA,SWGR-B CB-1,SWGR-B CB-2,B,UPS Rm B,Active,"Batt: 8 min @ full load (VRLA, 2 strings). Static + maint bypass"
+EQ-010398,UPS-C,UPS,Liebert NX 225,225 kVA,,,,UPS Rm A,Retired,"Decommissioned 2021, removed from site"
+EQ-010405,UPS-A OB-1,Breaker,Eaton Magnum DS,400A 480V 3P,UPS-A,,A,UPS Rm A,Active,Output board: PDU-1A
+EQ-010412,UPS-A OB-2,Breaker,Eaton Magnum DS,400A 480V 3P,UPS-A,,A,UPS Rm A,Active,Output board: PDU-2A
+EQ-010419,UPS-A OB-3,Breaker,Eaton Magnum DS,400A 480V 3P,UPS-A,,A,UPS Rm A,Active,Output board: PDU-3A
+EQ-010426,UPS-B OB-1,Breaker,Eaton Magnum DS,400A 480V 3P,UPS-B,,B,UPS Rm B,Active,Output board: PDU-1B
+EQ-010433,UPS-B OB-2,Breaker,Eaton Magnum DS,400A 480V 3P,UPS-B,,B,UPS Rm B,Active,Output board: PDU-2B
+EQ-010440,UPS-B OB-3,Breaker,Eaton Magnum DS,400A 480V 3P,UPS-B,,B,UPS Rm B,Active,Output board: PDU-3B
+EQ-010447,PDU-1A,PDU,Liebert FPC 150,150 kVA,UPS-A OB-1,,A,DH-1 Row A start,Active,84-pos panelboard
+EQ-010454,PDU-1B,PDU,Liebert FPC 150,150 KVA,UPS-B OB-1,,B,DH-1 Row B start,Active,84-pos panelboard
+EQ-010461,PDU-2A,PDU,Liebert FPC 150,150 kVA,UPS-A OB-2,,A,DH-1 Row C start,Active,HD row C (Caddo)
+EQ-010468,PDU-2B,PDU,Liebert FPC 150,150 kVA,UPS-B OB-2,,B,DH-1 Row C end,Active,HD row C (Caddo)
+EQ-010475,PDU-3A,PDU,Liebert FPC 150,150 kVA,UPS-A OB-3,,A,Elec Rm 1,Active,Sub-feed bkrs SF-1..SF-4 to RPPs
+EQ-010482,PDU-3B,PDU,Liebert FPC 150,150 kVA,UPS-B OB-3,,B,Elec Rm 2,Active,Replaced 2023 (MOP-0117). Sub-feed bkrs SF-1..SF-2
+EQ-010489,PDU-3A SF-1,Sub-feed Breaker,Square D I-Line,225A/208V/3ph,PDU-3A,,A,Elec Rm 1,Active,To RPP-3A
+EQ-010496,PDU-3A SF-2,Sub-feed Breaker,Square D I-Line,225A/208V/3ph,PDU-3A,,A,Elec Rm 1,Active,To RPP-4A
+EQ-010503,PDU-3A SF-3,Sub-feed Breaker,Square D I-Line,225A/208V/3ph,PDU-3A,,A,Elec Rm 1,Active,"To RPP-4B (temp during PDU-3B swap 2023, MOP-0117)"
+EQ-010510,PDU-3A SF-4,Sub-feed Breaker,Square D I-Line,225A/208V/3ph,PDU-3A,,A,Elec Rm 1,Active,To RPP-5A
+EQ-010517,PDU-3B SF-1,Sub-feed Breaker,Square D I-Line,225A/208V/3ph,PDU-3B,,B,Elec Rm 2,Active,To RPP-3B
+EQ-010524,PDU-3B SF-2,Sub-feed Breaker,Square D I-Line,225A/208V/3ph,PDU-3B,,B,Elec Rm 2,Spare,Spare (was RPP-4B before 2023)
+EQ-010531,RPP-3A,Remote Power Panel,Square D I-Line RPP,225A/208V/3ph,PDU-3A SF-1,,A,DH-1 Row D start,Active,42-pos
+EQ-010538,RPP-3B,Remote Power Panel,Square D I-Line RPP,225A/208V/3ph,PDU-3B SF-1,,B,DH-1 Row D end,Active,42-pos. IR scan 2025-03
+EQ-010545,RPP-4A,Remote Power Panel,Square D I-Line RPP,225A/208V/3ph,PDU-3A SF-2,,A,DH-1 Row E start,Active,42-pos
+EQ-010552,RPP-4B,Remote Power Panel,Square D I-Line RPP,225A/208V/3ph,PDU-3A SF-3,,B,DH-1 Row E end,Active,42-pos
+EQ-010559,RPP-5A,Remote Power Panel,Square D I-Line RPP,225A/208V/3ph,PDU-3A SF-4,,A,DH-1 Row E mid (E05/E06),Active,42-pos
+EQ-010566,RPP-5B,Remote Power Panel,Square D I-Line RPP,225A/208V/3ph,SWGR-B CB-6 via XFMR-5B,,B,DH-1 Row E mid (E05/E06),Active,42-pos. LSG expansion 2024
+EQ-010573,CH-1,Chiller,Trane CGAM 090 air-cooled,90 TR,SWGR-A CB-3 (via MCC-A),,CHWS-HDR-1,Central plant pad,Active,Duty
+EQ-010580,CH-2,Chiller,Trane CGAM 090 air-cooled,90 TR,SWGR-B CB-3 (via MCC-B),,CHWS-HDR-2,Central plant pad,Active,Duty
+EQ-010587,CH-3,Chiller,Trane CGAM 090 air-cooled,90 TR,SWGR-B CB-3 (via MCC-B),,CHWS-HDR-2,Central plant pad,Active,Standby. Moved from MCC-A to MCC-B 2022 after bucket failure (WO-22-0418)
+EQ-010594,CHWS-HDR-1,CHW Header,8in primary supply header,,,,CHW-LOOP-1,Central plant,Active,
+EQ-010601,CHWS-HDR-2,CHW Header,8in primary supply header,,,,CHW-LOOP-1,Central plant,Active,
+EQ-010608,CHW-LOOP-1,CHW Loop,"Primary/secondary, 44F supply",,,,,Central plant,Active,"Design N+1, phase 1: 2 of 3x 90TR carry 545 kW IT at 105F ambient. CH-4 pad and MCC-A bucket reserved for 600 kW build-out"
+EQ-010615,CHWP-1,Pump,B&G e-1510 10HP VFD,10 HP,SWGR-A CB-3 (via MCC-A),,CHW-LOOP-1,Central plant,Active,"Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT"
+EQ-010622,CHWP-2,Pump,B&G e-1510 10HP VFD,10 HP,SWGR-B CB-3 (via MCC-B),,CHW-LOOP-1,Central plant,Active,"Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT"
+EQ-010629,CHWP-3,Pump,B&G e-1510 10HP VFD,10 HP,SWGR-A CB-3 (via MCC-A),,CHW-LOOP-1,Central plant,Active,"Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT"
+EQ-010636,CRAH-01,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-A CB-4 (MP-A),,CHW-LOOP-1,"DH-1 grid (3.0, 0.8)",Active,North wall
+EQ-010643,CRAH-02,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-B CB-4 (MP-B),,CHW-LOOP-1,"DH-1 grid (9.5, 0.8)",Active,North wall
+EQ-010650,CRAH-03,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-A CB-4 (MP-A),,CHW-LOOP-1,"DH-1 grid (16.0, 0.8)",Active,North wall
+EQ-010657,CRAH-04,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-B CB-4 (MP-B),,CHW-LOOP-1,"DH-1 grid (22.5, 0.8)",Active,North wall
+EQ-010664,CRAH-05,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-A CB-4 (MP-A),,CHW-LOOP-1,"DH-1 grid (3.0, 21.2)",Active,South wall
+EQ-010671,CRAH-06,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-B CB-4 (MP-B),,CHW-LOOP-1,"DH-1 grid (9.5, 21.2)",Active,South wall
+EQ-010678,CRAH-07,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-A CB-4 (MP-A),,CHW-LOOP-1,"DH-1 grid (16.0, 21.2)",Active,South wall
+EQ-010685,CRAH-08,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-B CB-4 (MP-B),,CHW-LOOP-1,"DH-1 grid (22.5, 21.2)",Active,South wall
+EQ-010692,DH-1,Data Hall,,600 kW IT design,,,,Bldg 1 Level 1,Active,30.5 m x 22.0 m raised floor; cooling design N+1; max inlet 27 C (ASHRAE A1)
+EQ-010699,FACP-1,Fire Alarm Panel,Notifier NFS2-3030,,,,,Security,Active,Not tracked for power

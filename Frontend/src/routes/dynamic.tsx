@@ -4,6 +4,7 @@ import { Box, ExternalLink, Play, RefreshCw } from 'lucide-react';
 import { pageHead } from '@/lib/seo';
 import { Button } from '@/components/ui/button';
 import { Mono, StatusBadge } from '@/components/cascade/primitives';
+import { API_BASE } from '@/lib/api';
 
 export const Route = createFileRoute('/dynamic')({
   head: pageHead('Dynamic view (3D)', 'Interactive 3D data hall floor plan from cascade-main.'),
@@ -19,7 +20,7 @@ function DynamicView() {
   const triggerStart = async () => {
     setError(null);
     try {
-      const res = await fetch('/api/dynamic-view/start', { method: 'POST' });
+      const res = await fetch(`${API_BASE}/dynamic-view/start`, { method: 'POST' });
       if (res.ok) {
         const data = (await res.json()) as { state?: typeof status; error?: string };
         if (data.state) setStatus(data.state);
@@ -33,7 +34,7 @@ function DynamicView() {
     void triggerStart();
     const timer = setInterval(async () => {
       try {
-        const res = await fetch('/api/dynamic-view/status');
+        const res = await fetch(`${API_BASE}/dynamic-view/status`);
         if (!res.ok) return;
         const data = (await res.json()) as { state?: typeof status; error?: string | null };
         if (data.state) setStatus(data.state);

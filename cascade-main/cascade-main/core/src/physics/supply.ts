@@ -179,6 +179,7 @@ export function compileSupply(f: Facility): SupplyGraph {
     series(p.id, edgeOf(p.input), capacityOf(p.rating));
     label(p.id, p.labelledSide);
   }
+  for (const x of [...f.list('transformer'), ...f.list('panel')]) series(x.id, edgeOf(x.input), capacityOf(x.rating));
   for (const c of f.list('circuit')) series(c.id, edgeOf(c.panel), capacityOf(c.rating));
   for (const c of f.list('cord')) {
     series(c.id, edgeOf(c.circuit), null);
@@ -427,12 +428,14 @@ const EPS = 1e-6;
  * Capacity pools against heat demand. Loop capacity = min(Σ live chillers, Σ live pumps); each
  * hall gets Σ live CRAH capacity, and each loop's demand is the share of hall demand its CRAHs
  * carry. Evaluated twice: pessimistic (members up) and optimistic (members not down);
- * deficit in both → down, only pessimistic → unknown.
+ * deficit in both → down, only pessimistic → unknown. A pool in `failed` (the loop or hall itself was
+ * failed, e.g. a drained loop) contributes no capacity whatever its members' states.
  */
 export function coolingBalance(
   g: SupplyGraph,
   stateOf: (id: AnyId) => S3,
   demand: ReadonlyMap<AnyId, number>,
+  failed: ReadonlySet<AnyId> = new Set(),
 ): { readonly halls: ReadonlyMap<AnyId, PoolBalance>; readonly loops: ReadonlyMap<AnyId, PoolBalance> } {
   const cap = (id: AnyId) => (g.nodes.get(id)!.supply as Extract<SupplyRule, { rule: 'cooling-member' }>).capacityKw;
   const scenario = (optimistic: boolean) => {
@@ -442,7 +445,7 @@ export function coolingBalance(
     for (const [l, pool] of g.loops) {
       const ch = pool.chillers.reduce((s, m) => s + value(m), 0);
       const pu = pool.pumps.length === 0 ? Infinity : pool.pumps.reduce((s, m) => s + value(m), 0);
-      L.set(l, Math.min(ch, pu));
+      L.set(l, failed.has(l) ? 0 : Math.min(ch, pu));
     }
     const contrib = new Map<AnyId, Map<string, number>>();
     const lambda = new Map<string, number>();
@@ -470,7 +473,7 @@ export function coolingBalance(
       const D = demand.get(h) ?? 0;
       const total = [...c.values()].reduce((s, v) => s + v, 0);
       if (D <= EPS) hallDef.set(h, 0);
-      else if (total <= EPS) hallDef.set(h, D);
+      else if (total <= EPS || failed.has(h)) hallDef.set(h, D);
       else {
         let water = 0;
         for (const [l, v] of c) water += ((D * v) / total) * (1 - frac(l));
@@ -531,7 +534,12 @@ export interface PropagateOptions {
 const RANK = { up: 0, exposed: 1, unknown: 2, down: 3 } as const;
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-type HeapItem = { readonly t: number; readonly id: AnyId; readonly seq: number } & ({ readonly kind: 'transition'; readonly tr: Transition } | { readonly kind: 'recheck' });
+type HeapItem = { readonly t: number; readonly id: AnyId; readonly seq: number } & (
+  | { readonly kind: 'transition'; readonly tr: Transition }
+  | { readonly kind: 'recheck' }
+  /** A pool's ride-through ended: if it is still short of cooling, its deficit lands. */
+  | { readonly kind: 'thermal-check' }
+);
 
 class MinHeap {
   private readonly items: HeapItem[] = [];
@@ -539,7 +547,9 @@ class MinHeap {
     return this.items.length;
   }
   private less(a: HeapItem, b: HeapItem) {
-    return a.t !== b.t ? a.t < b.t : a.id !== b.id ? a.id < b.id : a.seq < b.seq;
+    // At one instant, electrical events (overload trips shedding load) settle before heat is judged.
+    const late = (x: HeapItem) => x.kind === 'thermal-check';
+    return a.t !== b.t ? a.t < b.t : late(a) !== late(b) ? late(b) : a.id !== b.id ? a.id < b.id : a.seq < b.seq;
   }
   push(x: HeapItem) {
     const h = this.items;
@@ -730,37 +740,49 @@ export function propagate(g: SupplyGraph, initiators: readonly Initiator[], opts
   const demand = new Map<AnyId, number>();
   for (const [h, pool] of g.halls) demand.set(h, pool.cabinets.reduce((s, c) => s + (g.cabinetLoadKw.get(c.id)?.kw ?? 0), 0));
   const seen = new Map<AnyId, { rank: number; deficit: number }>();
+  /** Loops and halls failed outright (an initiator), not merely short of capacity. */
+  const failedPools = new Set<AnyId>();
+  const balance = () => coolingBalance(g, eff, demand, failedPools);
   {
-    const b = coolingBalance(g, eff, demand);
+    const b = balance();
     for (const [id, x] of [...b.halls, ...b.loops]) seen.set(id, { rank: RANK[x.state], deficit: x.deficitKw });
   }
   const poolContingentOn = (members: readonly AnyId[]): FactRef[] =>
     union(...members.filter((m) => eff(m) !== 'up').map((m) => (state.get(m) ?? g.baseline.get(m))?.contingentOn ?? []));
+  /**
+   * A deficit that appears now lands only when the pool's thermal ride-through ends, and only if it
+   * is still there: an overload trip that sheds load in the meantime (or at this same instant, see
+   * MinHeap) can clear it. Without the re-check, a hall whose deficit vanished an hour earlier
+   * still went dark.
+   */
   function rebalance(t: number) {
-    const b = coolingBalance(g, eff, demand);
-    for (const [l, x] of b.loops) {
-      const prev = seen.get(l)!;
+    const b = balance();
+    for (const [id, x] of [...b.loops, ...b.halls]) {
+      const prev = seen.get(id)!;
       if (RANK[x.state] <= prev.rank && x.deficitKw <= prev.deficit + EPS) continue;
-      seen.set(l, { rank: Math.max(prev.rank, RANK[x.state]), deficit: Math.max(prev.deficit, x.deficitKw) });
-      const pool = g.loops.get(l)!;
-      const contingentOn = poolContingentOn([...pool.chillers, ...pool.pumps].map((m) => m.id));
-      if (x.state !== 'up') schedule({ tMin: t, id: l, state: x.state, cause: { kind: 'thermal', deficitKw: round2(x.deficitKw) }, contingentOn });
-    }
-    for (const [h, x] of b.halls) {
-      const prev = seen.get(h)!;
-      if (RANK[x.state] <= prev.rank && x.deficitKw <= prev.deficit + EPS) continue;
-      seen.set(h, { rank: Math.max(prev.rank, RANK[x.state]), deficit: Math.max(prev.deficit, x.deficitKw) });
+      seen.set(id, { rank: Math.max(prev.rank, RANK[x.state]), deficit: Math.max(prev.deficit, x.deficitKw) });
       if (x.state === 'up') continue;
-      const pool = g.halls.get(h)!;
-      const loopIds = sortIds(pool.crahs.flatMap((m) => m.loops));
-      const members = [...pool.crahs.map((m) => m.id), ...loopIds.flatMap((l) => [...(g.loops.get(l)?.chillers ?? []), ...(g.loops.get(l)?.pumps ?? [])].map((m) => m.id))];
-      const contingentOn = poolContingentOn(members);
-      const cause: Cause = { kind: 'thermal', deficitKw: round2(x.deficitKw) };
-      schedule({ tMin: t, id: h, state: x.state, cause, contingentOn });
       const ride = opts.timed && x.deficitKw > EPS ? (RIDE_THROUGH_MIN_AT_FULL_LOSS * x.demandKw) / x.deficitKw : 0;
-      for (const cab of pool.cabinets) {
-        if (eff(cab.id) !== 'down') schedule({ tMin: round2(t + ride), id: cab.id, state: x.state, cause, contingentOn });
-      }
+      heap.push({ kind: 'thermal-check', t: round2(t + ride), id, seq: seq++ });
+    }
+  }
+  function confirmThermal(id: AnyId, t: number) {
+    const b = balance();
+    const loop = g.loops.get(id);
+    const x = loop ? b.loops.get(id) : b.halls.get(id);
+    if (!x || x.state === 'up') return;
+    const cause: Cause = { kind: 'thermal', deficitKw: round2(x.deficitKw) };
+    if (loop) {
+      schedule({ tMin: t, id, state: x.state, cause, contingentOn: poolContingentOn([...loop.chillers, ...loop.pumps].map((m) => m.id)) });
+      return;
+    }
+    const pool = g.halls.get(id)!;
+    const loopIds = sortIds(pool.crahs.flatMap((m) => m.loops));
+    const members = [...pool.crahs.map((m) => m.id), ...loopIds.flatMap((l) => [...(g.loops.get(l)?.chillers ?? []), ...(g.loops.get(l)?.pumps ?? [])].map((m) => m.id))];
+    const contingentOn = poolContingentOn(members);
+    schedule({ tMin: t, id, state: x.state, cause, contingentOn });
+    for (const cab of pool.cabinets) {
+      if (eff(cab.id) !== 'down') schedule({ tMin: t, id: cab.id, state: x.state, cause, contingentOn });
     }
   }
 
@@ -784,6 +806,10 @@ export function propagate(g: SupplyGraph, initiators: readonly Initiator[], opts
         addLoad(s.bypass.to.filter((x) => eff(x) !== 'down'), load.get(item.id) ?? 0, item.t, cause?.contingentOn ?? []);
       }
       schedule(evaluate(item.id, item.t));
+      continue;
+    }
+    if (item.kind === 'thermal-check') {
+      confirmThermal(item.id, item.t);
       continue;
     }
     const queued = item.tr;
@@ -817,11 +843,13 @@ export function propagate(g: SupplyGraph, initiators: readonly Initiator[], opts
       const cab = g.cabinetOfCord.get(tr.id);
       if (cab) reshare(cab, t, tr);
       const kind = kindOf(tr.id);
-      if (after === 'down' && s.rule === 'any-cord') {
+      // Only a cabinet dark for another reason sheds heat; one killed by the deficit does not relieve it.
+      if (after === 'down' && s.rule === 'any-cord' && tr.cause.kind !== 'thermal') {
         const heat = g.cabinetLoadKw.get(tr.id)?.kw ?? 0;
         for (const h of s.zone.to) demand.set(h, Math.max(0, (demand.get(h) ?? 0) - heat));
       }
-      if (kind === 'chiller' || kind === 'pump' || kind === 'crah' || (after === 'down' && s.rule === 'any-cord')) rebalance(t);
+      if (s.rule === 'pool' && tr.cause.kind === 'initiating') failedPools.add(tr.id);
+      if (kind === 'chiller' || kind === 'pump' || kind === 'crah' || failedPools.has(tr.id) || (after === 'down' && s.rule === 'any-cord')) rebalance(t);
     }
   }
 

@@ -6,7 +6,7 @@ import type { ApiRouteKey, ApiRoutes, SseRouteKey } from "@cascade/core/contract
 
 const env = import.meta.env as Record<string, string | undefined>;
 // No auth yet: the server records this name on approvals.
-const USER = "facilities-manager";
+export const USER = "facilities-manager";
 
 export const API_BASE = env["VITE_API_BASE"] ?? "http://127.0.0.1:5002/api";
 
@@ -73,14 +73,15 @@ export async function api<K extends ApiRouteKey>(key: K, ...[req]: Args<K>): Pro
   const r = (req ?? {}) as LooseRequest;
   const method = key.slice(0, key.indexOf(" "));
   const headers: Record<string, string> = { "X-Cascade-User": USER };
-  if (r.body !== undefined) headers["Content-Type"] = "application/json";
+  const form = r.body instanceof FormData;
+  if (r.body !== undefined && !form) headers["Content-Type"] = "application/json";
   if (r.intent) headers["Idempotency-Key"] = r.intent.key;
   let res: Response;
   try {
     res = await fetch(urlFor(key, r), {
       method,
       headers,
-      ...(r.body !== undefined ? { body: JSON.stringify(r.body) } : {}),
+      ...(r.body !== undefined ? { body: form ? (r.body as FormData) : JSON.stringify(r.body) } : {}),
     });
   } catch {
     throw new ApiError(

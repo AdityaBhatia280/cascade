@@ -40,9 +40,12 @@ test('in-progress work, still-active alarms and the export edge are stated, not 
   assert.match(b.text, /the BMS export ends Tue 2026-11-03 09:58, so this window is not covered by it/);
 });
 
-test('watch lists the chilled-water 50 °F alarm limits', () => {
+test('watch lists the chilled-water 50 °F and cold aisle alarm limits', () => {
   const limits = brief('2026-11-08T18:00').watch.flatMap((w) => (w.kind === 'limit' ? [w.limit] : []));
-  assert.deepEqual(limits.map((l) => [l.entity, l.bound, l.value]), [['chiller:CH-1', 'high', 50], ['chiller:CH-2', 'high', 50], ['chiller:CH-3', 'high', 50]]);
+  const aisle = [['hall:DH-1', 'high', 80.6], ['hall:DH-1', 'low', 64.4]];
+  assert.deepEqual(limits.map((l) => [l.entity, l.bound, l.value]), [
+    ['chiller:CH-1', 'high', 50], ['chiller:CH-2', 'high', 50], ['chiller:CH-3', 'high', 50], ['loop:CHW-LOOP-1', 'high', 50], ...aisle, ...aisle, ...aisle,
+  ]);
 });
 
 test('who to call names the vendor Maximo lists for the PDU-3A job', () => {

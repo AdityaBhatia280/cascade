@@ -63,7 +63,7 @@ function ProposalLine({ site, id }: { site: Site; id: string }) {
 }
 
 export function Companion({ site }: { site: Site }) {
-  const { companionOpen: open } = useUi();
+  const { companionOpen: open, greet } = useUi();
   const { jobs } = useJobs();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -78,6 +78,11 @@ export function Companion({ site }: { site: Site }) {
   const greeting = `${partOfDay(new Date().getHours())} ${needing === 0 ? "The week looks safe." : needing === 1 ? "One job this week needs you." : `${needing} jobs this week need you.`}`;
   const chips = useMemo(() => suggestions(site, jobs), [site, jobs]);
 
+  useEffect(() => {
+    if (!greet) return;
+    const t = setTimeout(() => uiStore.set({ greet: false }), 1600);
+    return () => clearTimeout(t);
+  }, [greet]);
   useEffect(() => {
     msgs.current?.scrollTo({ top: 1e6 });
   }, [lines, busy]);
@@ -213,7 +218,7 @@ export function Companion({ site }: { site: Site }) {
           </button>
         </form>
       </div>
-      <button className={`orb${alert ? " alert" : ""}${open ? " open" : ""}`} aria-label="Cascade" aria-expanded={open} onClick={() => uiStore.set({ companionOpen: !open })} />
+      <button className={`orb${alert ? " alert" : ""}${open ? " open" : ""}${greet ? " greet" : ""}`} aria-label="Cascade" aria-expanded={open} onClick={() => uiStore.set({ companionOpen: !open })} />
     </>
   );
 }

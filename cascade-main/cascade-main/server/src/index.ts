@@ -6,6 +6,8 @@ import { llmFromEnv } from './agent/llm.js';
 import { apiRouter } from './api.js';
 import { openJsonlLog } from './log.js';
 import { mailerFromEnv } from './mail.js';
+import { modelReader } from './uploads/reader.js';
+import { Uploads } from './uploads/uploads.js';
 import { Workspace, type LogEntry } from './workspace.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -17,6 +19,7 @@ try {
 
 const SITE = process.env['CASCADE_SITE'] ?? 'dfw1';
 if (!/^[a-z0-9-]+$/.test(SITE)) throw new Error(`CASCADE_SITE must be a lowercase slug, got ${SITE}`);
+// Embedded in the parent app's Dynamic view: the parent passes DYNAMIC_PORT and keeps PORT for itself.
 const PORT = Number(process.env['DYNAMIC_PORT'] ?? 5002);
 const HOST = '127.0.0.1';
 const ORIGINS = (process.env['CASCADE_CORS_ORIGINS'] ?? 'http://localhost:5174,http://127.0.0.1:5174,http://localhost:5173,http://127.0.0.1:5173,http://127.0.0.1:5001').split(',').map((s) => s.trim());
@@ -27,18 +30,21 @@ if (log.tornTail) console.warn(`[cascade] dropped a torn final log line (${log.t
 const outboxDir = path.join(DATA_DIR, SITE, 'outbox');
 const inRepo = path.relative(ROOT, outboxDir);
 const mailer = mailerFromEnv(process.env, { dir: outboxDir, shownAs: inRepo.startsWith('..') || path.isAbsolute(inRepo) ? outboxDir : inRepo });
-const ws = await Workspace.open({ site: SITE, siteDir: path.join(ROOT, 'seed', 'sites', SITE), log, mailer });
+// CASCADE_START_EMPTY=1: the site holds only what was uploaded (nothing on a fresh data dir); seed docs are not registered.
+const START_EMPTY = process.env['CASCADE_START_EMPTY'] === '1';
+const ws = await Workspace.open({ site: SITE, siteDir: path.join(ROOT, 'seed', 'sites', SITE), log, mailer, syncDocs: !START_EMPTY });
 const llm = llmFromEnv(process.env);
+const uploads = new Uploads({ ws, reader: llm ? modelReader(llm) : null, dir: path.join(DATA_DIR, SITE, 'uploads') });
 
 const app = express();
 app.use(cors({ origin: ORIGINS }));
 app.use(express.json({ limit: '1mb' }));
-app.use('/api', apiRouter(ws, llm));
+app.use('/api', apiRouter(ws, uploads, llm));
 
 const server = app.listen(PORT, HOST, () => {
   const f = ws.analysis().facility;
   console.log(
-    `[cascade] http://${HOST}:${PORT}/api  site=${SITE} revision=${f.revision} companion=${llm ? llm.model : 'intent table (no LLM key)'} email=${mailer.kind === 'resend' ? 'resend' : `outbox (not sent: ${process.env['RESEND_API_KEY'] ? 'NOTIFY_FROM/NOTIFY_TO missing' : 'no email key'})`}`,
+    `[cascade] http://${HOST}:${PORT}/api  site=${SITE}${START_EMPTY ? ' (started empty)' : ''} documents=${ws.documentCount()} revision=${f.revision} companion=${llm ? llm.model : 'intent table (no LLM key)'} email=${mailer.kind === 'resend' ? 'resend' : `outbox (not sent: ${process.env['RESEND_API_KEY'] ? 'NOTIFY_FROM/NOTIFY_TO missing' : 'no email key'})`}`,
   );
 });
 

@@ -7,24 +7,42 @@ Effective Date: 2023-01-09
 [EXCERPT - Sections 1-6 omitted]
 
 7. SERVICE LEVELS
-7.1 Availability Commitment. Provider will maintain Power Availability of 99.99% per calendar month, excluding Scheduled Maintenance (Section 9).
+7.1 Availability Commitment. Provider will maintain Power Availability of 99.99% per calendar year, excluding Scheduled Maintenance (Section 9).
 7.2 Power Outage. A Power Outage occurs when a Licensed Cabinet loses power on all contracted feeds.
     For redundant (A+B or 2N) service, loss of a single feed is not a Power Outage.
-7.3 Exclusions. No credit is owed where (a) the Customer is not connected to all contracted feeds,
-    (b) Customer load on a redundant pair exceeds 80% of a single circuit rating, or (c) the event
-    occurs during Scheduled Maintenance.
+7.3 Environmental Commitment. Provider will keep the air temperature at the cold aisle face of each
+    Licensed Cabinet between 64.4 °F and 80.6 °F (18 °C to 27 °C, the ASHRAE Class A1 recommended range),
+    as measured by Provider's cold aisle sensors and recorded by its building management system. An
+    Environmental Excursion is a period of more than ten (10) consecutive minutes outside that range.
+7.4 Exclusions. No credit is owed where (a) the Customer is not connected to all contracted feeds,
+    (b) Customer load on a redundant pair exceeds 80% of a single circuit rating, (c) the event occurs
+    during Scheduled Maintenance, or (d) an Environmental Excursion is caused by Customer equipment drawing
+    more than its committed power or by missing blanking panels in a Licensed Cabinet.
 
 8. SERVICE CREDITS
-8.1 Credits are calculated on the Monthly Recurring Charge (MRC) of the affected Licensed Cabinets:
-      Cumulative Power Outage per month      Credit
-      10 - 43 minutes                         5% of MRC
-      43 - 240 minutes                        10% of MRC
-      240 - 720 minutes                       25% of MRC
-      > 720 minutes                           50% of MRC
-8.2 Total credits in any month shall not exceed 50% of the MRC. Credits are the sole and exclusive remedy
-    except as provided in Section 8.3 (chronic failure termination right).
+8.1 Power credits. Each band below is credited once per calendar year, as a percentage of the Monthly
+    Recurring Charge (MRC) of the affected Licensed Cabinets for the month in which cumulative Power
+    Outage in that calendar year first exceeds it:
+      Cumulative Power Outage per calendar year    Credit
+      More than 52.6 minutes (below 99.99%)        5% of MRC
+      More than 240 minutes                        10% of MRC
+      More than 720 minutes                        25% of MRC
+      More than 1,440 minutes                      50% of MRC
+8.2 Environmental credits. Each Environmental Excursion is credited on the MRC of the affected
+    Licensed Cabinets for the month in which it begins:
+      Environmental Excursion duration       Credit
+      More than 10 minutes, up to 4 hours    5% of MRC
+      More than 4 hours, up to 24 hours      10% of MRC
+      More than 24 hours                     25% of MRC
+8.3 Total credits in any month shall not exceed 50% of that month's MRC. Credits are the sole and
+    exclusive remedy except as provided in Section 8.4 (chronic failure termination right).
+8.4 Chronic failure. If cumulative Power Outage exceeds 1,440 minutes in a calendar year, or Environmental
+    Excursions occur in each of three consecutive months, Customer may terminate the affected Order Form
+    on thirty (30) days written notice without early termination charges.
 
 9. SCHEDULED MAINTENANCE
 9.1 Provider will give at least ten (10) business days written notice of Scheduled Maintenance.
 9.2 Provider will use commercially reasonable efforts to keep at least one contracted feed energized
     during Scheduled Maintenance for redundant service.
+9.3 Provider may perform emergency maintenance without advance notice where needed to prevent harm to
+    persons or equipment, and will notify Customer as soon as practicable.

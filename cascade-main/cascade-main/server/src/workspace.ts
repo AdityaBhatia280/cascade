@@ -13,10 +13,10 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import {
-  analyze, assemble, assessWorkOrders, entityHistory, historyOf, maintenanceNotices, parserFor, shiftHandoff, siteId, sourceDocument, workOrdersOf,
+  analyze, assemble, assessWorkOrders, contractStatements, entityHistory, historyOf, maintenanceNotices, parserFor, shiftHandoff, siteId, sourceDocument, workOrdersOf,
   type AnyId, type EntityHistory, type HandoffBrief, type HistoryWindow, type LocalDateTime, type NoticeSet, type SiteHistory,
   type Analysis, type AssemblyIssue, type CompletedChange, type DocFormat, type Facility, type FixPlan, type Revision, type SourceDocument,
-  type Statement, type WorkOrder,
+  type ContractReading, type Statement, type WorkOrder,
 } from '@cascade/core';
 import { applyPatch } from '@cascade/core';
 import type { MessageKind, ModelView } from '@cascade/core/contract';
@@ -79,9 +79,13 @@ export type DomainEvent =
       readonly path: string;
       readonly format: DocFormat;
       readonly sha256: string;
-      /** The document text itself, so the model re-folds the same after the file on disk changes. */
+      /** The document text itself (a PDF's text layer), so the model re-folds the same after the file on disk changes. */
       readonly text: string;
+      /** A model's checked reading of a contract, recorded because a model is not deterministic. */
+      readonly reading?: ContractReading;
     }
+  /** Empties the site: no documents, no proposals, no messages. Earlier entries stay in the log. */
+  | { readonly type: 'site-reset' }
   | { readonly type: 'proposal-submitted'; readonly id: ProposalId; readonly plan: FixPlan; readonly rationale: string }
   | ProposalEvent
   | {
@@ -110,9 +114,23 @@ interface Recorded {
   readonly result: CommandResult<unknown>;
 }
 
+/** One registered version of a document, with the checked model reading it was registered with. */
+interface Registered {
+  readonly doc: SourceDocument;
+  readonly reading: ContractReading | null;
+}
+
+/** A document to register: its text (a PDF's text layer) and, for a contract, a model's checked reading. */
+export interface DocumentInput {
+  readonly path: string;
+  readonly format: DocFormat;
+  readonly text: string;
+  readonly reading: ContractReading | null;
+}
+
 interface Records {
   /** Every registered version, in registration order (the last per path is current). */
-  readonly documents: readonly SourceDocument[];
+  readonly documents: readonly Registered[];
   readonly proposals: ReadonlyMap<ProposalId, Proposal>;
   /** Proposal ids in the order they were applied. */
   readonly applied: readonly ProposalId[];
@@ -169,18 +187,19 @@ const opsKey = (plan: FixPlan) => canonicalJson(plan.patch.ops);
 
 const parseMemo = new Map<string, readonly Statement[]>();
 
-/** Parser output is re-derived from the document at fold time (deterministic, never logged). */
-function parsedStatements(doc: SourceDocument): readonly Statement[] {
-  let statements = parseMemo.get(doc.id);
+/** Parser output is re-derived from the document at fold time (deterministic, never logged); a recorded reading adds to it. */
+function parsedStatements(r: Registered): readonly Statement[] {
+  const key = r.reading ? `${r.doc.id}:${canonicalJson(r.reading)}` : r.doc.id;
+  let statements = parseMemo.get(key);
   if (!statements) {
-    statements = parserFor(doc)?.parse(doc).statements ?? [];
-    parseMemo.set(doc.id, statements);
+    statements = contractStatements(r.doc, r.reading);
+    parseMemo.set(key, statements);
   }
   return statements;
 }
 
 /** The current version of each path, in the order paths were first registered. */
-const currentDocuments = (documents: readonly SourceDocument[]): SourceDocument[] => [...new Map(documents.map((d) => [d.path, d])).values()];
+const currentDocuments = (documents: readonly Registered[]): Registered[] => [...new Map(documents.map((d) => [d.doc.path, d])).values()];
 
 function reduce(r: Records, seq: number, at: string, entry: LogEntry): Records {
   const results = new Map(r.results).set(entry.key, { fingerprint: entry.fingerprint, result: entry.result });
@@ -190,8 +209,10 @@ function reduce(r: Records, seq: number, at: string, entry: LogEntry): Records {
     case 'document-registered': {
       const doc = sourceDocument({ path: e.path, format: e.format, text: e.text });
       if (doc.sha256 !== e.sha256) throw new Error(`log seq ${seq}: document ${e.path} text does not match its recorded sha256`);
-      return { ...r, results, documents: [...r.documents, doc] };
+      return { ...r, results, documents: [...r.documents, { doc, reading: e.reading ?? null }] };
     }
+    case 'site-reset':
+      return { ...EMPTY, results };
     case 'proposal-submitted': {
       if (actor.kind === 'system') throw new Error(`log seq ${seq}: system actor cannot submit`);
       const p: Proposal = {
@@ -246,7 +267,8 @@ function derive(site: string, records: Records): State {
     if (r.ok) planned = r.facility;
     else derivedStale.set(id, `patch no longer applies to the planned model: ${r.conflicts.map((c) => `${c.op.op} ${c.kind === 'precondition' ? `${c.ref} ${c.reason}` : c.reason}`).join('; ')}`);
   }
-  return { records, documented, planned, issues, workOrders: workOrdersOf(records.documents, documented), history: historyOf(records.documents, documented), derivedStale, analyses: new Map() };
+  const docs = records.documents.map((d) => d.doc);
+  return { records, documented, planned, issues, workOrders: workOrdersOf(docs, documented), history: historyOf(docs, documented), derivedStale, analyses: new Map() };
 }
 
 type CommandStep<T> =
@@ -265,7 +287,6 @@ export class Workspace {
 
   private constructor(
     private readonly site: string,
-    private readonly docsDir: string,
     private readonly log: EventLog<LogEntry>,
     private readonly mailer: Mailer,
   ) {
@@ -275,18 +296,22 @@ export class Workspace {
   }
 
   /**
-   * Folds the log, then registers every document under `<siteDir>/docs` whose current bytes are not
-   * the latest registered version of its path (first boot: all of them; later: changed files).
+   * Folds the log, then (unless `syncDocs` is false) registers every document under `<siteDir>/docs`
+   * whose current bytes are not the latest registered version of its path (first boot: all of them;
+   * later: changed files). With `syncDocs: false` the site holds only what the log holds.
    */
-  static async open(opts: { readonly site: string; readonly siteDir: string; readonly log: EventLog<LogEntry>; readonly mailer: Mailer }): Promise<Workspace> {
-    const ws = new Workspace(opts.site, path.join(opts.siteDir, 'docs'), opts.log, opts.mailer);
+  static async open(opts: { readonly site: string; readonly siteDir: string; readonly log: EventLog<LogEntry>; readonly mailer: Mailer; readonly syncDocs?: boolean }): Promise<Workspace> {
+    const ws = new Workspace(opts.site, opts.log, opts.mailer);
+    if (opts.syncDocs === false) return ws;
+    const docsDir = path.join(opts.siteDir, 'docs');
     const sync: SystemActor = { kind: 'system', name: 'docs-sync' };
-    for (const rel of await walk(ws.docsDir)) {
-      if (!FORMATS[path.extname(rel)]) continue;
-      const text = await readFile(path.join(ws.docsDir, rel), 'utf8');
-      const sha = sourceDocument({ path: rel, format: 'text', text }).sha256;
+    for (const rel of await walk(docsDir)) {
+      const format = FORMATS[path.extname(rel)];
+      if (!format) continue;
+      const text = await readFile(path.join(docsDir, rel), 'utf8');
+      const sha = sourceDocument({ path: rel, format, text }).sha256;
       if (ws.latest(rel)?.sha256 === sha) continue;
-      const r = await ws.ingest(rel, sync, `docs-sync:${rel}:${sha}`);
+      const r = await ws.register({ path: rel, format, text, reading: null }, sync, `docs-sync:${rel}:${sha}:${ws.log.nextSeq()}`);
       if (!r.ok) throw new Error(`boot: could not register ${rel}: ${r.message}`);
     }
     return ws;
@@ -360,35 +385,36 @@ export class Workspace {
     return this.state.planned.revision;
   }
 
+  /** How many documents the site holds (the current version of each path). */
+  documentCount(): number {
+    return currentDocuments(this.state.records.documents).length;
+  }
+
   // ───────────── commands ─────────────
 
   /**
-   * Registers a document from the site's docs dir. Same path + same bytes as the latest version
-   * returns the existing report; new bytes register a new version that replaces the old one.
+   * Registers a document. The same path, text and reading as the latest version returns the existing
+   * report; anything new registers a new version that replaces the old one.
    */
-  async ingest(rel: string, by: Actor | SystemActor, key: string): Promise<CommandResult<IngestReport>> {
-    const fp = fingerprintOf('ingest', { rel });
-    const replay = this.replayed<IngestReport>(key, fp);
-    if (replay) return replay;
-    const abs = path.resolve(this.docsDir, rel);
-    const relNorm = path.relative(this.docsDir, abs);
-    if (relNorm.startsWith('..') || path.isAbsolute(relNorm)) return fail('bad-request', `path escapes the site docs directory: ${rel}`);
-    const format = FORMATS[path.extname(relNorm)];
-    if (!format) return fail('bad-request', `unsupported document format: ${path.extname(relNorm) || '(none)'}`);
-    let text: string;
-    try {
-      if (!(await stat(abs)).isFile()) return fail('not-found', `not a file: ${relNorm}`);
-      text = await readFile(abs, 'utf8');
-    } catch {
-      return fail('not-found', `no such document: ${relNorm}`);
-    }
-    const doc = sourceDocument({ path: relNorm, format, text });
-    return this.command(key, fp, by, (s) => {
-      if (this.latest(relNorm, s)?.sha256 === doc.sha256) return { result: ok(this.report(s, doc.id)) };
+  async register(input: DocumentInput, by: Actor | SystemActor, key: string): Promise<CommandResult<IngestReport>> {
+    const doc = sourceDocument({ path: input.path, format: input.format, text: input.text });
+    const reading = input.reading && Object.keys(input.reading).length > 0 ? input.reading : null;
+    return this.command(key, fingerprintOf('register', { path: doc.path, sha256: doc.sha256, reading }), by, (s) => {
+      const latest = this.latestRegistered(doc.path, s);
+      if (latest?.doc.sha256 === doc.sha256 && canonicalJson(latest.reading) === canonicalJson(reading)) return { result: ok(this.report(s, latest)) };
       return {
-        event: { type: 'document-registered', path: relNorm, format, sha256: doc.sha256, text },
-        result: (next) => ok(this.report(next, doc.id)),
+        event: { type: 'document-registered', path: doc.path, format: doc.format, sha256: doc.sha256, text: doc.text, ...(reading ? { reading } : {}) },
+        result: (next) => ok(this.report(next, next.records.documents.at(-1)!)),
       };
+    });
+  }
+
+  /** Empties the site. Already empty: no event, the current revision. */
+  async reset(by: Actor, key: string): Promise<CommandResult<{ revision: Revision }>> {
+    return this.command(key, fingerprintOf('reset', {}), by, (s) => {
+      const r = s.records;
+      if (r.documents.length === 0 && r.proposals.size === 0 && r.messages.size === 0) return { result: ok({ revision: s.planned.revision }) };
+      return { event: { type: 'site-reset' }, result: (next) => ok({ revision: next.planned.revision }) };
     });
   }
 
@@ -515,7 +541,9 @@ export class Workspace {
 
   private emitChanges(prev: State, next: State, e: DomainEvent): void {
     const out: WorkspaceEvent[] = [];
-    if (prev.planned.revision !== next.planned.revision || prev.documented.revision !== next.documented.revision) {
+    // Work orders and monitoring history are records, not facts: a new export changes them without a new revision.
+    const recordsChanged = e.type === 'document-registered' || e.type === 'site-reset';
+    if (recordsChanged || prev.planned.revision !== next.planned.revision || prev.documented.revision !== next.documented.revision) {
       out.push({ type: 'model-changed', revision: next.planned.revision });
     }
     if ('id' in e && e.type.startsWith('proposal-')) out.push({ type: 'proposal-changed', id: e.id as ProposalId });
@@ -528,15 +556,18 @@ export class Workspace {
     return { ...p, state: { status: 'stale', at: p.state.at, reason } };
   }
 
-  private latest(rel: string, s: State = this.state): SourceDocument | undefined {
-    return s.records.documents.findLast((d) => d.path === rel);
+  private latestRegistered(rel: string, s: State = this.state): Registered | undefined {
+    return s.records.documents.findLast((d) => d.doc.path === rel);
   }
 
-  private report(s: State, docId: string): IngestReport {
-    const doc = s.records.documents.find((d) => d.id === docId)!;
-    const mine = new Set(parsedStatements(doc));
+  private latest(rel: string, s: State = this.state): SourceDocument | undefined {
+    return this.latestRegistered(rel, s)?.doc;
+  }
+
+  private report(s: State, r: Registered): IngestReport {
+    const mine = new Set(parsedStatements(r));
     const rejected = s.issues.filter((i) => i.kind !== 'stale-change' && mine.has(i.statement)).length;
-    return { doc: docId, via: parserFor(doc) ? 'parser' : 'unparsed', valuesRead: mine.size - rejected, valuesRejected: rejected, revision: s.planned.revision };
+    return { doc: r.doc.id, via: parserFor(r.doc) ? 'parser' : 'unparsed', valuesRead: mine.size - rejected, valuesRejected: rejected, revision: s.planned.revision };
   }
 }
 

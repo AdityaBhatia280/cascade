@@ -17,7 +17,7 @@ export type PatchOp =
   /** Add a second cord to a single-corded cabinet (requires dualPsu known true). */
   | { readonly op: 'add-cord'; readonly cabinet: Id<'cabinet'>; readonly side: Side; readonly circuit: Id<'circuit'> }
   /** Re-feed a PDU/RPP from a different upstream breaker or UPS (feeder work; typically needs a shutdown window). */
-  | { readonly op: 'refeed'; readonly device: Id<'pdu' | 'rpp'>; readonly from: Id<'ups' | 'breaker'>; readonly to: Id<'ups' | 'breaker'> };
+  | { readonly op: 'refeed'; readonly device: Id<'pdu' | 'rpp'>; readonly from: Id<'ups' | 'breaker' | 'transformer'>; readonly to: Id<'ups' | 'breaker'> };
 
 export interface Patch {
   readonly base: Revision;
@@ -161,7 +161,7 @@ export function parsePatchOps(raw: unknown, f: Facility): PatchOp[] | { readonly
       out.push({ op: 'add-cord', cabinet, side: o.side, circuit });
     } else if (o.op === 'refeed') {
       const device = parse(o.device, ['pdu', 'rpp']);
-      const from = parse(o.from, ['ups', 'breaker']);
+      const from = parse(o.from, ['ups', 'breaker', 'transformer']);
       const to = parse(o.to, ['ups', 'breaker']);
       if (!device || !from || !to) return { error: `ops[${i}]: unknown device or feeder` };
       out.push({ op: 'refeed', device, from, to });

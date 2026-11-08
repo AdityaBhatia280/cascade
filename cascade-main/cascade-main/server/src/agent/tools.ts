@@ -86,7 +86,7 @@ const what_if = {
     const ids = entities(t, a['equipment']);
     if (isError(ids)) return fail(ids.error);
     if (ids.length === 0 && t.off.length === 0) return fail('name at least one piece of equipment');
-    return ok(whatIf(t, ids), (v) => ({ off: v.off, losePower: who(v.down), onLastFeed: who(v.exposed), recordsCannotSay: who(v.unknown), revenueAtRiskUsdPerMonth: v.revenueUsd }));
+    return ok(whatIf(t, ids), (v) => ({ off: v.off, losePower: who(v.down), onLastFeed: who(v.exposed), recordsCannotSay: who(v.unknown), monthlyRevenueUsd: { losePower: v.revenueUsd.down, onLastFeed: v.revenueUsd.exposed, recordsCannotSay: v.revenueUsd.unknown } }));
   },
 } satisfies Tool;
 

@@ -25,6 +25,8 @@ export interface Box {
 }
 
 export interface Zone {
+  /** The room's place in floor order, stable while the site grows. */
+  id: string;
   x0: number;
   x1: number;
   z0: number;
@@ -42,9 +44,10 @@ export interface FloorLayout {
 }
 
 const NOT_DRAWN = new Set<EntityKind>(["circuit", "breaker", "customer", "row", "hall", "contract", "cord"]);
+const ROOM_IDS = ["plant", "power", "hall", "cooling"] as const;
 const ROOMS: readonly (readonly EntityKind[])[] = [
   ["utility", "generator", "ats"],
-  ["switchgear", "ups", "pdu", "rpp"],
+  ["switchgear", "ups", "pdu", "transformer", "rpp", "panel"],
   [],
   ["chiller", "header", "loop", "pump"],
 ];
@@ -69,12 +72,18 @@ function warp(lo: number, hi: number, weight: (v: number) => number, a: number, 
   return (v: number) => a + acc[Math.max(0, Math.min(acc.length - 1, Math.round((v - lo) / step)))]! * k;
 }
 
+/** Never true: stands in for a band the site does not have yet. */
+const NONE: Range = [0, 0];
+
 export function buildLayout(scene: SceneDto): FloorLayout {
   const drawn = scene.nodes.filter((n) => !NOT_DRAWN.has(n.kind) && n.placed !== "unplaced");
+  if (!drawn.length) return { boxes: new Map(), zones: [], at: (x, z) => [x, z] };
   const hallNode = scene.nodes.find((n) => n.kind === "hall");
-  const hallZ: Range = hallNode ? extent([hallNode], 2) : extent(drawn.filter((n) => n.kind === "cabinet"), 2);
+  const cabs = drawn.filter((n) => n.kind === "cabinet");
+  // A site read from part of its files may have plant but no hall or cabinets yet.
+  const hallZ: Range | null = hallNode ? extent([hallNode], 2) : cabs.length ? extent(cabs, 2) : null;
   const hallX: Range = hallNode ? extent([hallNode], 0) : extent(drawn, 0);
-  const inHall = (n: SceneNodeDto) => within(n.pos3[2], hallZ);
+  const inHall = (n: SceneNodeDto) => !!hallZ && within(n.pos3[2], hallZ);
 
   // Rooms in floor order: each group's z band, the hall's from the hall itself.
   const bands = ROOMS.map((kinds, i): Range | null => {
@@ -91,6 +100,7 @@ export function buildLayout(scene: SceneDto): FloorLayout {
     const z1 = hall ? b + 0.4 : next ? (b + next[0]) / 2 - 0.4 : b + 1;
     const outer = k === 0 || k === present.length - 1;
     return {
+      id: ROOM_IDS[i]!,
       x0: hallX[0] - 0.4,
       x1: hallX[1] + 0.4,
       z0,
@@ -108,14 +118,14 @@ export function buildLayout(scene: SceneDto): FloorLayout {
   }
 
   const rows = drawn.filter((n) => n.kind === "cabinet" || ((n.kind === "pdu" || n.kind === "rpp") && inHall(n)));
-  const cabs = drawn.filter((n) => n.kind === "cabinet");
-  const denseZ: Range = cabs.length ? [extent(cabs, 2)[0] - 0.4, extent(cabs, 2)[1] + 0.6] : hallZ;
+  const denseZ: Range = cabs.length ? [extent(cabs, 2)[0] - 0.4, extent(cabs, 2)[1] + 0.6] : (hallZ ?? NONE);
   const denseX: Range = rows.length ? [extent(rows, 0)[0] - 0.3, extent(rows, 0)[1] + 0.4] : hallX;
-  const zLo = Math.min(...zones.map((z) => z.z0)) - 0.2;
-  const zHi = Math.max(...zones.map((z) => z.z1)) + 0.2;
+  const span: Range = zones.length ? [Math.min(...zones.map((z) => z.z0)), Math.max(...zones.map((z) => z.z1))] : extent(drawn, 2);
+  const zLo = span[0] - 0.2;
+  const zHi = span[1] + 0.2;
   const xLo = hallX[0] - 0.6;
   const xHi = hallX[1] + 0.7;
-  const hallBand: Range = [hallZ[0] - 0.6, hallZ[1] + 0.6];
+  const hallBand: Range = hallZ ? [hallZ[0] - 0.6, hallZ[1] + 0.6] : NONE;
   const ZM = warp(zLo, zHi, (z) => (within(z, denseZ) ? 2.1 : within(z, hallBand) ? 0.75 : 0.45), 20, FW - 20);
   const XM = warp(xLo, xHi, (x) => (within(x, denseX) ? 2.3 : 0.62), 30, FH - 30);
   const XL = warp(xLo, xHi, () => 1, 30, FH - 30);

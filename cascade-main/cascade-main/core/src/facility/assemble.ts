@@ -3,7 +3,7 @@
 // inputs always give the same Facility and the same Revision (content hash), so the server can
 // re-fold from its event log at boot.
 
-import type { EntityKind } from '../contract.js';
+import { ENTITY_KINDS, type EntityKind } from '../contract.js';
 import { canonical, sha256Hex } from '../hash.js';
 import type { Statement } from '../ingest/documents.js';
 import { normalizeTag, SOURCE_PRECEDENCE } from '../ingest/sources.js';
@@ -45,6 +45,12 @@ const cabinetTagOfCord = (cordTag: string) => (cordTag.includes('/') ? cordTag.s
 
 const rankOf = (s: Statement) => SOURCE_PRECEDENCE.indexOf(s.source);
 
+/** Field names of the entity an id string names; none when it is not an entity id. */
+function fieldNames(id: string): readonly string[] {
+  const kind = id.slice(0, Math.max(0, id.indexOf(':')));
+  return (ENTITY_KINDS as readonly string[]).includes(kind) ? Object.keys(fieldCodecs(kind as EntityKind)) : [];
+}
+
 export function assemble(input: AssemblyInput): Assembly {
   const issues: AssemblyIssue[] = [];
 
@@ -78,6 +84,7 @@ export function assemble(input: AssemblyInput): Assembly {
     },
   };
   const chosen = new Map<string, { readonly value: unknown; readonly rank: number }>();
+  const candidates = new Map<string, { readonly value: unknown; readonly rank: number }[]>();
   for (const s of input.statements) {
     const id = mintId(s.subject.kind, normalizeTag(s.subject.tag));
     if (!displayTag.has(id)) {
@@ -102,6 +109,16 @@ export function assemble(input: AssemblyInput): Assembly {
     const rank = rankOf(s);
     const cur = chosen.get(key);
     if (!cur || rank < cur.rank) chosen.set(key, { value, rank });
+    (candidates.get(key) ?? candidates.set(key, []).get(key)!).push({ value, rank });
+  }
+  // A lower-ranked reference to a device that is itself fed from the chosen one names the same route
+  // in more detail ("CHWP-1 from SWGR-A CB-3" and "CHWP-1 from MCC-A", MCC-A fed from SWGR-A CB-3), so it is kept.
+  const feeds = (via: unknown, target: unknown) =>
+    typeof via === 'string' && fieldNames(via).some((field) => chosen.get(`${via}#${field}`)?.value === target);
+  for (const [key, said] of candidates) {
+    const win = chosen.get(key)!;
+    const finer = said.find((c) => c.rank > win.rank && feeds(c.value, win.value));
+    if (finer) chosen.set(key, finer);
   }
 
   // 3. Build entities. A field no document states is a missing fact.

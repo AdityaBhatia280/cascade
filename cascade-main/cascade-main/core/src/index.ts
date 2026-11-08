@@ -21,6 +21,10 @@ export type { SourceDocument, Statement, DocFormat, DocId } from './ingest/docum
 export { sourceDocument, docIdFor } from './ingest/documents.js';
 export type { Parser, ParseResult, ParserId, FactSource } from './ingest/sources.js';
 export { PARSERS, SOURCE_PRECEDENCE, parserFor, parseDocument, normalizeTag } from './ingest/sources.js';
+export { checkReading, contractStatements, CONTRACT_READING_SCHEMA } from './ingest/reading.js';
+export type { ContractReading, CheckedReading, ReadingField } from './ingest/reading.js';
+export { UPLOAD_KIND_SPECS, classifyByRules, readsAs, renameColumns, uploadSummary } from './ingest/classify.js';
+export type { UploadSummary } from './ingest/classify.js';
 
 // Maintenance (CMMS work orders: schedule and history records, joined to the model by the register)
 export { workOrdersOf, upcomingWorkOrders, addDays } from './maintenance/work-orders.js';
@@ -51,6 +55,7 @@ export type {
   Explanation, SpofEntry, TermCompliance,
 } from './analysis/analysis.js';
 export type { Finding, FindingId, FindingDetail, AuditReport, AuditDelta, CustomerImpact } from './analysis/audit.js';
+export { findingEntities } from './analysis/audit.js';
 export type { FixGoal, FixOutcome, FixPlan, PlanId, Unplanned } from './analysis/planner.js';
 export { planOfOps } from './analysis/planner.js';
 export type { Usd } from './analysis/money.js';

@@ -37,7 +37,7 @@ const TINTS: readonly (readonly [string, string])[] = [
 /** Kinds the floor and chain never draw as a stop of their own. */
 export const PASS_THROUGH = new Set(["breaker", "circuit", "row", "customer"]);
 /** Kinds a click selects. */
-export const SELECTABLE = new Set(["utility", "generator", "ats", "switchgear", "ups", "pdu", "rpp", "chiller", "crah", "pump", "header", "loop", "cabinet"]);
+export const SELECTABLE = new Set(["utility", "generator", "ats", "switchgear", "ups", "pdu", "transformer", "rpp", "panel", "chiller", "crah", "pump", "header", "loop", "cabinet"]);
 
 function push(m: Map<string, string[]>, k: string, v: string) {
   const xs = m.get(k);
@@ -143,20 +143,6 @@ export function depthFrom(site: Site, id: string): Map<string, number> {
 
 /** A cabinet's cords, as power links keyed by the cord id. */
 export const cordsOf = (site: Site, cabinet: string) => site.power.filter((l) => l.to === cabinet && l.id.startsWith("cord:"));
-
-export function cabinetRevenue(site: Site, cabinet: string): number {
-  const owner = site.node.get(cabinet)?.customer;
-  const c = owner ? site.customers.get(owner) : undefined;
-  return c && c.cabinets.length ? c.monthly / c.cabinets.length : 0;
-}
-
-/** Monthly revenue behind an entity: its own cabinet's share, or every cabinet it supplies. */
-export function revenueBehind(site: Site, id: string): number {
-  if (site.node.get(id)?.kind === "cabinet") return cabinetRevenue(site, id);
-  let s = 0;
-  for (const c of downCabinets(site, id)) s += cabinetRevenue(site, c);
-  return s;
-}
 
 /** The drawn entity a pass-through id belongs to: a circuit's or breaker's panel. */
 export function ownerOf(site: Site, id: string): string {

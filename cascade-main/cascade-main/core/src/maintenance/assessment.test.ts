@@ -71,22 +71,24 @@ test('PDU-3A shutdown also drops D03 (both cords on RPP-3A per the BMS) and sing
   assert.ok(line('one-cord-left').some(([cabs, change]) => cabs === 'cabinet:E06 cabinet:E07 cabinet:E08 cabinet:E09 cabinet:E10' && change === 'A+B → B'));
 });
 
-test('CH-2 offline is medium: chillers drop from N+1 to N, a CH-1 or CH-3 trip would overheat the hall, and CH-3 shares CH-2’s breaker', () => {
+test('CH-2 offline is medium: chillers drop from N+1 to N, a CH-1 or CH-3 trip would overheat the hall, and CH-3 shares CH-2’s MCC', () => {
   const x = assessed('WO-26-1235');
   assert.deepEqual(x.reasons.map((r) => r.kind), ['cooling-margin']);
   const r = x.reasons[0]!;
   assert.deepEqual(r.pools.map((p) => [p.pool, p.units, p.before, p.after]), [['loop:CHW-LOOP-1', 'chillers', 1, 0]]);
   assert.deepEqual(r.secondFaults.slice(0, 2), ['chiller:CH-1', 'chiller:CH-3']);
-  assert.ok((r.standingFaults as readonly string[]).includes('breaker:SWGR-B-CB-3'), 'the breaker CH-2 and CH-3 share is already a single fault today');
-  assert.deepEqual(r.sharedFeeds.map((s) => [s.unit, s.feed]), [['chiller:CH-3', 'breaker:SWGR-B-CB-3']]);
+  for (const shared of ['panel:MCC-B', 'breaker:SWGR-B-CB-3']) assert.ok((r.standingFaults as readonly string[]).includes(shared), `${shared}, which CH-2 and CH-3 share, is already a single fault today`);
+  // Register: CH-2 and CH-3 are both fed "SWGR-B CB-3 (via MCC-B)"; CH-3 was moved onto MCC-B in 2022.
+  assert.deepEqual(r.sharedFeeds.map((s) => [s.unit, s.feed]), [['chiller:CH-3', 'panel:MCC-B']]);
   assert.match(x.headline, /^Chillers N\+1 → N\./);
 });
 
-test('CRAH-05 filter change is medium: with it stopped, one MP-B breaker trip leaves 315 kW of CRAH for 347 kW of load', () => {
+test('CRAH-05 filter change is medium: with it stopped, one MP-B or SWGR-B CB-4 trip leaves 315 kW of CRAH for 347 kW of load', () => {
   const x = assessed('WO-26-1227');
   const r = x.reasons[0]!;
   assert.equal(r.kind, 'cooling-margin');
-  assert.deepEqual(r.secondFaults, ['breaker:SWGR-B-CB-4']);
+  // MP-B and the SWGR-B CB-4 breaker feeding it each carry CRAH-02/04/06/08.
+  assert.deepEqual(r.secondFaults, ['breaker:SWGR-B-CB-4', 'panel:MP-B']);
   assert.deepEqual(r.pools.map((p) => [p.units, p.before, p.after]), [['crahs', 4, 3]]);
 });
 

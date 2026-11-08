@@ -4,7 +4,7 @@ import type { AddressInfo } from 'node:net';
 import express from 'express';
 import type { CompanionAction, CompanionReply, MessageDto, ProposalDto } from '@cascade/core/contract';
 import { apiRouter } from '../api.js';
-import { dfw1 } from '../testing.js';
+import { dfw1, testUploads } from '../testing.js';
 import type { LlmClient, LlmRequest, LlmResponse } from './llm.js';
 import { TOOLS } from './tools.js';
 
@@ -13,7 +13,7 @@ const SUNDAY = () => new Date(2026, 10, 8, 0, 0);
 
 async function serve(llm: LlmClient | null = null) {
   const { ws } = await dfw1();
-  const server = express().use(express.json()).use('/api', apiRouter(ws, llm, { now: SUNDAY })).listen(0, '127.0.0.1');
+  const server = express().use(express.json()).use('/api', apiRouter(ws, testUploads(ws), llm, { now: SUNDAY })).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api`;
   const ask = async (text: string, opts: { key?: string; off?: string[]; selected?: string | null } = {}) => {

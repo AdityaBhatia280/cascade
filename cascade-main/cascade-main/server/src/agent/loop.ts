@@ -15,6 +15,7 @@ const SYSTEM = [
   'Never write internal ids with colons, file or document names, citations, markdown, or lists.',
   'You cannot approve, reject or send anything: submit_fix only queues a fix for a person to approve, and draft_notices only drafts.',
   'When asked to fix something, call submit_fix. When asked whether this week is safe, call week_check. When asked what happens if something fails, call what_if.',
+  'Lead with what goes dark and what loses backup, in cabinets and customers. Mention money only when asked, and never add revenue that goes dark to revenue that only loses backup.',
   'Use show to point at things in the view when it helps.',
 ].join(' ');
 

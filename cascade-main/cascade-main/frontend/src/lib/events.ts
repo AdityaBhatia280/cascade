@@ -5,8 +5,9 @@ import { useEffect } from "react";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import type { ApiRouteKey, ServerEventDto } from "@cascade/core/contract";
 import { urlFor } from "./api";
+import { UPLOAD_EVENTS, uploadSession, type UploadEventDto } from "./uploads";
 
-const SERVER_EVENTS = ["model-changed", "proposal-changed"] as const satisfies readonly ServerEventDto["type"][];
+const SERVER_EVENTS = ["model-changed", "proposal-changed", "upload-file", "upload-done"] as const satisfies readonly ServerEventDto["type"][];
 
 const byRoute = (qc: QueryClient, ...routes: ApiRouteKey[]) => Promise.all(routes.map((r) => qc.invalidateQueries({ queryKey: [r] })));
 
@@ -17,6 +18,10 @@ export function invalidateFor(qc: QueryClient, e: ServerEventDto, lastRevision: 
       return e.revision === lastRevision ? Promise.resolve() : qc.invalidateQueries();
     case "proposal-changed":
       return byRoute(qc, "GET /proposals");
+    case "upload-file":
+      return byRoute(qc, "GET /uploads/:batchId", "GET /site/status");
+    case "upload-done":
+      return qc.invalidateQueries();
   }
 }
 
@@ -44,6 +49,13 @@ export function useServerEvents(): void {
         timer = setTimeout(connect, delay);
         delay = Math.min(delay * 2, 30_000);
       };
+      for (const name of UPLOAD_EVENTS) {
+        es.addEventListener(name, (msg) => {
+          const e = JSON.parse((msg as MessageEvent<string>).data) as UploadEventDto;
+          uploadSession.receive(e);
+          if (e.type === "upload-done") void qc.invalidateQueries();
+        });
+      }
       for (const name of SERVER_EVENTS) {
         es.addEventListener(name, (msg) => {
           const e = JSON.parse((msg as MessageEvent<string>).data) as ServerEventDto;
@@ -52,9 +64,20 @@ export function useServerEvents(): void {
         });
       }
     };
+    // A page kept in the back-forward cache would hold its stream open, and enough of them take every
+    // connection the browser allows the server, which stalls the next request.
+    const hide = () => {
+      if (timer) clearTimeout(timer);
+      es?.close();
+    };
+    const show = (e: PageTransitionEvent) => e.persisted && !closed && connect();
+    window.addEventListener("pagehide", hide);
+    window.addEventListener("pageshow", show);
     connect();
     return () => {
       closed = true;
+      window.removeEventListener("pagehide", hide);
+      window.removeEventListener("pageshow", show);
       if (timer) clearTimeout(timer);
       es?.close();
     };

@@ -281,7 +281,7 @@ export function termField(t: ContractTerm): string {
 
 // ───────────────────────────── The table ─────────────────────────────
 
-const ELECTRICAL_SOURCE = ['breaker', 'circuit'] as const;
+const ELECTRICAL_SOURCE = ['breaker', 'circuit', 'panel'] as const;
 
 export const KINDS: { readonly [K in EntityKind]: KindSpec<K> } = {
   utility: { layer: 'power', geometry: { size: [3, 2.5, 3], band: 'yard' }, fields: { rating } },
@@ -321,16 +321,18 @@ export const KINDS: { readonly [K in EntityKind]: KindSpec<K> } = {
     geometry: { size: [1.2, 2, 0.8], band: 'electrical' },
     fields: { input: ref(['ups', 'breaker']), rating, labelledSide: nullableSide, placement },
   },
+  transformer: { layer: 'power', geometry: { size: [1.2, 1.6, 1], band: 'electrical' }, fields: { input: ref(['breaker']), rating } },
   rpp: {
     layer: 'power',
     geometry: { size: [0.8, 2, 0.6], band: 'electrical' },
-    fields: { input: ref(['breaker']), rating, labelledSide: nullableSide, placement },
+    fields: { input: ref(['breaker', 'transformer']), rating, labelledSide: nullableSide, placement },
   },
   circuit: {
     layer: 'power',
     geometry: { size: [0.15, 0.15, 0.1], band: 'electrical' },
     fields: { panel: ref(['pdu', 'rpp']), position: text, rating, measuredKw: number(0, ' kW') },
   },
+  panel: { layer: 'power', geometry: { size: [1.6, 2.2, 0.6], band: 'plant' }, fields: { input: ref(['breaker']), rating } },
   cord: { layer: 'power', geometry: { size: [0.05, 0.05, 0.05], band: 'hall' }, fields: { labelledSide: side, circuit: ref(['circuit']) } },
   hall: {
     layer: 'space',

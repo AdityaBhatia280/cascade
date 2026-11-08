@@ -16,6 +16,12 @@ and an MSA plus order form per customer).
   When two documents disagree, live measurement wins over paperwork. The BMS point list beats the
   circuit roster, the roster beats the equipment register, and the register beats the contracts. A
   value no document states is missing, and any outcome that needs it comes back `unknown`.
+- **Starts from the operator's own files.** Drop the site's exports and contract PDFs on an empty
+  site (`POST /api/uploads`). Each file is classified, contract PDFs are read through their text
+  layer, and the model rebuilds after each file, register first and work orders last. With an LLM
+  key, Nemotron classifies each file and reads each contract; every value it reads must appear in the
+  text where it belongs and agree with the parser, or it is dropped. Without a key the parsers and
+  file names decide.
 - **Audits redundancy.** Seven rules: single-corded cabinets, A/B paths that converge upstream, failover
   overload, over-committed circuits, cooling capacity (N+1 derived from capacity vs heat load, not
   declared), cooling common cause, and contract promises the topology doesn't deliver.
@@ -53,11 +59,11 @@ and an MSA plus order form per customer).
 
 - DFW1, its customers and contracts are invented. `seed/sites/dfw1/ground_truth.json` records the
   planted defects, conflicts and decoys; only tests read it, never the app.
-- The DFW1 accuracy test (8/8 planted defects found, 0/4 decoys flagged) measures internal
+- The DFW1 accuracy test (9/9 planted defects found, 0/4 decoys flagged) measures internal
   consistency: the engine and the seed were written against the same design. Accuracy on a real
   operator's documents is unmeasured.
-- Single-line diagram PDFs are not read, and contract clauses are read only in their one-line form. No
-  live telemetry, no auth or multi-user.
+- Single-line diagram PDFs and scanned PDFs are not read. The contract parser reads a clause only
+  when it sits on one line or one PDF paragraph. No live telemetry, no auth or multi-user.
 - Dollar figures are monthly revenue exposed, not SLA credits owed.
 
 ## Run
@@ -70,6 +76,15 @@ npm test        # core, server and frontend tests
 
 On first boot the server registers every document under `seed/sites/<CASCADE_SITE>/docs/` into an
 append-only event log at `data/<CASCADE_SITE>/events.jsonl`. Delete that file to start over.
+To show ingestion instead, start with `CASCADE_START_EMPTY=1` (no seed documents are registered) and
+drag the files in `seed/sites/dfw1/upload/` onto the app, or `POST /api/site/reset` and upload them:
+
+```sh
+curl -F files=@seed/sites/dfw1/upload/equipment_register.csv -F files=@... http://127.0.0.1:5001/api/uploads
+curl http://127.0.0.1:5001/api/uploads/<batchId>
+```
+
+Uploaded files are kept under `data/<CASCADE_SITE>/uploads/<batchId>/`.
 Copy `.env.example` to `.env` to set the port, site, CORS origins, or an OpenAI-compatible LLM
 (`LLM_API_KEY` or `NVIDIA_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`; default NVIDIA Nemotron), and email
 (`RESEND_API_KEY`, `NOTIFY_FROM`, `NOTIFY_TO`).
@@ -99,7 +114,7 @@ Things to try:
 | `core/src/view/scene.ts` | Scene for both views: 3D boxes, one-line positions, links, x-ray |
 | `server/` | Express shell: per-site event log, workspace (sole writer), approval gate, routes typed by `ApiRoutes`, SSE, agent loop |
 | `frontend/` | React 19 single-page app built with Vite (TanStack Router/Query, Radix + Tailwind, React Three Fiber, xyflow). Conventions in `frontend/AGENTS.md` |
-| `seed/sites/dfw1/` | The fictional site: documents, `generate.ts` that regenerates them, test-only ground truth |
+| `seed/sites/dfw1/` | The fictional site: documents, the upload bundle (`upload/`, with contract PDFs), `generate.ts` that regenerates both, test-only ground truth |
 | `docs/research/` | Sourced research notes: equipment reliability, data center cooling, CRE data sources, sponsor tracks |
 
 ## History

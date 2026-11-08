@@ -66,7 +66,7 @@ const facts = (f: Facility, refs: readonly FactRef[]) => refs.map((ref) => factB
 const customerName = (f: Facility, c: Id<'customer'>) => displayFact(f.get(c).name) ?? tagOf(c);
 
 function impactDto(i: CustomerImpact, f: Facility): CustomerImpactDto {
-  return { customer: i.customer, customerName: customerName(f, i.customer), cabinets: [...i.cabinets], state: i.state, revenueExposedUsd: i.revenueExposed };
+  return { customer: i.customer, customerName: customerName(f, i.customer), cabinets: [...i.cabinets], cabinetsLabel: cabinetRange(i.cabinets), state: i.state, revenueExposedUsd: i.revenueExposed };
 }
 
 const redundancy = (r: Redundancy | null): RedundancyDto | null =>
@@ -143,7 +143,7 @@ export const toWire = {
       revision: r.revision,
       events: r.scenario.events.map((e) => ({ target: e.target, how: e.how, atMin: e.atMin })),
       timeline: r.timeline.map((t) => ({ tMin: t.tMin, entity: t.id, state: t.state, cause: cause(t.cause) })),
-      customers: r.customers.map((i) => impactDto(i, f)),
+      moments: r.moments.map((m) => ({ tMin: m.tMin, customers: m.customers.map((i) => impactDto(i, f)) })),
       revenueExposedUsd: r.revenueExposed,
     };
   },

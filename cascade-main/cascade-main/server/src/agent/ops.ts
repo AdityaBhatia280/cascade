@@ -149,7 +149,8 @@ export interface Sim {
   readonly exposed: readonly Who[];
   /** The records cannot say. */
   readonly unknown: readonly Who[];
-  readonly revenueUsd: number;
+  /** Monthly revenue of each group's cabinets, so a dark dollar is never counted as a backup one. */
+  readonly revenueUsd: { readonly down: number; readonly exposed: number; readonly unknown: number };
 }
 
 function simulateOn(an: Analysis, off: readonly AnyId[]): Sim {
@@ -165,7 +166,9 @@ function simulateOn(an: Analysis, off: readonly AnyId[]): Sim {
         return [{ name: owner.kind === 'known' ? (displayFact(f.get(owner.value).name) ?? tagOf(owner.value)) : 'no customer on record', cabinets: [cab] }];
       }),
     );
-  return { off: off.map(tagOf), down: group('down'), exposed: group('exposed'), unknown: group('unknown'), revenueUsd: r.revenueExposed };
+  const end = r.moments.at(-1)?.customers ?? [];
+  const usd = (state: string) => Math.round(end.filter((c) => c.state === state).reduce((s, c) => s + c.revenueExposed, 0) * 100) / 100;
+  return { off: off.map(tagOf), down: group('down'), exposed: group('exposed'), unknown: group('unknown'), revenueUsd: { down: usd('down'), exposed: usd('exposed'), unknown: usd('unknown') } };
 }
 
 /** `ids` fail together with what the view already has off. */

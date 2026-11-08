@@ -37,7 +37,8 @@ export type RedundancyIntent =
 //   utility, generator   source
 //   ats                  transfer: energized if normal OR alternate (alternate after transfer delay)
 //   switchgear, breaker,
-//   pdu, rpp, circuit    series: energized iff its single input is energized and it is not overloaded
+//   pdu, transformer,
+//   rpp, circuit, panel  series: energized iff its single input is energized and it is not overloaded
 //   ups                  input OR (battery for batteryMin) OR bypass (maintenance)
 //   cord                 series from its circuit
 //   cabinet              ANY cord energized (with load re-shared to surviving cords) AND zone cooled
@@ -86,8 +87,14 @@ export interface Pdu extends Base<'pdu'> {
   readonly placement: Fact<Placement>;
 }
 
-export interface Rpp extends Base<'rpp'> {
+/** A step-down transformer between a breaker and the panel it feeds (480 V to 208/120 V). */
+export interface Transformer extends Base<'transformer'> {
   readonly input: Fact<Id<'breaker'>>;
+  readonly rating: Fact<Rating>;
+}
+
+export interface Rpp extends Base<'rpp'> {
+  readonly input: Fact<Id<'breaker' | 'transformer'>>;
   readonly rating: Fact<Rating>;
   readonly labelledSide: Fact<Side | null>;
   readonly placement: Fact<Placement>;
@@ -109,6 +116,12 @@ export interface Cord extends Base<'cord'> {
   readonly cabinet: Id<'cabinet'>;
   readonly labelledSide: Fact<Side>;
   readonly circuit: Fact<Id<'circuit'>>;
+}
+
+/** Mechanical distribution: a motor control center or mechanical panelboard. One bus, so its loads share it. */
+export interface Panel extends Base<'panel'> {
+  readonly input: Fact<Id<'breaker'>>;
+  readonly rating: Fact<Rating>;
 }
 
 // ───────────────────────────── IT space ─────────────────────────────
@@ -144,7 +157,7 @@ export interface Cabinet extends Base<'cabinet'> {
 
 export interface Chiller extends Base<'chiller'> {
   readonly header: Fact<Id<'header'>>;
-  readonly power: Fact<Id<'breaker' | 'circuit'>>;
+  readonly power: Fact<Id<'breaker' | 'circuit' | 'panel'>>;
   readonly capacityKw: Fact<number>;
   readonly role: Fact<'duty' | 'standby'>;
 }
@@ -159,14 +172,14 @@ export interface Loop extends Base<'loop'> {
 
 export interface Pump extends Base<'pump'> {
   readonly loop: Fact<Id<'loop'>>;
-  readonly power: Fact<Id<'breaker' | 'circuit'>>;
+  readonly power: Fact<Id<'breaker' | 'circuit' | 'panel'>>;
   readonly capacityKw: Fact<number>;
 }
 
 export interface Crah extends Base<'crah'> {
   readonly loop: Fact<Id<'loop'>>;
   readonly hall: Fact<Id<'hall'>>;
-  readonly power: Fact<Id<'breaker' | 'circuit'>>;
+  readonly power: Fact<Id<'breaker' | 'circuit' | 'panel'>>;
   readonly capacityKw: Fact<number>;
   readonly placement: Fact<Placement>;
 }
@@ -196,7 +209,7 @@ export interface Contract extends Base<'contract'> {
 // ───────────────────────────── The union ─────────────────────────────
 
 export type Entity =
-  | Utility | Generator | Ats | Switchgear | Breaker | Ups | Pdu | Rpp | Circuit | Cord
+  | Utility | Generator | Ats | Switchgear | Breaker | Ups | Pdu | Transformer | Rpp | Circuit | Cord | Panel
   | Hall | Row | Cabinet
   | Chiller | Header | Loop | Pump | Crah
   | Customer | Contract;

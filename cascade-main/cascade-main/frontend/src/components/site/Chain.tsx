@@ -5,7 +5,7 @@ import type { PatchOpDto } from "@cascade/core/contract";
 import type { Look } from "@/lib/floor";
 import type { Impact } from "@/lib/impact";
 import { directCabinets, downCabinets, labelOf, ownerOf, SELECTABLE, visibleStep, type Site } from "@/lib/site";
-import { usd } from "@/lib/format";
+import { plural } from "@/lib/format";
 
 const CW = 560;
 const CH = 262;
@@ -180,16 +180,17 @@ export function Chain({ site, center, looks, impact, pending, onSelect }: Props)
           const s = custState(id);
           const col = colOf(s);
           const r = 7 + 15 * Math.sqrt(c.monthly / maxRev);
-          const risk = impact?.customers.find((x) => x.id === id)?.risk;
+          const h = impact?.customers.find((x) => x.id === id);
+          const hit = h ? [h.dark && `${h.dark.cabinets.length} dark`, h.backup && `${h.backup.cabinets.length} losing backup`].filter(Boolean).join(" · ") : null;
           return (
             <g key={id} className="fi" style={{ animationDelay: `${chainOut.length * 90 + 140 + i * 50}ms` }}>
-              <title>{`${c.name} ${usd(c.monthly)}`}</title>
+              <title>{c.name}</title>
               <circle cx={p.x} cy={p.y} r={r} fill={col ? (s === "dark" ? "#fbe4e1" : "#fcefd6") : "#f3f4f6"} stroke={col ?? "#c9ced4"} strokeWidth={col ? 3 : 1.5} />
               <text x={p.x + 30} y={p.y - 2} style={{ fontSize: 12.5, fontWeight: 600, fill: col ? INK : "#5a646e" }}>
                 {c.name}
               </text>
               <text x={p.x + 30} y={p.y + 13} style={{ fontSize: 11, fontWeight: 600, fontVariantNumeric: "tabular-nums", fill: col ?? "#9099a3" }}>
-                {usd(risk ?? c.monthly)}
+                {hit ?? `${c.cabinets.length} ${plural(c.cabinets.length, "cabinet")}`}
               </text>
             </g>
           );

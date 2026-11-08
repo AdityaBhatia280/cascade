@@ -1,8 +1,8 @@
 asset_id,tag,asset_class,manufacturer_model,rating,fed_from,alt_source,system,location,status,notes
 EQ-010230,UTIL-1,Utility Service,Oncor 12.47kV svc / pad xfmr T1,2500 kVA,,,,Utility yard,Active,Primary service. Feeds ATS-A and ATS-B normal side. Oncor acct 10443-221
 EQ-010237,UTIL-2,Utility Service,Oncor 480V house service,300 kVA,,,,Utility yard,Active,Office / house loads only (HP-1). Not in critical path
-EQ-010244,GEN-1,Generator,Caterpillar 3512C,"2,000 kW",,,A,Gen yard,Active,Standby rating. start/transfer 10 s. 4000 gal belly tank
-EQ-010251,GEN-2,Generator,Caterpillar 3512C,2000kW,,,B,Gen yard,Active,Standby rating. start/transfer 10 s. 4000 gal belly tank
+EQ-010244,GEN-1,Generator,Caterpillar 3516C,"2,000 kW",,,A,Gen yard,Active,Standby rating. start/transfer 10 s. 4000 gal belly tank
+EQ-010251,GEN-2,Generator,Caterpillar 3516C,2000kW,,,B,Gen yard,Active,Standby rating. start/transfer 10 s. 4000 gal belly tank
 EQ-010258,ATS-A,Automatic Transfer Switch,ASCO 7000 Series,3000A 480V 3PH,UTIL-1,GEN-1,A,Elec Rm 1,Active,Open transition
 EQ-010265,ATS-B,ATS,ASCO 7000 Series,3000 A 480V 3PH,UTIL 1,GEN-2,B,Elec Rm 2,Active,Open transition
 EQ-010272,SWGR-A,Switchgear,Square D QED-2,3000A 480V 3PH,ATS-A,,A,Elec Rm 1,Active,Main switchboard A
@@ -53,10 +53,10 @@ EQ-010580,CH-2,Chiller,Trane CGAM 090 air-cooled,90 TR,SWGR-B CB-3 (via MCC-B),,
 EQ-010587,CH-3,Chiller,Trane CGAM 090 air-cooled,90 TR,SWGR-B CB-3 (via MCC-B),,CHWS-HDR-2,Central plant pad,Active,Standby. Moved from MCC-A to MCC-B 2022 after bucket failure (WO-22-0418)
 EQ-010594,CHWS-HDR-1,CHW Header,8in primary supply header,,,,CHW-LOOP-1,Central plant,Active,
 EQ-010601,CHWS-HDR-2,CHW Header,8in primary supply header,,,,CHW-LOOP-1,Central plant,Active,
-EQ-010608,CHW-LOOP-1,CHW Loop,"Primary/secondary, 44F supply",,,,,Central plant,Active,"Design N+1 (3x 90TR, 2 required at 600 kW IT build-out)"
-EQ-010615,CHWP-1,Pump,B&G e-1510 40HP VFD,40 HP,SWGR-A CB-3 (via MCC-A),,CHW-LOOP-1,Central plant,Active,Secondary pump; sized for 400 kW @ 12F dT
-EQ-010622,CHWP-2,Pump,B&G e-1510 40HP VFD,40 HP,SWGR-B CB-3 (via MCC-B),,CHW-LOOP-1,Central plant,Active,Secondary pump; sized for 400 kW @ 12F dT
-EQ-010629,CHWP-3,Pump,B&G e-1510 40HP VFD,40 HP,SWGR-A CB-3 (via MCC-A),,CHW-LOOP-1,Central plant,Active,Secondary pump; sized for 400 kW @ 12F dT
+EQ-010608,CHW-LOOP-1,CHW Loop,"Primary/secondary, 44F supply",,,,,Central plant,Active,"Design N+1, phase 1: 2 of 3x 90TR carry 545 kW IT at 105F ambient. CH-4 pad and MCC-A bucket reserved for 600 kW build-out"
+EQ-010615,CHWP-1,Pump,B&G e-1510 10HP VFD,10 HP,SWGR-A CB-3 (via MCC-A),,CHW-LOOP-1,Central plant,Active,"Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT"
+EQ-010622,CHWP-2,Pump,B&G e-1510 10HP VFD,10 HP,SWGR-B CB-3 (via MCC-B),,CHW-LOOP-1,Central plant,Active,"Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT"
+EQ-010629,CHWP-3,Pump,B&G e-1510 10HP VFD,10 HP,SWGR-A CB-3 (via MCC-A),,CHW-LOOP-1,Central plant,Active,"Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT"
 EQ-010636,CRAH-01,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-A CB-4 (MP-A),,CHW-LOOP-1,"DH-1 grid (3.0, 0.8)",Active,North wall
 EQ-010643,CRAH-02,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-B CB-4 (MP-B),,CHW-LOOP-1,"DH-1 grid (9.5, 0.8)",Active,North wall
 EQ-010650,CRAH-03,CRAH,Liebert CW106 (chilled water),105 kW sens.,SWGR-A CB-4 (MP-A),,CHW-LOOP-1,"DH-1 grid (16.0, 0.8)",Active,North wall

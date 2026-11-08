@@ -4,16 +4,18 @@
 // Commands read an `Idempotency-Key` header (one per user intent); a repeat replays the result.
 
 import { randomUUID } from 'node:crypto';
-import { Router, type Request, type Response } from 'express';
+import { Router, type Request, type RequestHandler, type Response } from 'express';
+import multer from 'multer';
 import { addDays, assessWorkOrders, draftMop, parsePatchOps, planOfOps, replan, toWire, upcomingWorkOrders, type FixPlan } from '@cascade/core';
 import type { ApiRouteKey, ApiRoutes, ServerEventDto, SseRouteKey } from '@cascade/core/contract';
-import { humanFrom, type HumanActor } from './actors.js';
+import { humanFrom, nameOf, type HumanActor } from './actors.js';
 import { companion } from './agent/companion.js';
 import type { LlmClient } from './agent/llm.js';
 import { messageDto, proposalDto } from './dto.js';
 import { isError, parseAsOf, parseCompanionBody, parseGoal, parseScenario, parseSendBody, parseView, parseWindow } from './parse.js';
 import type { ProposalCommand, ProposalId } from './proposals.js';
 import { openSse } from './sse.js';
+import type { UploadedFile, Uploads } from './uploads/uploads.js';
 import { canonicalJson, type CommandResult, type MessageDraft, type Workspace } from './workspace.js';
 
 type ErrorStatus = 400 | 403 | 404 | 409;
@@ -25,6 +27,8 @@ interface HandlerInput {
   readonly body: unknown;
   readonly human: HumanActor;
   readonly key: string;
+  /** Multipart files, for routes that take them. */
+  readonly files: readonly UploadedFile[];
 }
 
 type Handler<K extends ApiRouteKey> = (input: HandlerInput) => Promise<Reply<K>>;
@@ -44,19 +48,23 @@ const conflict = (error: string) => ({ status: 409 as const, json: { error } });
 
 const obj = (v: unknown): Record<string, unknown> => (v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {});
 
-/** Registers every entry of ApiRoutes under its method and path. */
-export function registerAll(api: Router, handlers: Handlers): void {
+/** Registers every entry of ApiRoutes under its method and path, behind its body parser when it has its own. */
+export function registerAll(api: Router, handlers: Handlers, parsers: Partial<Record<ApiRouteKey, RequestHandler>> = {}): void {
   for (const routeKey of Object.keys(handlers) as ApiRouteKey[]) {
     const [method, routePath] = routeKey.split(' ') as ['GET' | 'POST', string];
     const handler = handlers[routeKey] as Handler<ApiRouteKey>;
     const verb = method === 'GET' ? 'get' : 'post';
-    api[verb](routePath, (req: Request, res: Response) => {
+    const parse: RequestHandler = parsers[routeKey] ?? ((_req, _res, next) => next());
+    api[verb](routePath, parse, (req: Request, res: Response) => {
+      const files = Array.isArray(req.files) ? req.files : [];
       const input: HandlerInput = {
         params: req.params as Record<string, string>,
         query: req.query as Record<string, unknown>,
         body: req.body as unknown,
         human: humanFrom(req),
         key: req.header('idempotency-key')?.trim() || `anon:${randomUUID()}`,
+        // Browsers send UTF-8 file names; multer decodes them as latin1.
+        files: files.map((f) => ({ name: Buffer.from(f.originalname, 'latin1').toString('utf8'), bytes: f.buffer })),
       };
       handler(input).then(
         (r) => res.status(r.status).json(r.json),
@@ -71,8 +79,13 @@ export function registerAll(api: Router, handlers: Handlers): void {
 
 const MAX_KNOWN_PLANS = 500;
 
+const multipart = multer({ storage: multer.memoryStorage(), limits: { fileSize: 64 * 1024 * 1024, files: 200 } }).array('files');
+/** multer, with its refusals (too large, too many, wrong field) as 400s. */
+const uploadParser: RequestHandler = (req, res, next) =>
+  multipart(req, res, (e: unknown) => (e ? res.status(400).json({ error: `upload refused: ${(e as Error).message}` }) : next()));
+
 /** `now` is the site clock (tests pin it). */
-export function apiRouter(ws: Workspace, llm: LlmClient | null, opts: { readonly now?: () => Date } = {}): Router {
+export function apiRouter(ws: Workspace, uploads: Uploads, llm: LlmClient | null, opts: { readonly now?: () => Date } = {}): Router {
   const api = Router();
   const now = opts.now ?? (() => new Date());
   const ask = companion({ ws, llm, now });
@@ -98,12 +111,16 @@ export function apiRouter(ws: Workspace, llm: LlmClient | null, opts: { readonly
       if (!id) return notFound(`no such entity: ${params['id']}`);
       return okJson(toWire.entity(v.an.explain(id), v.an.facility));
     },
-    'POST /documents': async ({ body, human, key }) => {
-      const p = obj(body)['path'];
-      if (typeof p !== 'string' || p.trim() === '') return bad('path is required');
-      const r = await ws.ingest(p, human, key);
-      return fromResult(r, (x) => ({ revision: x.revision, valuesRead: x.valuesRead, valuesRejected: x.valuesRejected }));
+    'POST /uploads': async ({ files, human, key }) => {
+      if (files.length === 0) return bad("attach one or more files in the multipart field 'files'");
+      return okJson(await uploads.start(files, human, key));
     },
+    'GET /uploads/:batchId': async ({ params }) => {
+      const b = uploads.get(params['batchId'] ?? '');
+      return b ? okJson(b) : notFound(`no such upload batch: ${params['batchId']}`);
+    },
+    'POST /site/reset': async ({ human, key }) => fromResult(await ws.reset(nameOf(human), key), (x) => x),
+    'GET /site/status': async () => okJson({ empty: ws.documentCount() === 0, documents: ws.documentCount(), revision: ws.revision() }),
     'GET /audit': async ({ query }) => {
       const v = viewed(query);
       if (isError(v)) return bad(v.error);
@@ -249,7 +266,7 @@ export function apiRouter(ws: Workspace, llm: LlmClient | null, opts: { readonly
       return r.ok ? okJson(r.value) : conflict(r.message);
     },
   };
-  registerAll(api, handlers);
+  registerAll(api, handlers, { 'POST /uploads': uploadParser });
   const ssePath = (k: SseRouteKey) => k.slice(k.indexOf(' ') + 1);
 
   api.get(ssePath('GET /events'), (_req, res) => {
@@ -257,6 +274,7 @@ export function apiRouter(ws: Workspace, llm: LlmClient | null, opts: { readonly
     const send = (e: ServerEventDto) => out.send(e.type, e);
     send({ type: 'model-changed', revision: ws.revision() });
     out.onClose(ws.subscribe(send));
+    out.onClose(uploads.subscribe(send));
   });
 
   return api;

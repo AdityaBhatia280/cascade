@@ -21,6 +21,18 @@ test('the order documents arrive in does not change which source wins', () => {
   assert.equal(displayFact(reversed.facility.fact(fixture().facility.parseRef('cord:C22/B#circuit')!)!), 'PDU-A1/6');
 });
 
+test('a register feed through a panel and a BMS feed naming that panel’s breaker are one route, told in more detail', () => {
+  // Register: CRAH-1 is fed from mechanical panel MP-1, and MP-1 from SWGR-A-M. The BMS says SWGR-A-M.
+  const rows = [...setRow(BASE, 'crah', 'CRAH-1', 'power', 'MP-1'), ['panel', 'MP-1', 'input', 'SWGR-A-M'] as const];
+  const power = (bms: Parameters<typeof fixture>[1]) => {
+    const r = fixture(rows, bms);
+    return displayFact(r.facility.fact(r.facility.parseRef('crah:CRAH-1#power')!)!);
+  };
+  assert.equal(power([['crah', 'CRAH-1', 'power', 'SWGR-A-M']]), 'MP-1');
+  // A BMS feed off another bus is a disagreement, and the BMS wins it.
+  assert.equal(power([['crah', 'CRAH-1', 'power', 'SWGR-B-M']]), 'SWGR-B-M');
+});
+
 test('within one source, the first value read wins', () => {
   const r = assemble(fixtureInput([...BASE, ['ups', 'UPS-A', 'batteryMin', '20 min']], []));
   assert.equal(displayFact(r.facility.fact(r.facility.parseRef('ups:UPS-A#batteryMin')!)!), '10 min');

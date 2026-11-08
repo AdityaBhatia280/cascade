@@ -2,9 +2,10 @@
 // numbers and ground-truth line references cannot drift apart. Run from the repo root:
 //   npx tsx seed/sites/dfw1/generate.ts
 // README.md is hand-written and not touched.
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { PROVIDER, renderContractPdf, type Block, type ContractPdf, type Signer, type Table } from './contract-pdf.js';
 
 const siteDir = fileURLToPath(new URL('.', import.meta.url));
 const docsDir = join(siteDir, 'docs');
@@ -126,8 +127,8 @@ type RegRow = [string, string, string, string, string, string, string, string, s
 const reg: RegRow[] = [
   ['UTIL-1', 'Utility Service', 'Oncor 12.47kV svc / pad xfmr T1', '2500 kVA', '', '', '', 'Utility yard', 'Active', 'Primary service. Feeds ATS-A and ATS-B normal side. Oncor acct 10443-221'],
   ['UTIL-2', 'Utility Service', 'Oncor 480V house service', '300 kVA', '', '', '', 'Utility yard', 'Active', 'Office / house loads only (HP-1). Not in critical path'],
-  ['GEN-1', 'Generator', 'Caterpillar 3512C', '2,000 kW', '', '', 'A', 'Gen yard', 'Active', 'Standby rating. start/transfer 10 s. 4000 gal belly tank'],
-  ['GEN-2', 'Generator', 'Caterpillar 3512C', '2000kW', '', '', 'B', 'Gen yard', 'Active', 'Standby rating. start/transfer 10 s. 4000 gal belly tank'],
+  ['GEN-1', 'Generator', 'Caterpillar 3516C', '2,000 kW', '', '', 'A', 'Gen yard', 'Active', 'Standby rating. start/transfer 10 s. 4000 gal belly tank'],
+  ['GEN-2', 'Generator', 'Caterpillar 3516C', '2000kW', '', '', 'B', 'Gen yard', 'Active', 'Standby rating. start/transfer 10 s. 4000 gal belly tank'],
   ['ATS-A', 'Automatic Transfer Switch', 'ASCO 7000 Series', '3000A 480V 3PH', 'UTIL-1', 'GEN-1', 'A', 'Elec Rm 1', 'Active', 'Open transition'],
   ['ATS-B', 'ATS', 'ASCO 7000 Series', '3000 A 480V 3PH', 'UTIL 1', 'GEN-2', 'B', 'Elec Rm 2', 'Active', 'Open transition'],
   ['SWGR-A', 'Switchgear', 'Square D QED-2', '3000A 480V 3PH', 'ATS-A', '', 'A', 'Elec Rm 1', 'Active', 'Main switchboard A'],
@@ -178,10 +179,10 @@ const reg: RegRow[] = [
   ['CH-3', 'Chiller', 'Trane CGAM 090 air-cooled', '90 TR', 'SWGR-B CB-3 (via MCC-B)', '', 'CHWS-HDR-2', 'Central plant pad', 'Active', 'Standby. Moved from MCC-A to MCC-B 2022 after bucket failure (WO-22-0418)'],
   ['CHWS-HDR-1', 'CHW Header', '8in primary supply header', '', '', '', 'CHW-LOOP-1', 'Central plant', 'Active', ''],
   ['CHWS-HDR-2', 'CHW Header', '8in primary supply header', '', '', '', 'CHW-LOOP-1', 'Central plant', 'Active', ''],
-  ['CHW-LOOP-1', 'CHW Loop', 'Primary/secondary, 44F supply', '', '', '', '', 'Central plant', 'Active', 'Design N+1 (3x 90TR, 2 required at 600 kW IT build-out)'],
-  ['CHWP-1', 'Pump', 'B&G e-1510 40HP VFD', '40 HP', 'SWGR-A CB-3 (via MCC-A)', '', 'CHW-LOOP-1', 'Central plant', 'Active', 'Secondary pump; sized for 400 kW @ 12F dT'],
-  ['CHWP-2', 'Pump', 'B&G e-1510 40HP VFD', '40 HP', 'SWGR-B CB-3 (via MCC-B)', '', 'CHW-LOOP-1', 'Central plant', 'Active', 'Secondary pump; sized for 400 kW @ 12F dT'],
-  ['CHWP-3', 'Pump', 'B&G e-1510 40HP VFD', '40 HP', 'SWGR-A CB-3 (via MCC-A)', '', 'CHW-LOOP-1', 'Central plant', 'Active', 'Secondary pump; sized for 400 kW @ 12F dT'],
+  ['CHW-LOOP-1', 'CHW Loop', 'Primary/secondary, 44F supply', '', '', '', '', 'Central plant', 'Active', 'Design N+1, phase 1: 2 of 3x 90TR carry 545 kW IT at 105F ambient. CH-4 pad and MCC-A bucket reserved for 600 kW build-out'],
+  ['CHWP-1', 'Pump', 'B&G e-1510 10HP VFD', '10 HP', 'SWGR-A CB-3 (via MCC-A)', '', 'CHW-LOOP-1', 'Central plant', 'Active', 'Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT'],
+  ['CHWP-2', 'Pump', 'B&G e-1510 10HP VFD', '10 HP', 'SWGR-B CB-3 (via MCC-B)', '', 'CHW-LOOP-1', 'Central plant', 'Active', 'Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT'],
+  ['CHWP-3', 'Pump', 'B&G e-1510 10HP VFD', '10 HP', 'SWGR-A CB-3 (via MCC-A)', '', 'CHW-LOOP-1', 'Central plant', 'Active', 'Secondary pump. 230 gpm @ 85 ft TDH, sized for 400 kW @ 12F dT'],
 ];
 const crahGrid: [number, number][] = [[3.0, 0.8], [9.5, 0.8], [16.0, 0.8], [22.5, 0.8], [3.0, 21.2], [9.5, 21.2], [16.0, 21.2], [22.5, 21.2]];
 crahGrid.forEach(([x, z], i) => {
@@ -204,143 +205,169 @@ reg.forEach((r, i) => {
 writeFileSync(join(docsDir, 'equipment_register.csv'), regLines.join('\n') + '\n');
 
 // ───────────────────────── BMS points ─────────────────────────
+// The Desigo CC point table: one row per BACnet object, named by its designation (the same name the
+// event log and trends print), with object type, instance, units and alarm limits. Nameplate and
+// topology live in the register. A rating appears here only where the integrator typed it into a
+// point description at commissioning, which is how two of them came to disagree with the register.
 
+interface Point { readonly designation: string; readonly description: string }
+const plantPt = (tag: string, point: string, description: string): Point => ({ designation: `DFW1.Bldg1.CHW_Plant.${tag}.${point}`, description });
+const hallPt = (tag: string, point: string, description: string): Point => ({ designation: `DFW1.Bldg1.DH-1.${tag}.${point}`, description });
+const upsPt = (s: 'A' | 'B', point: string, description: string): Point => ({ designation: `DFW1.Bldg1.UPS_Rm_${s}.UPS-${s}.${point}`, description: `UPS-${s} ${description}` });
+const crahBms = (n: number) => (n === 5 ? 'CRAH-5' : `CRAH-${String(n).padStart(2, '0')}`);
+
+type ObjectType = 'AI' | 'AO' | 'BI' | 'BO' | 'BV';
+interface BmsDevice { readonly instance: number; readonly name: string; readonly description: string }
+interface BmsPoint extends Point {
+  readonly equipment: string;
+  readonly type: string;
+  readonly object: ObjectType;
+  readonly device: number;
+  readonly units: string | null;
+  readonly limits?: { readonly high?: number; readonly low?: number };
+  /** Inactive and active state text of a binary object. */
+  readonly states?: readonly [string, string];
+  /** Ground-truth key for this row's line. */
+  readonly key?: string;
+}
+type PointSpec = Omit<BmsPoint, keyof Point | 'equipment' | 'type' | 'device'>;
+const DEVICES: BmsDevice[] = [];
+const POINTS: BmsPoint[] = [];
+const device = (instance: number, name: string, description: string) => DEVICES.push({ instance, name, description });
+const pt = (p: BmsPoint) => POINTS.push(p);
+
+device(1000, 'DFW1-PXC-CHW', 'Chiller plant controller: secondary pumps, loop sensors, outdoor air');
+(['CH-1', 'CH-2', 'CH-3'] as const).forEach((u, i) => {
+  const dev = 1100 + i * 100;
+  device(dev, `DFW1-${u}`, `${u} Trane CGAM chiller controller (BACnet/IP)`);
+  const p = (point: string, description: string, spec: PointSpec) => pt({ ...plantPt(u, point, `${u} ${description}`), equipment: u, type: 'Chiller', device: dev, ...spec });
+  p('CHWS_Temp', 'CHW Supply Temp', { object: 'AI', units: '°F', limits: { high: 50 } });
+  p('CHWR_Temp', 'CHW Return Temp', { object: 'AI', units: '°F' });
+  p('kW', 'Power', { object: 'AI', units: 'kW' });
+  p('Disch_Press', 'Discharge Pressure', { object: 'AI', units: 'psig' });
+  p('Run_Status', 'Run Status', { object: 'BI', units: null, states: ['Stopped', 'Running'] });
+  p('Comp_Flt', 'Compressor Fault', { object: 'BI', units: null, states: ['Normal', 'Fault'] });
+  p('Cond_Limit', 'Condenser Pressure Limit', { object: 'BI', units: null, states: ['Inactive', 'Active'] });
+  p('Chiller_Diag', 'Diagnostic', { object: 'BI', units: null, states: ['Inactive', 'Active'] });
+  p('Start_Stop_Cmd', 'Start/Stop Command', { object: 'BV', units: null, states: ['Stop', 'Start'] });
+  p('Enable_Cmd', 'Enable Command', { object: 'BV', units: null, states: ['Disable', 'Enable'] });
+});
+pt({ ...plantPt('CHW-LOOP-1', 'CHWS_Temp', 'CHW Loop 1 Supply Temp'), equipment: 'CHW-LOOP-1', type: 'CHW Loop', object: 'AI', device: 1000, units: '°F', limits: { high: 50 } });
+pt({ ...plantPt('CHW-LOOP-1', 'CHWR_Temp', 'CHW Loop 1 Return Temp'), equipment: 'CHW-LOOP-1', type: 'CHW Loop', object: 'AI', device: 1000, units: '°F' });
+for (const n of [1, 2, 3]) {
+  const u = `CHWP-${n}`;
+  const p = (point: string, description: string, spec: PointSpec) => pt({ ...plantPt(u, point, `${u} ${description}`), equipment: u, type: 'Pump', device: 1000, ...spec });
+  p('Run_Status', 'Run Status', { object: 'BI', units: null, states: ['Off', 'On'] });
+  p('Start_Stop_Cmd', 'Start/Stop Command', { object: 'BO', units: null, states: ['Stop', 'Start'] });
+  p('VFD_Hz', 'VFD Speed', { object: 'AI', units: 'Hz' });
+  p('VFD_Flt', 'VFD Fault', { object: 'BI', units: null, states: ['Normal', 'Fault'] });
+  p('DP', 'Differential Pressure', { object: 'AI', units: 'psi' });
+}
+pt({ designation: 'DFW1.Bldg1.CHW_Plant.OAT', description: 'Plant Outside Air Temp', equipment: 'CHW Plant', type: 'Outdoor Air', object: 'AI', device: 1000, units: '°F' });
+
+device(2000, 'DFW1-PXC-DH1', 'Data hall DH-1 controller: cold aisle sensors');
+for (const r of ['A', 'C', 'E']) {
+  pt({ designation: `DFW1.Bldg1.DH-1.Row_${r}.Cold_Aisle_Temp`, description: `DH-1 Row ${r} Cold Aisle Temp`, equipment: 'DH-1', type: 'Data Hall', object: 'AI', device: 2000, units: '°F', limits: { high: 80.6, low: 64.4 } });
+}
+crahGrid.forEach((_, i) => {
+  const name = crahBms(i + 1);
+  const dev = 2101 + i;
+  device(dev, `DFW1-${name}`, `${name} Liebert iCOM controller (BACnet/IP)`);
+  const p = (point: string, description: string, spec: PointSpec) => pt({ ...hallPt(name, point, `${name} ${description}`), equipment: name, type: 'CRAH', device: dev, ...spec });
+  p('SAT', 'Supply Air Temp', { object: 'AI', units: '°F', ...(name === 'CRAH-5' ? { key: 'CRAH-5.name' } : {}) });
+  p('ValvePos', 'CHW Valve Position', { object: 'AO', units: '%' });
+  p('Filter_Status', 'Filter Status', { object: 'BI', units: null, states: ['Clean', 'Dirty'] });
+  p('Fan1_Status', 'EC Fan 1 Status', { object: 'BI', units: null, states: ['Normal', 'Fault'] });
+  p('Fan2_Status', 'EC Fan 2 Status', { object: 'BI', units: null, states: ['Normal', 'Fault'] });
+});
+
+(['A', 'B'] as const).forEach((s, i) => {
+  const dev = 3000 + i;
+  device(dev, `DFW1-UPS-${s}`, `UPS-${s} Eaton 9395P network card (BACnet/IP)`);
+  const p = (point: string, description: string, spec: PointSpec) => pt({ ...upsPt(s, point, description), equipment: `UPS-${s}`, type: 'UPS', device: dev, ...spec });
+  p('Load_Pct', 'Output Load', { object: 'AI', units: '%' });
+  p('Output_kW', 'Output kW (750 kVA)', { object: 'AI', units: 'kW' });
+  p('On_Bypass', 'Bypass Status', { object: 'BI', units: null, states: ['On Inverter', 'On Bypass'] });
+});
+// The integrator labelled PDU-2B from a 225 kVA submittal; the register has it at 150 kVA.
+const BMS_PDUS = [
+  { tag: 'PDU-1A', room: 'DH-1', kva: 150 }, { tag: 'PDU-1B', room: 'DH-1', kva: 150 },
+  { tag: 'PDU 2A', room: 'DH-1', kva: 150 }, { tag: 'PDU 2B', room: 'DH-1', kva: 225 },
+  { tag: 'PDU-3A', room: 'Elec_Rm_1', kva: 150 }, { tag: 'PDU-3B', room: 'Elec_Rm_2', kva: 150 },
+];
+BMS_PDUS.forEach((p, i) => {
+  const dev = 3100 + i;
+  device(dev, `DFW1-${p.tag.replace(' ', '-')}`, `${p.tag} distribution monitoring card (BACnet/IP)`);
+  pt({ designation: `DFW1.Bldg1.${p.room}.${p.tag.replace(' ', '_')}.Output_kW`, description: `${p.tag} Output kW (${p.kva} kVA)`, equipment: p.tag, type: 'PDU', object: 'AI', device: dev, units: 'kW',
+    ...(p.tag === 'PDU 2B' ? { key: 'PDU 2B.rating' } : p.tag === 'PDU 2A' ? { key: 'PDU 2A.name' } : {}) });
+});
+
+device(4000, 'DFW1-PXC-ELEC', 'Switchboard meters (Modbus TCP integration)');
+(['A', 'B'] as const).forEach((s, i) => {
+  const room = `DFW1.Bldg1.Elec_Rm_${i + 1}.SWGR-${s}`;
+  pt({ designation: `${room}.Main_kW`, description: `SWGR-${s} Main kW`, equipment: `SWGR-${s}`, type: 'Switchboard', object: 'AI', device: 4000, units: 'kW' });
+  // SWGR-B CB-1 is labelled 1600 A (its CT size); the register has a 1200 A Masterpact NW12.
+  pt({ designation: `${room}.CB1_Amps`, description: `SWGR-${s} CB-1 UPS-${s} Input Amps (${s === 'A' ? 1200 : 1600}A 480V 3P)`, equipment: `SWGR-${s} CB-1`, type: 'Breaker', object: 'AI', device: 4000, units: 'A',
+    ...(s === 'B' ? { key: 'SWGR-B-CB-1.meter' } : {}) });
+});
+
+// Branch-circuit monitoring on the row D RPPs and on the documented spares: breakers installed and
+// metered, no cord. Each channel's description names the cord it meters, or SPARE, and the breaker
+// size. The fix planner can only add or re-home cords onto spares, and each is the physically obvious
+// landing spot for one planted defect.
+interface Spare { panel: string; pos: number; amps: number; phases: 1 | 3; note: string }
+const SPARES: Spare[] = [
+  { panel: 'RPP-3B', pos: 31, amps: 30, phases: 3, note: 'D06 B position; breaker installed, whip not pulled (ticket 88213)' },
+  { panel: 'PDU-1B', pos: 26, amps: 30, phases: 1, note: 'B07 B position; breaker installed, no whip (single feed per order)' },
+  ...[61, 67, 73, 79].map((pos) => ({ panel: 'PDU-1A', pos, amps: 60, phases: 3 as const, note: 'Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)' })),
+];
+device(5000, 'DFW1-BCM-GW', 'Branch circuit monitoring gateway (Modbus TCP integration)');
+const dcabs = cabs.filter((c) => c.cab.startsWith('D'));
+const bcmPoint = (panel: string, pos: number, label: string, amps: number, phases: 1 | 3, key: string, note?: string) => {
+  const cb = `CB${String(pos).padStart(2, '0')}`;
+  pt({ designation: `DFW1.Bldg1.DH-1.${panel}.${cb}_kW`, description: [`${panel} ${cb} kW`, label, `${amps}A/208V/${phases}P`, ...(note ? [note] : [])].join(' - '),
+    equipment: panel, type: panel.startsWith('RPP') ? 'RPP' : 'PDU', object: 'AI', device: 5000, units: 'kW', key });
+};
+const bcmSpares = (panel: string) => {
+  for (const s of SPARES.filter((x) => x.panel === panel)) bcmPoint(s.panel, s.pos, 'SPARE', s.amps, s.phases, `spare.${s.panel}/${s.pos}`, s.note);
+};
+for (const panel of ['RPP-3A', 'RPP-3B']) {
+  const side = panel === 'RPP-3A' ? 'A' : 'B';
+  for (const c of dcabs) {
+    if (side === 'B' && !c.panels.B) continue;
+    if (c.cab === 'D03' && side === 'B') continue; // the BMS meters D03-B on RPP-3A (below), not RPP-3B
+    bcmPoint(panel, c.pos, `Cab ${c.cab} Cord ${side}`, 30, 3, `bcm.${c.cab}-${side}`);
+  }
+  if (panel === 'RPP-3A') bcmPoint('RPP-3A', 26, 'Cab D03 Cord B', 30, 3, 'bcm.D03-B');
+  bcmSpares(panel);
+}
+bcmSpares('PDU-1A');
+bcmSpares('PDU-1B');
+
+const pointByDesignation = new Map(POINTS.map((p) => [p.designation, p]));
+if (pointByDesignation.size !== POINTS.length) throw new Error('two BMS points share a designation');
 const L: string[] = [];
 const bmsLineOf: Record<string, number> = {};
-const mark = (key: string) => { bmsLineOf[key] = L.length + 1; };
-const push = (s: string) => L.push(s);
-push('{');
-push('  "bms_system": { "system_id": "DFW1-BMS-01", "protocol": "BACnet/IP", "vendor": "Siemens Desigo CC", "export_date": "2026-10-28", "polling_interval_sec": 15 },');
-push('  "chillers": [');
-const chillers = [
-  { name: 'CH-1', oid: 'DEV:1100', role: 'DUTY', power: 'SWGR-A-CB3 (MCC-A)', header: 'CHWS HDR-1' },
-  { name: 'CH-2', oid: 'DEV:1200', role: 'DUTY', power: 'SWGR-B-CB3 (MCC-B)', header: 'CHWS HDR-2' },
-  { name: 'CH-3', oid: 'DEV:1300', role: 'STANDBY', power: 'SWGR-B-CB3 (MCC-B)', header: 'CHWS HDR-2' },
-];
-chillers.forEach((c, i) => {
-  push('    {');
-  push(`      "object_id": "${c.oid}",`);
-  push(`      "name": "${c.name}",`);
-  push(`      "description": "Air-cooled chiller ${i + 1}",`);
-  mark(`${c.name}.role`); push(`      "chiller_role": "${c.role}",`);
-  mark(`${c.name}.power`); push(`      "power_source": "${c.power}",`);
-  mark(`${c.name}.header`); push(`      "header": "${c.header}",`);
-  mark(`${c.name}.capacity`); push('      "capacity_tons": 90,');
-  push('      "location": "Central plant pad",');
-  push('      "points": [');
-  push(`        { "object_id": "AI:${1101 + i * 100}", "name": "${c.name}.CHWS.Temp", "units": "degF", "alarm_high": 50 },`);
-  push(`        { "object_id": "AI:${1102 + i * 100}", "name": "${c.name}.CHWR.Temp", "units": "degF" },`);
-  push(`        { "object_id": "AI:${1103 + i * 100}", "name": "${c.name}.kW", "units": "kW" },`);
-  push(`        { "object_id": "BI:${1104 + i * 100}", "name": "${c.name}.RunStatus", "values": { "0": "OFF", "1": "RUN" } }`);
-  push('      ]');
-  push(i === chillers.length - 1 ? '    }' : '    },');
+const jsonRow = (o: Record<string, string | number | null | readonly string[]>) => JSON.stringify(o).replace(/,"/g, ', "').replace(/":/g, '": ').replace(/^\{/, '{ ').replace(/\}$/, ' }');
+const nextInstance = new Map<string, number>();
+L.push('{');
+L.push('  "export": { "system_name": "DFW1-BMS-01", "product": "Siemens Desigo CC", "protocol": "BACnet/IP", "exported": "2026-10-28" },');
+L.push('  "devices": [');
+DEVICES.forEach((d, i) => L.push(`    ${jsonRow({ device_instance: d.instance, name: d.name, description: d.description })}${i === DEVICES.length - 1 ? '' : ','}`));
+L.push('  ],');
+L.push('  "points": [');
+POINTS.forEach((p, i) => {
+  const counter = `${p.device}:${p.object}`;
+  const instance = (nextInstance.get(counter) ?? 0) + 1;
+  nextInstance.set(counter, instance);
+  if (p.key) bmsLineOf[p.key] = L.length + 1;
+  L.push(`    ${jsonRow({
+    designation: p.designation, equipment: p.equipment, equipment_type: p.type, object_type: p.object, object_instance: instance, device_instance: p.device,
+    description: p.description, units: p.units, high_limit: p.limits?.high ?? null, low_limit: p.limits?.low ?? null, state_text: p.states ?? null,
+  })}${i === POINTS.length - 1 ? '' : ','}`);
 });
-push('  ],');
-push('  "pumps": [');
-const pumps = [
-  { name: 'CHWP-1', power: 'SWGR-A CB-3', loop: 'CHW LOOP 1' },
-  { name: 'CHWP-2', power: 'SWGR-B CB-3', loop: 'CHW LOOP 1' },
-  { name: 'CHWP-3', power: 'SWGR-A CB-3', loop: 'CHW LOOP 1' },
-];
-pumps.forEach((p, i) => {
-  push('    {');
-  push(`      "object_id": "DEV:${1400 + i * 10}",`);
-  push(`      "name": "${p.name}",`);
-  mark(`${p.name}.power`); push(`      "power_source": "${p.power}",`);
-  mark(`${p.name}.loop`); push(`      "loop": "${p.loop}",`);
-  push(`      "points": [ { "object_id": "AI:${1401 + i * 10}", "name": "${p.name}.VFD.Hz", "units": "Hz" }, { "object_id": "AI:${1402 + i * 10}", "name": "${p.name}.DP", "units": "psi" } ]`);
-  push(i === pumps.length - 1 ? '    }' : '    },');
-});
-push('  ],');
-push('  "crahs": [');
-crahGrid.forEach((_, i) => {
-  const n = i + 1;
-  const name = n === 5 ? 'CRAH-5' : `CRAH-${String(n).padStart(2, '0')}`;
-  push('    {');
-  push(`      "object_id": "DEV:${2100 + n}",`);
-  mark(`${name}.name`); push(`      "name": "${name}",`);
-  mark(`CRAH-${n}.power`); push(`      "power_source": "${i % 2 === 0 ? 'SWGR-A CB-4' : 'SWGR-B CB-4'}",`);
-  mark(`CRAH-${n}.loop`); push('      "loop": "CHW-LOOP-1",');
-  mark(`CRAH-${n}.zone`); push('      "zone": "DH-1",');
-  mark(`CRAH-${n}.capacity`); push('      "net_sensible_kw": 105,');
-  push(`      "points": [ { "object_id": "AI:${2200 + n}", "name": "${name}.SAT", "units": "degF" }, { "object_id": "AI:${2300 + n}", "name": "${name}.ValvePos", "units": "%" } ]`);
-  push(i === crahGrid.length - 1 ? '    }' : '    },');
-});
-push('  ],');
-push('  "ups": [');
-(['A', 'B'] as const).forEach((s, i) => {
-  push('    {');
-  push(`      "object_id": "DEV:${3000 + i}",`);
-  push(`      "name": "UPS-${s}",`);
-  mark(`UPS-${s}.rating`); push('      "kva_rating": 750,');
-  mark(`UPS-${s}.battery`); push('      "battery_runtime_min": 8,');
-  push(`      "points": [ { "object_id": "AI:${3010 + i * 10}", "name": "UPS-${s}.LoadPct", "units": "%" }, { "object_id": "BI:${3011 + i * 10}", "name": "UPS-${s}.OnBypass" } ]`);
-  push(i === 1 ? '    }' : '    },');
-});
-push('  ],');
-push('  "pdus": [');
-const pdus = [
-  { name: 'PDU-1A', kva: 150, fed: 'UPS-A OB-1' }, { name: 'PDU-1B', kva: 150, fed: 'UPS-B OB-1' },
-  { name: 'PDU 2A', kva: 150, fed: 'UPS-A OB-2' }, { name: 'PDU 2B', kva: 225, fed: 'UPS-B OB-2' },
-  { name: 'PDU-3A', kva: 150, fed: 'UPS-A OB-3' }, { name: 'PDU-3B', kva: 150, fed: 'UPS-B OB-3' },
-];
-pdus.forEach((p, i) => {
-  push('    {');
-  push(`      "object_id": "DEV:${3100 + i}",`);
-  mark(`${p.name}.name`); push(`      "name": "${p.name}",`);
-  mark(`${p.name}.rating`); push(`      "kva_rating": ${p.kva},`);
-  mark(`${p.name}.fed`); push(`      "fed_from": "${p.fed}",`);
-  push(`      "points": [ { "object_id": "AI:${3110 + i}", "name": "${p.name.replace(' ', '-')}.kW", "units": "kW" } ]`);
-  push(i === pdus.length - 1 ? '    }' : '    },');
-});
-push('  ],');
-push('  "electrical_meters": [');
-mark('SWGR-A-CB-1.meter'); push('    { "object_id": "AI:4001", "name": "SWGR-A.CB1.Amps", "breaker": "SWGR-A CB-1", "trip_rating_a": 1200, "volts": 480, "phases": 3 },');
-mark('SWGR-B-CB-1.meter'); push('    { "object_id": "AI:4002", "name": "SWGR-B.CB1.Amps", "breaker": "SWGR-B CB-1", "trip_rating_a": 1600, "volts": 480, "phases": 3 },');
-push('    { "object_id": "AI:4003", "name": "SWGR-A.Main.kW", "units": "kW" },');
-push('    { "object_id": "AI:4004", "name": "SWGR-B.Main.kW", "units": "kW" }');
-push('  ],');
-push('  "branch_circuit_monitoring": {');
-const dcabs = cabs.filter((c) => c.cab.startsWith('D'));
-const point = (o: Record<string, string | number>) => JSON.stringify(o).replace(/,"/g, ', "').replace(/":/g, '": ').replace(/^\{/, '{ ').replace(/\}$/, ' }');
-
-// Documented spare branch circuits: breaker installed and metered, no cord. The fix planner can only
-// add or re-home cords onto these. Each is the physically obvious landing spot for one planted defect.
-interface Spare { panel: string; pos: number; amps: number; phases: 1 | 3; note: string; base: number }
-const SPARES: Spare[] = [
-  { panel: 'RPP-3B', pos: 31, amps: 30, phases: 3, base: 5200, note: 'D06 B position; breaker installed, whip not pulled (ticket 88213)' },
-  { panel: 'PDU-1B', pos: 26, amps: 30, phases: 1, base: 5400, note: 'B07 B position; breaker installed, no whip (single feed per order)' },
-  ...[61, 67, 73, 79].map((pos) => ({ panel: 'PDU-1A', pos, amps: 60, phases: 3 as const, base: 5300, note: 'Caddo expansion pre-pull: 60A 3P whip to row C tray (CR-2410)' })),
-];
-const bcm = (panel: string): { e: string; key: string }[] => {
-  const entries: { e: string; key: string }[] = [];
-  for (const c of panel.startsWith('RPP-3') ? dcabs : []) {
-    const side = panel === 'RPP-3A' ? 'A' : 'B';
-    if (side === 'B' && !c.panels.B) continue;
-    const pos = c.pos;
-    if (c.cab === 'D03' && side === 'B') continue; // BMS has D03-B on RPP-3A (below), not RPP-3B
-    entries.push({ key: `bcm.${c.cab}-${side}`, e: point({ object_id: `AI:${panel === 'RPP-3A' ? 5100 : 5200}${String(pos).padStart(2, '0')}`, name: `${panel}.CB${String(pos).padStart(2, '0')}.kW`, serves: `${c.cab}-${side}`, trip_a: 30, volts: 208, phases: 3 }) });
-  }
-  if (panel === 'RPP-3A') {
-    entries.push({ key: 'bcm.D03-B', e: point({ object_id: 'AI:510026', name: 'RPP-3A.CB26.kW', serves: 'D03-B', trip_a: 30, volts: 208, phases: 3 }) });
-  }
-  for (const s of SPARES.filter((x) => x.panel === panel)) {
-    entries.push({ key: `spare.${s.panel}/${s.pos}`, e: point({ object_id: `AI:${s.base}${s.pos}`, name: `${s.panel}.CB${s.pos}.kW`, serves: 'SPARE', trip_a: s.amps, volts: 208, phases: s.phases, note: s.note }) });
-  }
-  return entries;
-};
-const bcmPanels = ['RPP-3A', 'RPP-3B', 'PDU-1A', 'PDU-1B'];
-bcmPanels.forEach((panel, pi) => {
-  push(`    "${panel}": [`);
-  const es = bcm(panel);
-  es.forEach(({ e, key }, i) => {
-    mark(key);
-    push(`      ${e}${i === es.length - 1 ? '' : ','}`);
-  });
-  push(pi === bcmPanels.length - 1 ? '    ]' : '    ],');
-});
-push('  }');
-push('}');
+L.push('  ]');
+L.push('}');
 const bmsText = L.join('\n') + '\n';
 JSON.parse(bmsText);
 writeFileSync(join(docsDir, 'bms_points.json'), bmsText);
@@ -364,7 +391,187 @@ const powerText: Record<Power, string> = {
   'A+B': 'A+B - dual power feeds from diverse PDUs/RPPs',
   N: 'N - single power feed (non-redundant)',
 };
+
+// The same contracts as the provider's PDFs: what an operator actually has on file. Each states the
+// same terms as its .txt excerpt (the parsers' test fixture), with the full agreement around them.
+const SIGNERS: Record<string, { readonly customer: Omit<Signer, 'org' | 'date'>; readonly provider: Omit<Signer, 'org' | 'date'> }> = {
+  mesquite: { customer: { name: 'Derek Anand', title: 'Chief Technology Officer' }, provider: { name: 'Grant Holloway', title: 'Director, Customer Operations' } },
+  pecan: { customer: { name: 'Laura Kessler', title: 'Director of IT Operations' }, provider: { name: 'Grant Holloway', title: 'Director, Customer Operations' } },
+  caddo: { customer: { name: 'Jonah Whitehorse', title: 'VP, Infrastructure' }, provider: { name: 'Marisol Trevino', title: 'Vice President, Sales' } },
+  trinity: { customer: { name: 'Rebecca Ortiz', title: 'Director, Enterprise Infrastructure' }, provider: { name: 'Grant Holloway', title: 'Director, Customer Operations' } },
+  halcyon: { customer: { name: 'Priya Raman', title: 'Chief Information Officer' }, provider: { name: 'Marisol Trevino', title: 'Vice President, Sales' } },
+  lonestar: { customer: { name: 'Wesley Tran', title: 'Head of Research Computing' }, provider: { name: 'Marisol Trevino', title: 'Vice President, Sales' } },
+};
+const SITE_LINE = 'DFW1 Data Center, 4200 Lakeshore Industrial Pkwy, Garland, Texas';
+const dayBefore = (iso: string) => new Date(Date.parse(`${iso}T00:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
+const clause = (text: string) => ({ kind: 'clause' as const, text });
+
+// Sections 7-9 of every MSA. The .txt excerpt prints each clause as these lines (continuations
+// indented); the PDF states each clause as one paragraph. Availability is measured over the calendar
+// year, so 99.999% allows 5.26 minutes of Power Outage a year and the first credit band starts there.
+type SlaBlock = { readonly kind: 'lines'; readonly lines: readonly string[] } | Table;
+const said = (...l: string[]): SlaBlock => ({ kind: 'lines', lines: l });
+const ALLOWED_OUTAGE_MIN: Record<string, string> = { '99.999': '5.26', '99.99': '52.6' };
+function serviceLevels(cu: Customer): { readonly heading: string; readonly blocks: readonly SlaBlock[] }[] {
+  const pct = cu.availability;
+  const allowed = ALLOWED_OUTAGE_MIN[pct]!;
+  const bands = pct === '99.999' ? ['60', '240', '720'] : ['240', '720', '1,440'];
+  const availability =
+    cu.short === 'caddo'
+      ? // Wrapped across lines the way the PDF export left it: no single line states the full commitment.
+        said(`7.1 Availability Commitment. Provider will maintain Power Availability of ${pct}% per`, '    calendar year for each Licensed Cabinet, excluding Scheduled Maintenance as defined in Section 9.')
+      : cu.short === 'halcyon'
+        ? said(`7.1 Availability Commitment. Power Availability shall be ${pct}% per calendar year, excluding Scheduled Maintenance (Section 9).`)
+        : said(`7.1 Availability Commitment. Provider will maintain Power Availability of ${pct}% per calendar year, excluding Scheduled Maintenance (Section 9).`);
+  return [
+    { heading: '7. SERVICE LEVELS', blocks: [
+      availability,
+      said('7.2 Power Outage. A Power Outage occurs when a Licensed Cabinet loses power on all contracted feeds.', '    For redundant (A+B or 2N) service, loss of a single feed is not a Power Outage.'),
+      said('7.3 Environmental Commitment. Provider will keep the air temperature at the cold aisle face of each', '    Licensed Cabinet between 64.4 °F and 80.6 °F (18 °C to 27 °C, the ASHRAE Class A1 recommended range),', "    as measured by Provider's cold aisle sensors and recorded by its building management system. An", '    Environmental Excursion is a period of more than ten (10) consecutive minutes outside that range.'),
+      said('7.4 Exclusions. No credit is owed where (a) the Customer is not connected to all contracted feeds,', '    (b) Customer load on a redundant pair exceeds 80% of a single circuit rating, (c) the event occurs', '    during Scheduled Maintenance, or (d) an Environmental Excursion is caused by Customer equipment drawing', '    more than its committed power or by missing blanking panels in a Licensed Cabinet.'),
+    ] },
+    { heading: '8. SERVICE CREDITS', blocks: [
+      said('8.1 Power credits. Each band below is credited once per calendar year, as a percentage of the Monthly', '    Recurring Charge (MRC) of the affected Licensed Cabinets for the month in which cumulative Power', '    Outage in that calendar year first exceeds it:'),
+      { kind: 'table', columns: [{ label: 'Cumulative Power Outage per calendar year', width: 3 }, { label: 'Credit', width: 2 }], rows: [
+        [`More than ${allowed} minutes (below ${pct}%)`, '5% of MRC'],
+        [`More than ${bands[0]} minutes`, '10% of MRC'],
+        [`More than ${bands[1]} minutes`, '25% of MRC'],
+        [`More than ${bands[2]} minutes`, '50% of MRC'],
+      ] },
+      said('8.2 Environmental credits. Each Environmental Excursion is credited on the MRC of the affected', '    Licensed Cabinets for the month in which it begins:'),
+      { kind: 'table', columns: [{ label: 'Environmental Excursion duration', width: 3 }, { label: 'Credit', width: 2 }], rows: [
+        ['More than 10 minutes, up to 4 hours', '5% of MRC'],
+        ['More than 4 hours, up to 24 hours', '10% of MRC'],
+        ['More than 24 hours', '25% of MRC'],
+      ] },
+      said('8.3 Total credits in any month shall not exceed 50% of that month\'s MRC. Credits are the sole and', '    exclusive remedy except as provided in Section 8.4 (chronic failure termination right).'),
+      said(`8.4 Chronic failure. If cumulative Power Outage exceeds ${bands[2]} minutes in a calendar year, or Environmental`, '    Excursions occur in each of three consecutive months, Customer may terminate the affected Order Form', '    on thirty (30) days written notice without early termination charges.'),
+    ] },
+    { heading: '9. SCHEDULED MAINTENANCE', blocks: [
+      said('9.1 Provider will give at least ten (10) business days written notice of Scheduled Maintenance.'),
+      said('9.2 Provider will use commercially reasonable efforts to keep at least one contracted feed energized', '    during Scheduled Maintenance for redundant service.'),
+      said('9.3 Provider may perform emergency maintenance without advance notice where needed to prevent harm to', '    persons or equipment, and will notify Customer as soon as practicable.'),
+    ] },
+  ];
+}
+const pdfBlock = (b: SlaBlock): Block => (b.kind === 'lines' ? clause(b.lines.map((l) => l.trim()).join(' ')) : b);
+const txtLines = (b: SlaBlock): string[] => {
+  if (b.kind === 'lines') return [...b.lines];
+  const w = b.columns.map((c, i) => Math.max(c.label.length, ...b.rows.map((r) => r[i]!.length)) + 4);
+  const row = (cells: readonly string[]) => `      ${cells.map((c, i) => (i === cells.length - 1 ? c : c.padEnd(w[i]!))).join('')}`;
+  return [row(b.columns.map((c) => c.label)), ...b.rows.map(row)];
+};
+
+function contractPdfsOf(cu: Customer): { file: string; spec: ContractPdf }[] {
+  const who = SIGNERS[cu.short]!;
+  const signers: readonly [Signer, Signer] = [
+    { org: PROVIDER.name, ...who.provider, date: cu.signed },
+    { org: cu.name, ...who.customer, date: dayBefore(cu.signed) },
+  ];
+  const parties = [
+    ['Provider', [`${PROVIDER.name}, a Texas limited liability company`, PROVIDER.address]],
+    ['Customer', [cu.name, `Account No. ${cu.acct}  ·  Cage ${cu.cage}`]],
+  ] as const;
+  const msa: ContractPdf = {
+    title: `MASTER SERVICES AGREEMENT No. ${cu.msa}`,
+    subtitle: [`Effective Date: ${cu.signed}`, `Site: ${SITE_LINE}`],
+    docLabel: `Agreement No. ${cu.msa}`,
+    customerName: cu.name,
+    parties,
+    preamble: `This Master Services Agreement (the "Agreement") is entered into as of the Effective Date by and between ${PROVIDER.name} ("Provider") and ${cu.name} ("Customer"). Provider operates the DFW1 data center and licenses colocation space, power and cooling to Customer under order forms issued under this Agreement (each an "Order Form").`,
+    sections: [
+      { heading: '1. DEFINITIONS', blocks: [
+        clause('1.1 "Licensed Cabinets" means the cabinets identified in an Order Form, together with the floor space they occupy.'),
+        clause('1.2 "Contracted Feeds" means the power feeds to a Licensed Cabinet that an Order Form describes.'),
+        clause('1.3 "Scheduled Maintenance" means maintenance of the facility power, cooling or life-safety infrastructure for which Provider gives notice under Section 9.'),
+        clause('1.4 "Power Availability" means the share of minutes in a calendar year in which no Power Outage (Section 7.2) affects a Licensed Cabinet.'),
+      ] },
+      { heading: '2. TERM', blocks: [
+        clause('2.1 This Agreement begins on the Effective Date and continues until the last Order Form under it expires or is terminated.'),
+        clause('2.2 Each Order Form states its own term. An Order Form renews for successive twelve-month periods unless either party gives ninety (90) days written notice of non-renewal.'),
+      ] },
+      { heading: '3. SERVICES', blocks: [
+        clause('3.1 Provider will provide the space, power, cooling, physical security and remote hands described in each Order Form. Customer equipment remains the property of Customer.'),
+      ] },
+      { heading: '4. FEES AND PAYMENT', blocks: [
+        clause('4.1 Customer will pay the charges stated in each Order Form. Recurring charges are invoiced monthly in advance and are due within thirty (30) days of the invoice date.'),
+        clause('4.2 Amounts not paid when due bear interest at the lesser of 1.0% per month or the highest rate permitted by law.'),
+      ] },
+      { heading: '5. CUSTOMER OBLIGATIONS', blocks: [
+        clause('5.1 Customer will keep the load in each Licensed Cabinet within the committed power stated in the Order Form and will connect redundant equipment to every Contracted Feed.'),
+        clause('5.2 Customer will not install equipment that exceeds the floor loading or heat density limits Provider publishes for the data hall.'),
+      ] },
+      { heading: '6. ACCESS AND SECURITY', blocks: [
+        clause("6.1 Access to the data hall is limited to individuals on Customer's authorized access list, who must present government-issued photo identification and comply with Provider's site rules."),
+      ] },
+      ...serviceLevels(cu).map((sec) => ({ heading: sec.heading, blocks: sec.blocks.map(pdfBlock) })),
+      { heading: '10. GENERAL', blocks: [
+        clause('10.1 This Agreement is governed by the laws of the State of Texas. Venue for any dispute lies in the state or federal courts located in Dallas County, Texas.'),
+        clause('10.2 This Agreement, with its Order Forms, is the entire agreement of the parties about its subject matter and supersedes all prior proposals and understandings.'),
+      ] },
+    ],
+    witness: 'IN WITNESS WHEREOF, the parties have executed this Agreement by their duly authorized representatives as of the Effective Date.',
+    signers,
+    createdOn: cu.signed,
+  };
+
+  const list = cabsOf(cu.acct);
+  const feeds = (c: Cab) => (cu.power === 'N' ? (c.panels.B ? 'A+B (courtesy)' : 'A only') : 'A+B');
+  const special =
+    cu.short === 'mesquite'
+      ? '3.1 B03 upgraded from 4.0 kW to 8.0 kW effective 2025-07-01 (CR-2291). Circuits unchanged.'
+      : cu.short === 'lonestar'
+        ? '3.1 Expansion cabinets E06-E10 delivered on new RPP-5A/RPP-5B (2024).'
+        : cu.short === 'pecan'
+          ? '3.1 Customer acknowledges single-feed service; dual feeds, where present, are provided as a courtesy.'
+          : '3.1 None.';
+  const orderForm: ContractPdf = {
+    title: `ORDER FORM No. ${cu.of}`,
+    subtitle: [`Issued under Master Services Agreement No. ${cu.msa}`, `Order Date: ${cu.signed}  ·  Term: 36 months  ·  Site: DFW1 / Data Hall DH-1`],
+    docLabel: `Order Form No. ${cu.of}`,
+    customerName: cu.name,
+    parties,
+    preamble: `This Order Form is entered into under the Master Services Agreement between ${PROVIDER.name} ("Provider") and ${cu.name} ("Customer") and is subject to its terms.`,
+    sections: [
+      { heading: '1. PRICING', blocks: [
+        {
+          kind: 'table',
+          columns: [{ label: 'Charge', width: 3 }, { label: 'Description', width: 4 }, { label: 'Amount (USD)', width: 2, align: 'right' }],
+          rows: [
+            ['Monthly Recurring Charge (MRC)', `Colocation space, power and cooling for ${list.length} cabinets`, `$${cu.mrc.toLocaleString('en-US')}.00`],
+            ['Non-Recurring Charge (NRC)', 'Installation and cabinet setup', 'Waived'],
+          ],
+        },
+        clause('1.1 Charges begin on the Service Commencement Date and exclude applicable taxes. Recurring charges increase by 3% on each anniversary of the Order Date.'),
+      ] },
+      { heading: '2. SPACE AND POWER', blocks: [
+        clause(`2.1 Licensed Cabinets: ${ranges(list.map((c) => c.cab)).replace(/-/g, '–')}`),
+        clause(`2.2 Power Redundancy: ${powerText[cu.power]}`),
+        clause(cu.cooling ? `2.3 Cooling Redundancy: ${cu.cooling} (chilled water plant and CRAH units)` : '2.3 Cooling: per Provider standard operating environment'),
+        clause('2.4 Committed Power per cabinet (kW, contracted maximum average draw):'),
+        {
+          kind: 'table',
+          columns: [{ label: 'Cabinet', width: 2 }, { label: 'Circuits (each feed)', width: 3 }, { label: 'Feeds', width: 3 }, { label: 'Committed', width: 2, align: 'right' }],
+          rows: list.map((c) => [c.cab, `${c.amps}A/208V/${c.phases === 1 ? '1ph' : '3ph'}`, feeds(c), `${c.committed.toFixed(1)} kW`]),
+        },
+      ] },
+      { heading: '3. SPECIAL TERMS', blocks: [clause(special)] },
+      { heading: '4. GENERAL', blocks: [
+        clause('4.1 If this Order Form conflicts with the Agreement, this Order Form controls for the services it describes. Capitalized terms not defined here have the meanings given in the Agreement.'),
+      ] },
+    ],
+    witness: 'Accepted and agreed by the authorized representatives of the parties:',
+    signers,
+    createdOn: cu.signed,
+  };
+  return [
+    { file: `${cu.acct}-${cu.short}-msa.pdf`, spec: msa },
+    { file: `${cu.acct}-${cu.short}-order-form.pdf`, spec: orderForm },
+  ];
+}
+
 const contractLineOf: Record<string, number> = {};
+const contractPdfs: { readonly file: string; readonly spec: ContractPdf }[] = [];
 for (const cu of CUSTOMERS) {
   const msa: string[] = [];
   const add = (a: string[], s: string) => a.push(s);
@@ -376,38 +583,11 @@ for (const cu of CUSTOMERS) {
   add(msa, '');
   add(msa, '[EXCERPT - Sections 1-6 omitted]');
   add(msa, '');
-  add(msa, '7. SERVICE LEVELS');
-  if (cu.short === 'caddo') {
-    // Wrapped across lines the way the PDF export left it: no single line states the full commitment.
-    add(msa, `7.1 Availability Commitment. Provider will maintain Power Availability of ${cu.availability}% per`);
-    add(msa, '    calendar month for each Licensed Cabinet, excluding Scheduled Maintenance as defined in Section 9.');
-  } else if (cu.short === 'halcyon') {
-    add(msa, `7.1 Availability Commitment. Power Availability shall be ${cu.availability}% per calendar month, excluding Scheduled Maintenance (Section 9).`);
-  } else {
-    add(msa, `7.1 Availability Commitment. Provider will maintain Power Availability of ${cu.availability}% per calendar month, excluding Scheduled Maintenance (Section 9).`);
-    contractLineOf[`${cu.short}.availability`] = msa.length;
-  }
-  if (cu.short === 'halcyon') contractLineOf[`${cu.short}.availability`] = msa.length;
-  add(msa, '7.2 Power Outage. A Power Outage occurs when a Licensed Cabinet loses power on all contracted feeds.');
-  add(msa, '    For redundant (A+B or 2N) service, loss of a single feed is not a Power Outage.');
-  add(msa, '7.3 Exclusions. No credit is owed where (a) the Customer is not connected to all contracted feeds,');
-  add(msa, '    (b) Customer load on a redundant pair exceeds 80% of a single circuit rating, or (c) the event');
-  add(msa, '    occurs during Scheduled Maintenance.');
-  add(msa, '');
-  add(msa, '8. SERVICE CREDITS');
-  add(msa, '8.1 Credits are calculated on the Monthly Recurring Charge (MRC) of the affected Licensed Cabinets:');
-  add(msa, '      Cumulative Power Outage per month      Credit');
-  add(msa, '      10 - 43 minutes                         5% of MRC');
-  add(msa, '      43 - 240 minutes                        10% of MRC');
-  add(msa, '      240 - 720 minutes                       25% of MRC');
-  add(msa, '      > 720 minutes                           50% of MRC');
-  add(msa, '8.2 Total credits in any month shall not exceed 50% of the MRC. Credits are the sole and exclusive remedy');
-  add(msa, '    except as provided in Section 8.3 (chronic failure termination right).');
-  add(msa, '');
-  add(msa, '9. SCHEDULED MAINTENANCE');
-  add(msa, '9.1 Provider will give at least ten (10) business days written notice of Scheduled Maintenance.');
-  add(msa, '9.2 Provider will use commercially reasonable efforts to keep at least one contracted feed energized');
-  add(msa, '    during Scheduled Maintenance for redundant service.');
+  serviceLevels(cu).forEach((sec, i) => {
+    if (i > 0) add(msa, '');
+    add(msa, sec.heading);
+    for (const b of sec.blocks) msa.push(...txtLines(b));
+  });
   writeFileSync(join(docsDir, 'contracts', `${cu.acct}-${cu.short}-msa.txt`), msa.join('\n') + '\n');
 
   const of: string[] = [];
@@ -448,6 +628,7 @@ for (const cu of CUSTOMERS) {
   else if (cu.short === 'pecan') add(of, '3.1 Customer acknowledges single-feed service; dual feeds, where present, are provided as a courtesy.');
   else add(of, '3.1 None.');
   writeFileSync(join(docsDir, 'contracts', `${cu.acct}-${cu.short}-order-form.txt`), of.join('\n') + '\n');
+  contractPdfs.push(...contractPdfsOf(cu));
 }
 
 // ───────────────────────── Maximo work orders ─────────────────────────
@@ -758,17 +939,12 @@ const isRunning = (u: Chiller, utc: number) => lastChange(u, utc)?.running ?? IN
 const loadedOf = (c: RunChange | null, u: Chiller, utc: number) => (!c ? (INITIAL_RUNNING[u] ? 1 : 0) : c.running ? Math.min(1, (utc - c.utc) / (c.rampMin * MIN)) : 0);
 
 // ── Desigo CC event log rows ──
-interface Point { readonly designation: string; readonly description: string }
 interface DesigoRow {
   readonly utc: number; readonly point: Point; readonly record: 'Event' | 'Activity'; readonly message: string; readonly category: string;
   readonly eventUtc: number | null; readonly state: string; readonly cause: string; readonly instance: object | null;
   readonly action: string; readonly value: string; readonly prev: string; readonly unit: string;
 }
 const desigoRows: DesigoRow[] = [];
-const plantPt = (tag: string, point: string, description: string): Point => ({ designation: `DFW1.Bldg1.CHW_Plant.${tag}.${point}`, description });
-const hallPt = (tag: string, point: string, description: string): Point => ({ designation: `DFW1.Bldg1.DH-1.${tag}.${point}`, description });
-const upsPt = (s: 'A' | 'B', point: string, description: string): Point => ({ designation: `DFW1.Bldg1.UPS_Rm_${s}.UPS-${s}.${point}`, description: `UPS-${s} ${description}` });
-const crahBms = (n: number) => (n === 5 ? 'CRAH-5' : `CRAH-${pad(n)}`);
 const runPt = (u: string) => plantPt(u, 'Run_Status', `${u} Run Status`);
 const cmdPt = (u: string) => plantPt(u, 'Start_Stop_Cmd', `${u} Start/Stop Command`);
 const enablePt = (u: string) => plantPt(u, 'Enable_Cmd', `${u} Enable Command`);
@@ -936,7 +1112,7 @@ const excAt = (utc: number) => {
   return excursion[i]! + (excursion[i + 1]! - excursion[i]!) * Math.min(1, x - i);
 };
 const CHWS_SETPOINT = 44;
-// CHW-LOOP-1 supply high limit: 50 °F, the limit the BMS point list sets on each chiller's CHWS.
+// CHW-LOOP-1 supply high limit: 50 °F, the high_limit the BMS point table sets on the loop supply point.
 {
   const point = plantPt('CHW-LOOP-1', 'CHWS_Temp', 'CHW Loop 1 Supply Temp');
   let raisedAt: number | null = null, raisedValue = '';
@@ -966,7 +1142,8 @@ const chillerTons = (u: Chiller, utc: number) => {
 };
 const chillerKw = (u: Chiller, utc: number) => (isRunning(u, utc) ? chillerTons(u, utc) * kwPerTon(utc) + 1.5 : 0.4);
 const pumpHz = (n: 1 | 2 | 3, utc: number) => (n === 3 ? 0 : 36 + (8 * (demandTons(utc) - 90)) / 30 + 1.2 * excAt(utc) + 0.3 * jitter(10 + n, utc));
-const pumpKw = (hz: number) => (30 * (hz / 60) ** 3) / 0.93;
+// 10 HP motors (7.46 kW shaft at 60 Hz); 230 gpm at 85 ft is about 6.9 BHP at 72% pump efficiency.
+const pumpKw = (hz: number) => (7.46 * (hz / 60) ** 3) / 0.93;
 const sideAt = (s: Side, utc: number) => {
   const upsOutKw = itKw(utc) * itShare[s];
   const mccKw = s === 'A' ? chillerKw('CH-1', utc) + pumpKw(pumpHz(1, utc)) : chillerKw('CH-2', utc) + chillerKw('CH-3', utc) + pumpKw(pumpHz(2, utc));
@@ -1172,6 +1349,11 @@ const TREND: TrendPoint[] = [
   ...['A', 'C', 'E'].map((row, i) => ({ point: { designation: `DFW1.Bldg1.DH-1.Row_${row}.Cold_Aisle_Temp`, description: `DH-1 Row ${row} Cold Aisle Temp` }, unit: '°F', value: (t: number) => coldAisle(row, t) + 0.3 * jitter(40 + i, t) })),
   ...(['A', 'B'] as const).map((s) => ({ point: upsPt(s, 'Load_Pct', 'Output Load'), unit: '%', value: (t: number) => (sideAt(s, t).upsOutKw / 750) * 100 })),
 ];
+// Every point the event log and trends print is a row of the point table, under the same description.
+for (const p of [...desigoRows.map((r) => r.point), ...TREND.map((t) => t.point)]) {
+  const row = pointByDesignation.get(p.designation);
+  if (row?.description !== p.description) throw new Error(`${p.designation} "${p.description}" is not in the BMS point table as written`);
+}
 const writeDesigoTrend = (name: string, samples: readonly number[]) => {
   const lines = [csvLine(['Date/Time', 'Source Designation', 'Source Description', 'Value', 'Unit', 'Quality'])];
   for (const t of samples) for (const p of TREND) lines.push(csvLine([desigoTime(t), p.point.designation, p.point.description, p.value(t).toFixed(1), p.unit, 'Good']));
@@ -1213,11 +1395,11 @@ const R = 'docs/circuit_roster.csv';
 const E = 'docs/equipment_register.csv';
 const B = 'docs/bms_points.json';
 const W = 'docs/maximo_workorders.csv';
-// Register asset classes the model represents, by ground-truth kind. Anything else (MCC, transformer,
-// fire alarm panel) is an asset Cascade does not model.
+// Register asset classes the model represents, by ground-truth kind. Anything else (the fire alarm
+// panel) is an asset Cascade does not model.
 const MODELED_CLASS: Record<string, string> = {
   Generator: 'generator', 'Automatic Transfer Switch': 'ats', ATS: 'ats', Switchgear: 'switchgear', UPS: 'ups', PDU: 'pdu',
-  'Remote Power Panel': 'rpp', Chiller: 'chiller', Pump: 'pump', CRAH: 'crah',
+  'Remote Power Panel': 'rpp', Chiller: 'chiller', Pump: 'pump', CRAH: 'crah', 'Motor Control Center': 'panel', Transformer: 'transformer',
 };
 const kindOfClass = (cls: string): string | null => MODELED_CLASS[cls] ?? null;
 const of = (s: string) => `docs/contracts/${CUSTOMERS.find((c) => c.short === s)!.acct}-${s}-order-form.txt`;
@@ -1311,13 +1493,12 @@ const truth = {
     {
       id: 'cooling-common-cause-mcc-b',
       rule: 'cooling-common-cause',
-      subjects: [ref('chiller', 'CH-2'), ref('chiller', 'CH-3'), ref('breaker', 'SWGR-B-CB-3'), ref('header', 'CHWS-HDR-2')],
+      subjects: [ref('chiller', 'CH-2'), ref('chiller', 'CH-3'), ref('panel', 'MCC-B'), ref('breaker', 'SWGR-B-CB-3'), ref('header', 'CHWS-HDR-2')],
       affectedCabinets: 'all',
       customer: null,
       why: `The loop is documented N+1 (3 x 90 TR, 2 required). Standby CH-3 was moved onto MCC-B in 2022, so it shares SWGR-B CB-3 (and header CHWS-HDR-2) with duty chiller CH-2. Losing SWGR-B CB-3, SWGR-B or ATS-B leaves only CH-1 (${Math.round(90 * 3.517 * 10) / 10} kW) against ~${hallLoad} kW of IT heat. N+1 by unit count, not by failure domain.`,
       evidence: [
         { doc: E, line: regLineOf['CH-3'] }, { doc: E, line: regLineOf['CH-2'] }, { doc: E, line: regLineOf['CHW-LOOP-1'] },
-        { doc: B, line: bmsLineOf['CH-3.power'] }, { doc: B, line: bmsLineOf['CH-3.role'] },
         { doc: W, line: woLineOf['ch3-mcc-move'], note: 'WO-22-0418: CH-3 re-fed from MCC-B' },
       ],
       consequential: CUSTOMERS.filter((c) => c.cooling === 'N+1').map((c) => ({
@@ -1325,6 +1506,23 @@ const truth = {
         evidence: [{ doc: of(c.short), line: contractLineOf[`${c.short}.cooling`] }],
       })),
       fix: fix(null, [], 'Cooling: move CH-3 back to an A-side MCC. Not a power cord move.'),
+    },
+    {
+      id: 'cooling-common-cause-chw-loop',
+      rule: 'cooling-common-cause',
+      subjects: [ref('loop', 'CHW-LOOP-1')],
+      affectedCabinets: 'all',
+      customer: null,
+      why: `All eight CRAHs in DH-1 draw chilled water from CHW-LOOP-1, the only loop. Its "Design N+1" counts chillers (3 x 90 TR, 2 required); the loop itself has no second path, so a loop loss (a pipe break, a drain-down for valve work) leaves no CRAH able to remove the ~${hallLoad} kW of IT heat.`,
+      evidence: [
+        { doc: E, line: regLineOf['CHW-LOOP-1'] }, { doc: E, line: regLineOf['CRAH-01'], note: 'system CHW-LOOP-1, as for CRAH-02..08' },
+        { doc: E, line: regLineOf['CHWS-HDR-1'] }, { doc: E, line: regLineOf['CHWS-HDR-2'] },
+      ],
+      consequential: CUSTOMERS.filter((c) => c.cooling === 'N+1').map((c) => ({
+        rule: 'contract-topology-mismatch', subject: ref('contract', c.msa), why: 'order form promises N+1 cooling',
+        evidence: [{ doc: of(c.short), line: contractLineOf[`${c.short}.cooling`] }],
+      })),
+      fix: fix(null, [], 'Cooling: a second chilled-water path (a loop or cross-connect with isolation valves). Not a power cord move.'),
     },
     {
       id: 'contract-2n-lonestar',
@@ -1436,10 +1634,19 @@ const truth = {
       id: 'decoy-tag-spellings',
       looksLike: 'conflict',
       subjects: [ref('pdu', 'PDU-2A'), ref('crah', 'CRAH-5')],
-      why: 'PDU-2A is written "PDU-2A" (register), "PDU 2A" (BMS) and "PDU2A" (roster); CRAH-05 is "CRAH-5" in the BMS. Each set is one device after tag normalization, not a conflict and not extra equipment.',
+      why: 'PDU-2A is written "PDU-2A" (register), "PDU 2A" (BMS equipment) and "PDU2A" (roster); CRAH-05 is "CRAH-5" in the BMS. Each set is one device after tag normalization, not a conflict and not extra equipment.',
       evidence: [{ doc: E, line: regLineOf['PDU-2A'] }, { doc: B, line: bmsLineOf['PDU 2A.name'] }, { doc: R, line: rosterLineOf['C01/A'] }, { doc: B, line: bmsLineOf['CRAH-5.name'] }],
     },
   ],
 };
 writeFileSync(join(siteDir, 'ground_truth.json'), JSON.stringify(truth, null, 2) + '\n');
 console.log(JSON.stringify({ cabinets: cabs.length, rosterRows: rosterLines.length - 1, registerRows: reg.length, bmsLines: L.length, hallLoad, rowCLoad }));
+
+// ───────────────────────── upload bundle ─────────────────────────
+// What a user drags onto an empty Cascade: every export as the operator's systems wrote it, and the
+// contracts as PDFs. Rebuilt from scratch each run so a removed document cannot linger.
+const uploadDir = join(siteDir, 'upload');
+rmSync(uploadDir, { recursive: true, force: true });
+mkdirSync(uploadDir, { recursive: true });
+for (const name of readdirSync(docsDir).sort()) if (/\.(csv|json)$/.test(name)) copyFileSync(join(docsDir, name), join(uploadDir, name));
+void Promise.all(contractPdfs.map(async ({ file, spec }) => writeFileSync(join(uploadDir, file), await renderContractPdf(spec))));

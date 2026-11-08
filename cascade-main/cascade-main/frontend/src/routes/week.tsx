@@ -1,8 +1,8 @@
 // Week: this week's jobs on a calendar, one column per day, blocks by scheduled time, coloured by risk
 // grade. A click opens the job on Site. Under the calendar, the customer notices of the job in focus,
-// each sendable only through the server's approval gate. The floor below shows the job in focus.
+// each sendable only through the server's approval gate. The floor beside it shows the job in focus.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { MessageDto, NoticeDto, WorkAssessmentDto } from "@cascade/core/contract";
@@ -17,6 +17,20 @@ export const Route = createFileRoute("/week")({ component: WeekView });
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 const CAL_H = 300;
+const GAP = 20;
+
+/** The week panel's width; the floor takes the rest of the screen beside it. */
+const panelWidth = () => Math.round(Math.min(860, Math.max(520, window.innerWidth * 0.52)));
+
+function usePanelWidth(): number {
+  const [w, setW] = useState(panelWidth);
+  useEffect(() => {
+    const on = () => setW(panelWidth());
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+  }, []);
+  return w;
+}
 const hours = (t: string) => Number(t.slice(11, 13)) + Number(t.slice(14, 16)) / 60;
 
 const toneOfEffect = (k: NoticeDto["effects"][number]["kind"]) => (k === "loses-power" || k === "loses-cooling" ? "r" : "a");
@@ -116,7 +130,7 @@ function Block({ site, a, onOpen, onFocus, focus, top, height }: { site: Site; a
       <b>{id ? labelOf(site, id) : w.location}</b>
       <span className="tm">
         {hm(w.scheduledStart!)}
-        {w.scheduledFinish ? `–${hm(w.scheduledFinish)}` : ""}
+        {w.scheduledFinish && height >= 64 ? `–\u200b${hm(w.scheduledFinish)}` : ""}
       </span>
     </button>
   );
@@ -138,6 +152,8 @@ function WeekView() {
     [today],
   );
   const scheduled = all.filter((a) => a.workOrder.scheduledStart);
+  const busy = new Set(scheduled.map((a) => a.workOrder.scheduledStart!.slice(0, 10)));
+  const columns = `44px ${days.map((d) => (busy.has(d) ? "minmax(0, 1fr)" : "30px")).join(" ")}`;
   const starts = scheduled.map((a) => hours(a.workOrder.scheduledStart!));
   const ends = scheduled.map((a) => (a.workOrder.scheduledFinish && a.workOrder.scheduledFinish.slice(0, 10) === a.workOrder.scheduledStart!.slice(0, 10) ? hours(a.workOrder.scheduledFinish) : 24));
   const h0 = Math.max(0, Math.floor(Math.min(6, ...starts)));
@@ -155,17 +171,18 @@ function WeekView() {
     return { ...RESTING, active: true, looks, origin: focus.asset, cables: true, pulse: [focus.asset], pulseTone: impact.grade };
   }, [focus, impact]);
   const handlers = useMemo(() => ({}), []);
-  useFloor(paint, handlers, { top: CAL_H + 300, right: 12, bottom: 12, left: 12 });
+  const width = usePanelWidth();
+  useFloor(paint, handlers, { top: 12, right: 12, bottom: 12, left: width + GAP * 2 });
   if (!site) return null;
 
   const open = (wonum: string) => void navigate({ to: "/site", search: { job: wonum } });
   return (
-    <section className="sheet panel week">
-      <div className="cal">
+    <section className="sheet panel week" style={{ width }}>
+      <div className="cal" style={{ gridTemplateColumns: columns }}>
         <div />
         {days.map((d) => (
-          <div key={d} className={`dh${d === today ? " today" : ""}`}>
-            {DAYS[new Date(`${d}T00:00:00Z`).getUTCDay()]}
+          <div key={d} className={`dh${d === today ? " today" : ""}${busy.has(d) ? "" : " quiet"}`}>
+            {busy.has(d) && DAYS[new Date(`${d}T00:00:00Z`).getUTCDay()]}
             <small>{Number(d.slice(8, 10))}</small>
           </div>
         ))}

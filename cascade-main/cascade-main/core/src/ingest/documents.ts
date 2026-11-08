@@ -7,7 +7,8 @@ import type { FactSource } from './sources.js';
 declare const DOC: unique symbol;
 export type DocId = string & { readonly [DOC]: true };
 
-export type DocFormat = 'csv' | 'json' | 'text';
+/** `pdf`: the document is a PDF and `text` is its text layer. */
+export type DocFormat = 'csv' | 'json' | 'text' | 'pdf';
 
 export interface SourceDocument {
   readonly id: DocId;

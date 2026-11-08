@@ -1,5 +1,5 @@
 // Procedures: the method of procedure the engine drafts for a job, as a checklist. The current step is
-// the first one not ticked; the floor shows what is de-energized by then. Printable.
+// the first one not ticked; the floor shows what is de-energized by then.
 
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -136,10 +136,7 @@ function ProceduresView() {
             <span className="tm">{span(job.start, job.finish)}</span>
           </h2>
         )}
-        <div className="bar no-print" style={{ display: "flex", gap: 8, marginTop: 12 }}>
-          <button className="btn" onClick={() => window.print()} disabled={!m}>
-            Print
-          </button>
+        <div className="bar" style={{ display: "flex", gap: 8, marginTop: 12 }}>
           <button className="btn ghost" onClick={reset} disabled={!m || checked.size === 0}>
             Reset
           </button>

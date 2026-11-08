@@ -4,7 +4,7 @@
 // through the equipment register.
 
 import type { Facility } from '../facility/facility.js';
-import type { AnyId } from '../facility/ids.js';
+import { kindOf, type AnyId } from '../facility/ids.js';
 import type { SourceDocument } from '../ingest/documents.js';
 import { normalizeTag, parseDocument, registerAssets, type RegisterAsset } from '../ingest/sources.js';
 import type { LocalDateTime, WorkOrder } from '../maintenance/work-orders.js';
@@ -43,10 +43,10 @@ export interface TrendSeries {
   readonly samples: readonly TrendSample[];
 }
 
-/** An alarm threshold configured on one BMS point, as the point list states it. */
+/** An alarm threshold configured on one BMS point, as the point table states it. */
 export interface AlarmLimit {
   readonly system: HistorySystem;
-  /** The point name as the point list writes it ("CH-1.CHWS.Temp"). */
+  /** The point's designation, as the point table, event log and trends write it ("DFW1.Bldg1.CHW_Plant.CH-1.CHWS_Temp"). */
   readonly source: string;
   readonly bound: 'high' | 'low';
   readonly value: number;
@@ -153,9 +153,11 @@ export interface EntityHistory {
  */
 export function entityHistory(site: SiteHistory, workOrders: readonly WorkOrder[], facility: Facility, entity: AnyId, window: HistoryWindow): EntityHistory {
   const relevant = new Map<AnyId, boolean>();
+  // A panel or transformer passes its feed straight through, so a meter on the breaker feeding MCC-B is about CH-2.
+  const feeds = (e: AnyId): boolean => facility.dependents(e).some((d) => d === entity || ((kindOf(d) === 'panel' || kindOf(d) === 'transformer') && feeds(d)));
   const about = (e: AnyId) => {
     let r = relevant.get(e);
-    if (r === undefined) relevant.set(e, (r = e === entity || facility.dependents(e).includes(entity)));
+    if (r === undefined) relevant.set(e, (r = e === entity || feeds(e)));
     return r;
   };
   const inWindow = (t: LocalDateTime) => (window.from === null || t >= window.from) && (window.to === null || t < window.to);

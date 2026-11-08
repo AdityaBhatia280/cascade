@@ -1,5 +1,5 @@
 // Handoff: the floor at a chosen moment for the incoming shift. Cabinets running without backup are
-// tinted, active alarms sit as dots on their equipment, jobs in progress are in ink. Printable.
+// tinted, active alarms sit as dots on their equipment, jobs in progress are in ink.
 
 import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -69,11 +69,8 @@ function HandoffView() {
     <>
       <section className="sheet panel handoff">
         <h2>Handoff</h2>
-        <div className="bar no-print">
+        <div className="bar">
           <input type="datetime-local" value={at} onChange={(e) => e.target.value && void navigate({ search: { at: e.target.value }, replace: true })} />
-          <button className="btn" onClick={() => window.print()} disabled={!h}>
-            Print
-          </button>
         </div>
         {q.isError && <div className="empty">{(q.error as Error).message}</div>}
         {h && wb && (
@@ -135,7 +132,6 @@ function HandoffView() {
           </div>
         )}
       </section>
-      {h && <pre className="print-only">{h.text}</pre>}
     </>
   );
 }
