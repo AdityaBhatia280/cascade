@@ -8,6 +8,7 @@ import type { Action, Incident } from '../src/db/schema.js';
 import { seedPortfolio } from '../src/services/portfolio.js';
 import { createAction, getRetellCallStatus, handleRetellWebhook, syncLatestRetellCalls } from '../src/services/actions.js';
 import { streamAgent } from '../src/services/agent.js';
+import { applyCustomFaults } from '../src/services/simulation.js';
 import type { Request, Response } from 'express';
 
 type Line = { role: 'agent' | 'user'; content: string };
@@ -294,4 +295,23 @@ test('every observed call is streamed over SSE, including calls the page did not
   assert.equal(voice[0]!.data.outcome, null);
   assert.ok(voice[1]!.data.outcome, 'ended call carries its outcome');
   assert.ok(events.some((e) => e.event === 'voice_call_outcome'));
+});
+
+test('a restart keeps reported units failed and their tickets open, so a graph re-sync does not resolve them', async () => {
+  const c = call('call_restart_upsb', [
+    GREETING,
+    { role: 'user', content: 'UPS panel B is down and needs a ticket.' },
+    { role: 'agent', content: 'Confirmed, UPS Panel B fault reported. I am opening a new incident ticket and work order.' },
+  ]);
+  await handleRetellWebhook({ event: 'call_ended', call: c });
+  const [inc] = voiceIncidents();
+
+  await seedPortfolio();
+  store.loadFromDisk();
+
+  assert.ok(store.injectedFaults.has('UPS-B'), 'reported unit still failed after restart');
+  assert.equal(store.getNode('UPS-B')!.status, 'failed');
+  applyCustomFaults([...store.injectedFaults]);
+  assert.equal(store.incidents.find((i) => i.id === inc!.id)!.status, 'open', 'the voice ticket stays open');
+  assert.equal(store.incidents.filter((i) => i.root_node === 'UPS-B' && i.status !== 'resolved').length, 1, 'no duplicate ticket');
 });

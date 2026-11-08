@@ -248,6 +248,8 @@ class Store {
         simulations?: Simulation[];
         assumptions?: Assumptions;
         voiceCalls?: VoiceCallOutcome[];
+        injectedFaults?: string[];
+        nodeStatuses?: Record<string, Node['status']>;
       };
       if (Array.isArray(data.incidents) && data.incidents.length > 0) {
         for (const inc of data.incidents) {
@@ -275,6 +277,11 @@ class Store {
       }
       for (const call of data.voiceCalls ?? []) {
         this.voiceCalls.set(call.call_id, call);
+      }
+      this.injectedFaults = new Set((data.injectedFaults ?? []).filter((id) => this.getNode(id)));
+      for (const node of this.nodes) {
+        const saved = data.nodeStatuses?.[node.id];
+        if (saved) node.status = saved;
       }
     } catch {
       // Ignore corrupt or missing disk db
