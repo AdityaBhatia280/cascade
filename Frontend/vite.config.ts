@@ -12,7 +12,8 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    host: '127.0.0.1',
+    // 'localhost' covers both 127.0.0.1 and ::1, so browsers that try IPv6 first (Safari) still connect.
+    host: 'localhost',
     proxy: Object.fromEntries(
       ['/api', '/dynamic-api', '/dynamic-app'].map((prefix) => [prefix, { target: 'http://127.0.0.1:5001', changeOrigin: true }]),
     ),
