@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Activity, AlertTriangle, CheckCircle2, ChevronDown, ChevronUp, ClipboardList, Flame, PanelRightClose, PanelRightOpen, Pause, Play, Plus, RotateCcw, X, Zap } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -54,7 +54,7 @@ function Intelligence() {
   const search = Route.useSearch();
   const {
     nodeStatus, faults, whatIf, failNode, healNode, resetFaults,
-    setSimulation, scenarioRunning, steps, createWorkOrder, approve, setApprovalOpen,
+    setSimulation, scenarioRunning, steps, createWorkOrder, approve, setApprovalOpen, incident,
   } = useCascade();
   const q = useQuery({ queryKey: ['graph'], queryFn: api.graph });
   const [filter, setFilter] = useState(0);
@@ -215,6 +215,11 @@ function Intelligence() {
           })}
         </div>
         <div className="ml-auto flex items-center gap-2">
+          {incident && incident.status !== 'resolved' && (
+            <Link to="/incidents/$id" params={{ id: incident.id }} className="inline-flex items-center gap-1.5 hover:underline" title={incident.title}>
+              <StatusBadge status={incident.status} label={`${incident.id} · ${label(nodes, incident.root_node)}`} />
+            </Link>
+          )}
           <span className="tnum text-muted-foreground">
             <strong className="text-critical">{failedCount}</strong> failed · <strong className="text-warning">{degradedCount}</strong> degraded
             {whatIf && whatIf.total_usd > 0 ? <> · <strong className="text-foreground">{usd(whatIf.total_usd)}</strong> exposure</> : null}
