@@ -159,7 +159,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </Button>
             </div>
           </header>
-          <main className="mx-auto w-full max-w-[1440px] flex-1 p-4 md:p-8">{children}</main>
+          <main className={cn('w-full flex-1', path === '/dynamic' ? 'p-2' : 'mx-auto max-w-[1440px] p-4 md:p-8')}>{children}</main>
         </div>
       </div>
       <ApprovalDialog />

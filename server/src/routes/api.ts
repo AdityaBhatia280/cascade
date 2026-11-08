@@ -1,8 +1,4 @@
 import { Router } from 'express';
-import { spawn, type ChildProcess } from 'node:child_process';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import {
   seedPortfolio,
   getOverview,
@@ -335,90 +331,6 @@ apiRouter.post('/retell/webhook', async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });
   }
-});
-
-// ── Dynamic View (cascade-main 3D Floor Sub-App) ──
-
-let dynamicProc: ChildProcess | null = null;
-let dynamicState: 'stopped' | 'installing' | 'starting' | 'running' | 'error' = 'stopped';
-let dynamicError: string | null = null;
-
-async function probeDynamicUrl(): Promise<boolean> {
-  try {
-    const res = await fetch('http://127.0.0.1:5174', { method: 'GET' });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
-apiRouter.get('/dynamic-view/status', async (_req, res) => {
-  const live = await probeDynamicUrl();
-  if (live) dynamicState = 'running';
-  res.json({
-    state: dynamicState,
-    url: 'http://127.0.0.1:5174/site?cam=3d',
-    api_url: 'http://127.0.0.1:5002/api',
-    error: dynamicError,
-  });
-});
-
-apiRouter.post('/dynamic-view/start', async (_req, res) => {
-  if (await probeDynamicUrl()) {
-    dynamicState = 'running';
-    res.json({ state: 'running', url: 'http://127.0.0.1:5174/site?cam=3d' });
-    return;
-  }
-
-  if (dynamicState === 'installing' || dynamicState === 'starting') {
-    res.json({ state: dynamicState, url: 'http://127.0.0.1:5174/site?cam=3d' });
-    return;
-  }
-
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const cascadeMainDir = path.resolve(__dirname, '../../../cascade-main/cascade-main');
-  if (!fs.existsSync(cascadeMainDir)) {
-    res.status(404).json({ error: 'cascade-main/cascade-main directory not found' });
-    return;
-  }
-
-  dynamicError = null;
-  const hasNodeModules = fs.existsSync(path.join(cascadeMainDir, 'node_modules'));
-
-  const launchDev = () => {
-    dynamicState = 'starting';
-    dynamicProc = spawn('npm', ['run', 'dev'], {
-      cwd: cascadeMainDir,
-      shell: true,
-      env: { ...process.env, DYNAMIC_PORT: '5002' },
-      stdio: 'ignore',
-    });
-    dynamicProc.on('error', (err) => {
-      dynamicState = 'error';
-      dynamicError = err.message;
-    });
-  };
-
-  if (!hasNodeModules) {
-    dynamicState = 'installing';
-    const installProc = spawn('npm', ['install'], {
-      cwd: cascadeMainDir,
-      shell: true,
-      stdio: 'ignore',
-    });
-    installProc.on('close', (code) => {
-      if (code === 0) {
-        launchDev();
-      } else {
-        dynamicState = 'error';
-        dynamicError = `npm install exited with code ${code}`;
-      }
-    });
-  } else {
-    launchDev();
-  }
-
-  res.json({ state: dynamicState, url: 'http://127.0.0.1:5174/site?cam=3d' });
 });
 
 // ── Health ──

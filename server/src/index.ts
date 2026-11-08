@@ -9,6 +9,7 @@ import { seedPortfolio } from './services/portfolio.js';
 import { startTelemetryLoop } from './services/telemetry.js';
 import { startRetellCallSyncLoop } from './services/actions.js';
 import { store } from './db/store.js';
+import { mountDynamicApp, superviseDynamicServer } from './dynamic.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const frontendDist = path.resolve(__dirname, '../../Frontend/dist');
@@ -16,6 +17,7 @@ const frontendDist = path.resolve(__dirname, '../../Frontend/dist');
 const app = express();
 
 app.use(cors());
+mountDynamicApp(app);
 app.use(express.json());
 
 // API routes
@@ -45,6 +47,14 @@ if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
         eval: '/api/eval',
       },
     });
+  });
+}
+
+const stopDynamic = superviseDynamicServer();
+for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+  process.on(signal, () => {
+    stopDynamic();
+    process.exit(0);
   });
 }
 
