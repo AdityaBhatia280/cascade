@@ -19,10 +19,11 @@ import type {
   ParityResult,
   GroundTruthEdge,
   Assumptions,
+  VoiceCallOutcome,
 } from './schema.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_FILE_PATH = path.resolve(__dirname, '../../data/cascade-db.json');
+const DB_FILE_PATH = process.env['CASCADE_DB_PATH'] || path.resolve(__dirname, '../../data/cascade-db.json');
 
 export const DEFAULT_ASSUMPTIONS: Assumptions = {
   version: 1,
@@ -56,6 +57,7 @@ class Store {
   groundTruthEdges: GroundTruthEdge[] = [];
   assumptions: Assumptions = structuredClone(DEFAULT_ASSUMPTIONS);
   injectedFaults: Set<string> = new Set();
+  voiceCalls: Map<string, VoiceCallOutcome> = new Map();
 
   // ── Node helpers ──
 
@@ -227,6 +229,7 @@ class Store {
         simulations: this.simulations,
         assumptions: this.assumptions,
         injectedFaults: Array.from(this.injectedFaults),
+        voiceCalls: Array.from(this.voiceCalls.values()),
         nodeStatuses: Object.fromEntries(this.nodes.map((n) => [n.id, n.status])),
       };
       fs.writeFileSync(DB_FILE_PATH, JSON.stringify(payload, null, 2), 'utf-8');
@@ -244,6 +247,7 @@ class Store {
         actions?: Action[];
         simulations?: Simulation[];
         assumptions?: Assumptions;
+        voiceCalls?: VoiceCallOutcome[];
       };
       if (Array.isArray(data.incidents) && data.incidents.length > 0) {
         for (const inc of data.incidents) {
@@ -268,6 +272,9 @@ class Store {
       }
       if (data.assumptions) {
         this.assumptions = data.assumptions;
+      }
+      for (const call of data.voiceCalls ?? []) {
+        this.voiceCalls.set(call.call_id, call);
       }
     } catch {
       // Ignore corrupt or missing disk db
@@ -307,6 +314,7 @@ class Store {
     this.groundTruthEdges = [];
     this.assumptions = structuredClone(DEFAULT_ASSUMPTIONS);
     this.injectedFaults.clear();
+    this.voiceCalls.clear();
   }
 }
 

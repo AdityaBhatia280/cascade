@@ -188,6 +188,21 @@ export interface Action {
   result: string | null;
 }
 
+export interface VoiceCallTicket {
+  incident_id: string;
+  action_id: string;
+  /** null when no unit could be identified from what the caller said. */
+  node_id: string | null;
+}
+
+/** What Cascade did once a Retell call ended. Recorded once per call_id. */
+export interface VoiceCallOutcome {
+  call_id: string;
+  processed_at: string;
+  ticket: VoiceCallTicket | null;
+  approved_action_ids: string[];
+}
+
 export interface TelemetryPoint {
   id: string;
   node_id: string;

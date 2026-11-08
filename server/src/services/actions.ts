@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { store } from '../db/store.js';
 import { config } from '../config.js';
-import type { Action, ActionTool, Incident } from '../db/schema.js';
+import type { Action, ActionTool, Incident, Simulation, VoiceCallOutcome, VoiceCallTicket } from '../db/schema.js';
 import { broadcastAgentEvent } from './agent.js';
 import { applyCustomFaults, nextIncidentId, simulateFailure } from './simulation.js';
 
@@ -125,22 +125,9 @@ export function buildIcsAttachment(summary: string, description: string): string
 }
 
 /**
- * Approve and execute a pending action (sends real email via Resend if configured).
+ * Send an action's email through Resend (when configured) and return the delivery note to record as its result.
  */
-export async function approveAndExecuteAction(
-  actionId: string,
-  editedContent?: string,
-): Promise<Action | null> {
-  const action = store.getAction(actionId);
-  if (!action) return null;
-
-  if (editedContent && editedContent.trim().length > 0) {
-    action.content = editedContent.trim();
-  }
-
-  action.decided_by = 'Demo operator';
-  action.decided_at = new Date().toISOString();
-
+async function deliverActionEmail(action: Action): Promise<string> {
   // Execute external side-effect via Resend to DEMO_INBOX (JMJMJMJohnMan@gmail.com) for email, calendar invite, and work orders
   const { apiKey, fromAddress, demoInbox } = config.resend;
   if (
@@ -171,7 +158,7 @@ export async function approveAndExecuteAction(
             <tr><td style="padding: 4px 0; color: #71717a;">Simulated Recipient:</td><td style="padding: 4px 0; font-family: monospace;">${action.recipient_display}</td></tr>
             <tr><td style="padding: 4px 0; color: #71717a;">Routed Demo Inbox:</td><td style="padding: 4px 0; font-family: monospace;">${demoInbox}</td></tr>
             <tr><td style="padding: 4px 0; color: #71717a;">Financial Exposure:</td><td style="padding: 4px 0; font-weight: 600;">$${action.usd_impact.toLocaleString()}</td></tr>
-            <tr><td style="padding: 4px 0; color: #71717a;">Approved By:</td><td style="padding: 4px 0;">${action.decided_by} (${action.decided_at})</td></tr>
+            <tr><td style="padding: 4px 0; color: #71717a;">Approved By:</td><td style="padding: 4px 0;">${action.decided_by ? `${action.decided_by} (${action.decided_at})` : 'Awaiting approval'}</td></tr>
           </table>
           <div style="background: #f4f4f5; border-radius: 6px; padding: 14px; font-size: 14px; line-height: 1.5; white-space: pre-wrap;">${action.content}</div>
         </div>
@@ -236,31 +223,55 @@ export async function approveAndExecuteAction(
       if (res.ok) {
         const body = (await res.json().catch(() => ({}))) as { id?: string };
         const msgId = body.id ? ` [id: ${body.id.slice(0, 12)}]` : '';
-        action.status = 'executed';
-        action.result = isCalendar
+        return isCalendar
           ? `Delivered with .ics invite to ${deliveredTo}${msgId}`
           : isWorkOrder
             ? `Work order dispatched to ${deliveredTo}${msgId}`
             : `Delivered to ${deliveredTo}${msgId}`;
       } else {
-        action.status = 'executed';
-        action.result = `Recorded (Resend HTTP ${res.status}${errBody ? `: ${errBody.slice(0, 60)}` : ''}); routed to ${demoInbox}`;
+        return `Recorded (Resend HTTP ${res.status}${errBody ? `: ${errBody.slice(0, 60)}` : ''}); routed to ${demoInbox}`;
       }
     } catch {
-      action.status = 'executed';
-      action.result = `Delivered to ${demoInbox} (local fallback)`;
+      return `Delivered to ${demoInbox} (local fallback)`;
     }
-  } else {
-    action.status = 'executed';
-    action.result =
-      action.tool === 'create_work_order'
-        ? 'Work order logged in facilities queue'
-        : 'Delivered to demo inbox';
   }
+  if (!apiKey) console.log(`[Resend] RESEND_API_KEY not set; ${action.id} (${action.tool}) recorded without sending email`);
+  return action.tool === 'create_work_order' ? 'Work order logged in facilities queue' : 'Delivered to demo inbox';
+
+}
+
+/**
+ * Approve and execute a pending action (sends real email via Resend if configured).
+ */
+export async function approveAndExecuteAction(
+  actionId: string,
+  editedContent?: string,
+  decidedBy = 'Demo operator',
+): Promise<Action | null> {
+  const action = store.getAction(actionId);
+  if (!action) return null;
+
+  if (editedContent && editedContent.trim().length > 0) {
+    action.content = editedContent.trim();
+  }
+
+  action.decided_by = decidedBy;
+  action.decided_at = new Date().toISOString();
+  action.result = await deliverActionEmail(action);
+  action.status = 'executed';
 
   store.saveToDisk();
   broadcastAgentEvent('action_updated', action);
   return action;
+}
+
+/**
+ * Email a still-pending action (a voice-reported work order) without approving it.
+ */
+async function forwardPendingAction(action: Action): Promise<void> {
+  action.result = `Forwarded by email, awaiting approval: ${await deliverActionEmail(action)}`;
+  store.saveToDisk();
+  broadcastAgentEvent('action_updated', action);
 }
 
 /**
@@ -375,9 +386,8 @@ function buildRetellDynamicVars(incidentId?: string): Record<string, string> {
   const failedNodes = store.nodes.filter((n) => n.status === 'failed').map((n) => `${n.label} (${n.id})`);
   const degradedNodes = store.nodes.filter((n) => n.status === 'degraded').map((n) => `${n.label} (${n.id})`);
 
-  const relevantActions = store.actions.filter(
-    (a) => !targetInc || a.run_id === targetInc.agent_run_id || a.run_id === 'manual',
-  );
+  // Same scope a verbal approval on this call executes (see pendingActionsForIncident).
+  const relevantActions = store.actions.filter((a) => !targetInc || a.run_id === targetInc.agent_run_id);
   const pendingList = relevantActions.filter((a) => a.status === 'pending');
   const executedList = relevantActions.filter((a) => a.status === 'executed' || a.status === 'approved');
 
@@ -544,30 +554,129 @@ export async function createRetellPhoneCall(
   return { call_id: data.call_id, from_number, to_number };
 }
 
-const autoApprovedCalls = new Set<string>();
-const voiceTicketsByCall = new Map<string, { incidentId: string; actionId: string; nodeId: string }>();
+type Utterance = { role: string; content: string };
 
-const SERVER_VOICE_APPROVAL_REGEX = /\b(approve|confirm|yes dispatch|dispatch now|execute|send the email|go ahead|authorize)\b/i;
-const SERVER_VOICE_REPORT_REGEX =
-  /\b(report|reporting|ticket|work order|new incident|open an incident|incident|down|broken|failed|tripped|overheating|offline|fault|alarm|malfunction|not working|shut down|outage|issue|problem|leak|leaking|smoke|fire|hot|freeze|frozen)\b/i;
-
-function detectReportedNodeId(text: string): string {
-  const lower = text.toLowerCase();
-  if (/\b(chiller\s*1|chiller\s*one|ch-1)\b/.test(lower)) return 'CH-1';
-  if (/\b(chiller\s*2|chiller\s*two|ch-2)\b/.test(lower)) return 'CH-2';
-  if (/\b(chiller\s*3|chiller\s*three|ch-3)\b/.test(lower)) return 'CH-3';
-  if (/\b(crah|unit\s*4|air\s*handler)\b/.test(lower)) return 'CRAH-4';
-  if (/\b(sw-03|switch|bms|network)\b/.test(lower)) return 'SW-03';
-  if (/\b(chilled\s*water|cooling\s*loop|flow)\b/.test(lower)) return 'cooling_loop';
-  if (/\b(hall\s*200|data\s*hall|acme)\b/.test(lower)) return 'hall_200';
-  if (/\b(ups\s*a|panel\s*a|ups-a)\b/.test(lower)) return 'UPS-A';
-  return 'UPS-B';
-}
-
-function parseRawTranscript(data: {
+interface RetellCall {
+  call_id?: string;
+  call_status?: string;
+  start_timestamp?: number;
   transcript?: string;
   transcript_object?: Array<{ role?: string; content?: string }>;
-}): Array<{ role: string; content: string }> {
+  retell_llm_dynamic_variables?: Record<string, unknown>;
+  call_analysis?: {
+    call_summary?: string;
+    user_sentiment?: string;
+    call_successful?: boolean;
+  };
+}
+
+export interface VoiceCallView {
+  call_id: string;
+  call_status: string;
+  transcript: Utterance[];
+  call_summary?: string;
+  user_sentiment?: string;
+  call_successful?: boolean;
+  /** Set once the call has ended and Cascade has acted on its final transcript. */
+  outcome: VoiceCallOutcome | null;
+}
+
+const ENDED_CALL_STATUSES = new Set(['ended', 'error', 'not_connected']);
+const ENDED_WEBHOOK_EVENTS = new Set(['call_ended', 'call_analyzed']);
+
+/** Earliest mention wins, so "UPS B is down and Chiller 1 tripped" names the root, not the knock-on. */
+const UNIT_PATTERNS: Array<[string, RegExp]> = [
+  ['UPS-B', /\b(ups\s*-?\s*b|panel\s*b)\b/i],
+  ['UPS-A', /\b(ups\s*-?\s*a|panel\s*a)\b/i],
+  ['CH-1', /\b(chiller\s*(1|one)|ch\s*-?\s*1)\b/i],
+  ['CH-2', /\b(chiller\s*(2|two)|ch\s*-?\s*2)\b/i],
+  ['CH-3', /\b(chiller\s*(3|three)|ch\s*-?\s*3)\b/i],
+  ['CRAH-4', /\b(crah|unit\s*4|air\s*handler)\b/i],
+  ['SW-03', /\b(sw\s*-?\s*0?3|bms\s+switch|network\s+switch)\b/i],
+  ['cooling_loop', /\b(chilled\s*water|cooling\s*loop)\b/i],
+  ['hall_200', /\b(hall\s*200|data\s*hall|acme)\b/i],
+];
+
+const FAULT_REGEX =
+  /\b(down|broken|failed|failing|tripped|overheating|offline|fault|alarm|malfunction(ing)?|not working|shut down|outage|issue|problem|leak|leaking|smoke|fire|hot|freeze|frozen)\b/i;
+const INTAKE_REGEX = /\b(report|reporting|new incident|open an incident|open a ticket|new ticket)\b/i;
+const NOT_A_FAULT_REGEX = /\b(no problems?|no issues?|nothing(?:'s| is)? (?:wrong|down))\b/gi;
+const AGENT_INTAKE_REGEX = /\b(opening a new incident|logging a work order|creating a ticket)\b/i;
+const AGENT_CONFIRMATION_REGEX = /\b(reported|you(?:'re| are) reporting)\b/i;
+const APPROVAL_REGEX = /\b(approve|approved|confirm|confirmed|yes,? dispatch|dispatch (it|them|now)|execute|send the email|go ahead|authorize)\b/i;
+const AFFIRMATIVE_REGEX = /^(yes|yeah|yep|yup|sure|ok(ay)?|correct|affirmative|please do|do it)\b/i;
+const AGENT_ASKS_APPROVAL_REGEX = /\b(approve|dispatch|execute|send)\b/i;
+const NEGATION_REGEX = /\b(don't|do not|not yet|hold off|wait|never|cancel)\b/i;
+const QUESTION_START_REGEX = /^(is|are|was|were|do|does|did|can|could|would|any|what|why|how|has|have)\b/i;
+
+function sentences(text: string): string[] {
+  return text
+    .split(/(?<=[.?!])\s+/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+function isStatement(sentence: string): boolean {
+  return !sentence.endsWith('?') && !QUESTION_START_REGEX.test(sentence);
+}
+
+function firstUnitIn(text: string): string | null {
+  let best: { id: string; at: number } | null = null;
+  for (const [id, re] of UNIT_PATTERNS) {
+    const at = text.search(re);
+    if (at >= 0 && (!best || at < best.at)) best = { id, at };
+  }
+  return best && store.getNode(best.id) ? best.id : null;
+}
+
+interface CallIntent {
+  callerText: string;
+  reported: boolean;
+  approved: boolean;
+  nodeId: string | null;
+}
+
+/**
+ * Read what the caller asked for. Only the caller's own statements count; the agent's greeting and
+ * briefing name units from other incidents. The agent's explicit "X fault reported" confirmation is
+ * used for the unit only when the caller's words name none.
+ */
+function readCallIntent(lines: Utterance[]): CallIntent {
+  const isCaller = (l: Utterance) => l.role.toLowerCase() === 'user';
+  const callerStatements = lines.filter(isCaller).flatMap((l) => sentences(l.content)).filter(isStatement);
+  const callerText = lines.filter(isCaller).map((l) => l.content).join(' ');
+  const agentStatements = lines
+    .filter((l) => !isCaller(l))
+    .flatMap((l) => sentences(l.content))
+    .filter(isStatement);
+
+  const reported =
+    callerText.trim().length > 0 &&
+    (callerStatements.some((x) => {
+      const cleaned = x.replace(NOT_A_FAULT_REGEX, '');
+      return FAULT_REGEX.test(cleaned) || INTAKE_REGEX.test(cleaned);
+    }) ||
+      agentStatements.some((x) => AGENT_INTAKE_REGEX.test(x)));
+
+  let approved = false;
+  lines.forEach((line, i) => {
+    if (!isCaller(line)) return;
+    const prev = lines[i - 1];
+    const agentAsked = prev !== undefined && !isCaller(prev) && prev.content.includes('?') && AGENT_ASKS_APPROVAL_REGEX.test(prev.content);
+    for (const x of sentences(line.content)) {
+      if (!isStatement(x) || NEGATION_REGEX.test(x)) continue;
+      if (APPROVAL_REGEX.test(x) || (agentAsked && AFFIRMATIVE_REGEX.test(x))) approved = true;
+    }
+  });
+
+  const nodeId =
+    firstUnitIn(callerStatements.join(' ')) ??
+    firstUnitIn(agentStatements.filter((x) => AGENT_CONFIRMATION_REGEX.test(x)).join(' '));
+
+  return { callerText, reported, approved, nodeId };
+}
+
+function parseRawTranscript(data: RetellCall): Utterance[] {
   if (Array.isArray(data.transcript_object) && data.transcript_object.length > 0) {
     return data.transcript_object.map((t) => ({
       role: t.role ?? 'agent',
@@ -593,108 +702,113 @@ function parseRawTranscript(data: {
   return [];
 }
 
+/** Open the incident and work order for a reported fault, injecting it into the graph when the unit is known. */
+function openVoiceTicket(callId: string, intent: CallIntent): { ticket: VoiceCallTicket; workOrder: Action } {
+  const node = intent.nodeId ? store.getNode(intent.nodeId) : undefined;
+  const runId = `VOICE-${callId.slice(-6)}`;
+  const callerSnippet = intent.callerText.slice(0, 160).trim();
+
+  let sim: Simulation | null = null;
+  if (node) {
+    applyCustomFaults([...store.injectedFaults, node.id], true);
+    sim = simulateFailure(node.id);
+  }
+
+  const inc: Incident = {
+    id: nextIncidentId(),
+    title: node
+      ? `[Voice Intake] ${node.label} fault reported`
+      : '[Voice Intake] Fault reported, unit unidentified',
+    root_node: node?.id ?? 'unidentified',
+    status: 'open',
+    opened_at: new Date().toISOString(),
+    simulation_id: sim?.id ?? null,
+    agent_run_id: runId,
+  };
+  store.addIncident(inc);
+  broadcastAgentEvent('incident', inc);
+  if (sim) broadcastAgentEvent('simulation', sim);
+
+  const workOrder = createAction({
+    run_id: runId,
+    tool: 'create_work_order',
+    recipient_display: 'facilities-ops@cascade-tower.example',
+    content: node
+      ? `[P1 Critical · ${inc.id}] Voice-reported fault on ${node.label} (${node.id}). Caller: "${callerSnippet}". Inspect and restore to nominal operation.`
+      : `[P1 Critical · ${inc.id}] Voice-reported fault, unit unidentified. The caller did not name a unit Cascade recognizes, so no fault was injected into the dependency graph. Caller: "${callerSnippet}". Confirm the affected unit with the caller and inspect.`,
+    usd_impact: sim?.total_usd ?? 0,
+  });
+
+  return { ticket: { incident_id: inc.id, action_id: workOrder.id, node_id: node?.id ?? null }, workOrder };
+}
+
+/** The incident the agent briefed on this call, taken from the dynamic variables Cascade placed the call with. */
+function briefedIncident(call: RetellCall): Incident | undefined {
+  const id = call.retell_llm_dynamic_variables?.['incident_id'];
+  return typeof id === 'string' ? store.getIncident(id) : undefined;
+}
+
+function pendingActionsForIncident(inc: Incident | undefined): Action[] {
+  if (!inc?.agent_run_id) return [];
+  return store.actions.filter((a) => a.status === 'pending' && a.run_id === inc.agent_run_id);
+}
+
 /**
- * Inspect a live or completed Retell call transcript and:
- * 1. If the caller reports a new fault / asks to create a ticket, create an Incident (INC-100X) + Work Order (ACT-200X),
- *    inject the fault into the live dependency graph, persist to disk, and broadcast over SSE.
- * 2. If the caller verbally approves ("approve", "confirm", "yes dispatch"), execute all pending actions via Resend.
+ * Act on an ended call's final transcript exactly once. The outcome is recorded (and persisted) before
+ * the first await, so the poll, the sync loop and the webhook seeing the same call converge on one record.
  */
-async function processVoiceCallTranscript(
-  callId: string,
-  transcriptLines: Array<{ role: string; content: string }>,
-): Promise<{
-  autoDispatched: boolean;
-  createdTicket?: { incidentId: string; actionId: string; nodeId: string };
-}> {
-  const userUtterances = transcriptLines
-    .filter((t) => t.role.toLowerCase() === 'user')
-    .map((t) => t.content)
-    .join(' ');
-  const agentUtterances = transcriptLines
-    .filter((t) => t.role.toLowerCase() === 'agent')
-    .map((t) => t.content)
-    .join(' ');
+async function finalizeVoiceCall(callId: string, call: RetellCall, lines: Utterance[]): Promise<VoiceCallOutcome> {
+  const existing = store.voiceCalls.get(callId);
+  if (existing) return existing;
 
-  // 1. Check if caller reported an incident / requested a ticket
-  if (
-    !voiceTicketsByCall.has(callId) &&
-    userUtterances.trim().length > 0 &&
-    (SERVER_VOICE_REPORT_REGEX.test(userUtterances) ||
-      /\b(opening a new incident|logging a work order|creating a ticket)\b/i.test(agentUtterances))
-  ) {
-    const nodeId = detectReportedNodeId(`${userUtterances} ${agentUtterances}`);
-    const nodeObj = store.getNode(nodeId);
-    const nodeLabel = nodeObj?.label ?? nodeId;
+  const intent = readCallIntent(lines);
+  const opened = intent.reported ? openVoiceTicket(callId, intent) : null;
+  const toApprove = !intent.approved
+    ? []
+    : opened
+      ? [opened.workOrder]
+      : pendingActionsForIncident(briefedIncident(call));
 
-    // Update live dependency graph with the reported fault
-    const nextFaults = Array.from(new Set([...store.injectedFaults, nodeId]));
-    applyCustomFaults(nextFaults, true);
+  const outcome: VoiceCallOutcome = {
+    call_id: callId,
+    processed_at: new Date().toISOString(),
+    ticket: opened?.ticket ?? null,
+    approved_action_ids: toApprove.map((a) => a.id),
+  };
+  store.voiceCalls.set(callId, outcome);
+  store.saveToDisk();
+  broadcastAgentEvent('voice_call_outcome', outcome);
 
-    const sim = simulateFailure(nodeId);
-    const incId = nextIncidentId();
-    const runId = `VOICE-${callId.slice(-6)}`;
-    const shortSnippet = userUtterances.slice(0, 90).trim();
-    const inc: Incident = {
-      id: incId,
-      title: `[Voice Intake] ${nodeLabel} fault reported (${shortSnippet || 'Retell call'})`,
-      root_node: nodeId,
-      status: 'open',
-      opened_at: new Date().toISOString(),
-      simulation_id: sim.id,
-      agent_run_id: runId,
-    };
-    store.addIncident(inc);
-    broadcastAgentEvent('incident', inc);
-    broadcastAgentEvent('simulation', sim);
-
-    const wo = createAction({
-      run_id: runId,
-      tool: 'create_work_order',
-      recipient_display: 'facilities-ops@cascade-tower.example',
-      content: `[P1 Critical · ${inc.id}] Voice-reported fault on ${nodeLabel} (${nodeId}): "${shortSnippet}". Inspect and restore to nominal operation.`,
-      usd_impact: sim.total_usd || 16000,
-    });
-
-    const record = { incidentId: inc.id, actionId: wo.id, nodeId };
-    voiceTicketsByCall.set(callId, record);
-    // Immediately execute and dispatch the Resend email for voice-reported tickets
-    await approveAndExecuteAction(wo.id);
-    store.saveToDisk();
+  const decidedBy = `Voice approval (${callId})`;
+  for (const action of toApprove) {
+    await approveAndExecuteAction(action.id, undefined, decidedBy);
   }
-
-  // 2. Check if caller verbally approved pending actions
-  let autoDispatched = autoApprovedCalls.has(callId);
-  if (!autoDispatched && SERVER_VOICE_APPROVAL_REGEX.test(userUtterances)) {
-    const pending = store.getPendingActions();
-    if (pending.length > 0) {
-      autoApprovedCalls.add(callId);
-      autoDispatched = true;
-      for (const act of pending) {
-        await approveAndExecuteAction(act.id);
-      }
-    }
+  if (opened && !toApprove.includes(opened.workOrder)) {
+    await forwardPendingAction(opened.workOrder);
   }
+  return outcome;
+}
 
+async function observeRetellCall(call: RetellCall & { call_id: string }, ended: boolean): Promise<VoiceCallView> {
+  const lines = parseRawTranscript(call);
+  const outcome = ended
+    ? await finalizeVoiceCall(call.call_id, call, lines)
+    : (store.voiceCalls.get(call.call_id) ?? null);
   return {
-    autoDispatched,
-    createdTicket: voiceTicketsByCall.get(callId),
+    call_id: call.call_id,
+    call_status: call.call_status ?? 'ongoing',
+    transcript: lines,
+    call_summary: call.call_analysis?.call_summary,
+    user_sentiment: call.call_analysis?.user_sentiment,
+    call_successful: call.call_analysis?.call_successful,
+    outcome,
   };
 }
 
 /**
- * Poll a live or completed Retell phone/web call to stream its real-time transcript and post-call analysis,
- * and execute multi-step tool dispatch or ticket creation from the spoken conversation.
+ * Poll a Retell phone/web call for its live transcript. Tickets and approvals happen only once the call has ended.
  */
-export async function getRetellCallStatus(callId: string): Promise<{
-  call_id: string;
-  call_status: string;
-  transcript: Array<{ role: string; content: string }>;
-  call_summary?: string;
-  user_sentiment?: string;
-  call_successful?: boolean;
-  auto_dispatched?: boolean;
-  created_ticket?: { incidentId: string; actionId: string; nodeId: string };
-}> {
+export async function getRetellCallStatus(callId: string): Promise<VoiceCallView> {
   const { apiKey } = config.retell;
   if (!apiKey) throw new Error('Retell API key not configured');
 
@@ -706,44 +820,12 @@ export async function getRetellCallStatus(callId: string): Promise<{
     throw new Error(`Retell get-call HTTP ${res.status}`);
   }
 
-  const data = (await res.json()) as {
-    call_id?: string;
-    call_status?: string;
-    transcript?: string;
-    transcript_object?: Array<{ role?: string; content?: string }>;
-    call_analysis?: {
-      call_summary?: string;
-      user_sentiment?: string;
-      call_successful?: boolean;
-    };
-  };
-
-  const transcriptLines = parseRawTranscript(data);
-  const { autoDispatched, createdTicket } = await processVoiceCallTranscript(
-    data.call_id ?? callId,
-    transcriptLines,
-  );
-
-  return {
-    call_id: data.call_id ?? callId,
-    call_status: data.call_status ?? 'ongoing',
-    transcript: transcriptLines,
-    call_summary: data.call_analysis?.call_summary,
-    user_sentiment: data.call_analysis?.user_sentiment,
-    call_successful: data.call_analysis?.call_successful,
-    auto_dispatched: autoDispatched,
-    created_ticket: createdTicket,
-  };
+  const data = (await res.json()) as RetellCall;
+  const call = { ...data, call_id: data.call_id ?? callId };
+  return observeRetellCall(call, ENDED_CALL_STATUSES.has(call.call_status ?? ''));
 }
 
-let latestSyncedCall: {
-  call_id: string;
-  call_status: string;
-  transcript: Array<{ role: string; content: string }>;
-  call_summary?: string;
-  auto_dispatched?: boolean;
-  created_ticket?: { incidentId: string; actionId: string; nodeId: string };
-} | null = null;
+let latestSyncedCall: VoiceCallView | null = null;
 
 const bootTimestampMs = Date.now() - 15 * 60_000;
 
@@ -751,7 +833,7 @@ const bootTimestampMs = Date.now() - 15 * 60_000;
  * Automatically poll Retell's /v2/list-calls endpoint so ANY call made on the Retell dashboard ("Run Test")
  * or inbound to +1(469)429-6682 automatically syncs to the Cascade backend & frontend in real time—even on localhost!
  */
-export async function syncLatestRetellCalls(): Promise<typeof latestSyncedCall> {
+export async function syncLatestRetellCalls(): Promise<VoiceCallView | null> {
   const { apiKey, agentId } = config.retell;
   if (!apiKey || !agentId) return latestSyncedCall;
 
@@ -773,17 +855,7 @@ export async function syncLatestRetellCalls(): Promise<typeof latestSyncedCall> 
 
     if (!res.ok) return latestSyncedCall;
 
-    const calls = (await res.json()) as Array<{
-      call_id?: string;
-      call_status?: string;
-      start_timestamp?: number;
-      transcript?: string;
-      transcript_object?: Array<{ role?: string; content?: string }>;
-      call_analysis?: {
-        call_summary?: string;
-      };
-    }>;
-
+    const calls = (await res.json()) as RetellCall[];
     if (!Array.isArray(calls) || calls.length === 0) return latestSyncedCall;
 
     for (const c of calls) {
@@ -791,19 +863,9 @@ export async function syncLatestRetellCalls(): Promise<typeof latestSyncedCall> 
       const isRecent = !c.start_timestamp || c.start_timestamp >= bootTimestampMs;
       if (!isRecent && c.call_status !== 'ongoing') continue;
 
-      const lines = parseRawTranscript(c);
-      const { autoDispatched, createdTicket } = await processVoiceCallTranscript(c.call_id, lines);
-
-      // Return the most recent call or the call that created a ticket / dispatched
-      if (c === calls[0] || createdTicket) {
-        latestSyncedCall = {
-          call_id: c.call_id,
-          call_status: c.call_status ?? 'ongoing',
-          transcript: lines,
-          call_summary: c.call_analysis?.call_summary,
-          auto_dispatched: autoDispatched,
-          created_ticket: createdTicket ?? voiceTicketsByCall.get(c.call_id),
-        };
+      const view = await observeRetellCall({ ...c, call_id: c.call_id }, ENDED_CALL_STATUSES.has(c.call_status ?? ''));
+      if (c === calls[0] || view.outcome?.ticket) {
+        latestSyncedCall = view;
       }
     }
   } catch {
@@ -827,27 +889,14 @@ export function startRetellCallSyncLoop(): void {
 }
 
 /**
- * Direct Retell Webhook handler (POST /api/retell/webhook) for when Cascade is deployed on Brev.
+ * Direct Retell Webhook handler (POST /api/retell/webhook). `call_ended` and `call_analyzed` carry the final transcript.
  */
 export async function handleRetellWebhook(body: Record<string, unknown>): Promise<{ ok: boolean }> {
-  const callObj = (body['call'] ?? body) as {
-    call_id?: string;
-    call_status?: string;
-    transcript?: string;
-    transcript_object?: Array<{ role?: string; content?: string }>;
-    call_analysis?: { call_summary?: string };
-  };
+  const event = typeof body['event'] === 'string' ? body['event'] : '';
+  const callObj = (body['call'] ?? body) as RetellCall;
   if (callObj?.call_id) {
-    const lines = parseRawTranscript(callObj);
-    const { autoDispatched, createdTicket } = await processVoiceCallTranscript(callObj.call_id, lines);
-    latestSyncedCall = {
-      call_id: callObj.call_id,
-      call_status: callObj.call_status ?? 'ongoing',
-      transcript: lines,
-      call_summary: callObj.call_analysis?.call_summary,
-      auto_dispatched: autoDispatched,
-      created_ticket: createdTicket,
-    };
+    const ended = ENDED_WEBHOOK_EVENTS.has(event) || ENDED_CALL_STATUSES.has(callObj.call_status ?? '');
+    latestSyncedCall = await observeRetellCall({ ...callObj, call_id: callObj.call_id }, ended);
   }
   return { ok: true };
 }
