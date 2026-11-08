@@ -71,9 +71,9 @@ function Voice() {
     return saved && saved.trim() ? saved : '+1 (469) 685-5805';
   });
   const [autoCallOnIncident, setAutoCallOnIncident] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
+    if (typeof window === 'undefined') return false;
     const saved = window.localStorage.getItem('cascade_auto_phone_call');
-    return saved === null ? true : saved === 'true';
+    return saved === 'true';
   });
   const [activePhoneCallId, setActivePhoneCallId] = useState<string | null>(null);
   const [phoneCallMeta, setPhoneCallMeta] = useState<{ from: string; to: string; summary?: string } | null>(null);
