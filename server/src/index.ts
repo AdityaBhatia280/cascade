@@ -58,8 +58,10 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   });
 }
 
-app.listen(config.port, '0.0.0.0', async () => {
-  console.log(`[Cascade Server] Listening on http://127.0.0.1:${config.port}`);
+// Local by default; deploy-brev.sh sets HOST=0.0.0.0 so the one public port is reachable.
+const HOST = process.env['HOST'] ?? '127.0.0.1';
+app.listen(config.port, HOST, async () => {
+  console.log(`[Cascade Server] Listening on http://${HOST}:${config.port}`);
   try {
     console.log('[Cascade Server] Initializing portfolio seed data...');
     const summary = await seedPortfolio();

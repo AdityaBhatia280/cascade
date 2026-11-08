@@ -25,6 +25,7 @@ npm run build
 # 4. One process on PORT: serves the SPA, /api, /dynamic-app and /dynamic-api, and runs the 3D app's
 #    server as a child on 127.0.0.1:DYNAMIC_PORT (default 5002, not exposed)
 export PORT="${PORT:-5001}"
+export HOST="${HOST:-0.0.0.0}"
 echo "[4/4] Starting Cascade on 0.0.0.0:${PORT}..."
 echo "      Expose port ${PORT} in your Brev console (brev port-forward or Share Port ${PORT})."
 npm run start
