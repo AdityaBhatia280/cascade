@@ -52,19 +52,19 @@
 - Node.js `>= 20.17`
 - Copy `.env.example` to `.env` and fill in your API keys (`NVIDIA_API_KEY`, `RESEND_API_KEY`, `DEMO_EMAIL_TO`, `RETELL_API_KEY`, `RETELL_AGENT_ID`).
 
-### Development (Hot Reload on Ports `5001` & `5173`)
+### Development (one address: `http://127.0.0.1:5173`)
 ```bash
-npm install
+npm install   # also installs the embedded 3D app in cascade-main/cascade-main
 npm run dev
 ```
-- Frontend UI: `http://127.0.0.1:5173`
-- Backend API & SSE: `http://127.0.0.1:5001/api`
+- Open `http://127.0.0.1:5173`. Vite proxies `/api`, `/dynamic-api` and `/dynamic-app` to the server on `5001`.
+- The server starts the 3D app's server as a child on `127.0.0.1:5002` (`DYNAMIC_PORT`) and serves its prebuilt frontend at `/dynamic-app/`. `npm run dev` builds that frontend once if it is missing; after changing `cascade-main/cascade-main/frontend`, run `npm run build:dynamic`.
 
 ### Single-Port Production / Brev Deployment
-Build both workspaces and serve the compiled SPA + API from a single server on port `5001`:
+Build everything and serve the SPA, `/api`, the 3D app (`/dynamic-app/`) and its API (`/dynamic-api/`) from one process on `PORT` (default `5001`):
 ```bash
 npm run build
 npm start
 ```
-Then open `http://127.0.0.1:5001`.
+Then open `http://127.0.0.1:5001`. On Brev, `bash deploy-brev.sh` does the install, build and start; expose only `PORT`.
 

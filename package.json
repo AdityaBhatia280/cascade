@@ -4,10 +4,13 @@
   "private": true,
   "workspaces": ["server", "Frontend"],
   "scripts": {
+    "postinstall": "cd cascade-main/cascade-main && npm install --no-audit --no-fund",
+    "predev": "[ -f cascade-main/cascade-main/frontend/dist/index.html ] || npm run build:dynamic",
     "dev": "concurrently -n server,client -c blue,green \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "npm run dev -w server",
     "dev:client": "npm run dev -w Frontend",
-    "build": "npm run build -w server && npm run build -w Frontend",
+    "build": "npm run build -w server && npm run build -w Frontend && npm run build:dynamic",
+    "build:dynamic": "cd cascade-main/cascade-main && VITE_API_BASE=/dynamic-api npm run build -w frontend -- --base /dynamic-app/",
     "start": "node server/dist/index.js"
   },
   "overrides": {

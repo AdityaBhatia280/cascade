@@ -14,19 +14,17 @@ else
   echo "[1/4] Node.js $(node -v) already installed."
 fi
 
-# 2. Install workspace dependencies (root + server + Frontend)
+# 2. Install dependencies (root, server, Frontend; postinstall adds the embedded 3D app in cascade-main/cascade-main)
 echo "[2/4] Installing dependencies..."
 npm install
-npm install -w server
-npm install -w Frontend
 
-# 3. Build TypeScript backend and Vite 6 frontend SPA
-echo "[3/4] Building server and Frontend..."
+# 3. Build the server, the Frontend SPA, and the embedded 3D app's frontend (served at /dynamic-app/)
+echo "[3/4] Building server, Frontend and the 3D site app..."
 npm run build
 
-# 4. Launch Express server on PORT=5001 (serves both /api/* and Frontend/dist)
+# 4. One process on PORT: serves the SPA, /api, /dynamic-app and /dynamic-api, and runs the 3D app's
+#    server as a child on 127.0.0.1:DYNAMIC_PORT (default 5002, not exposed)
 export PORT="${PORT:-5001}"
 echo "[4/4] Starting Cascade on 0.0.0.0:${PORT}..."
 echo "      Expose port ${PORT} in your Brev console (brev port-forward or Share Port ${PORT})."
 npm run start
-
