@@ -418,7 +418,7 @@ function buildRetellDynamicVars(incidentId?: string): Record<string, string> {
       executedList.length > 0
         ? executedList.map((a) => `${a.id}: ${a.tool.replace(/_/g, ' ')} to ${a.recipient_display}`).join(' | ')
         : 'None yet',
-    demo_inbox: config.resend.demoInbox || 'JMJMJMJohnMan@gmail.com',
+    demo_inbox: config.resend.demoInbox || 'vicalexsim@gmail.com',
   };
 }
 
@@ -551,7 +551,7 @@ const voiceTicketsByCall = new Map<string, { incidentId: string; actionId: strin
 
 const SERVER_VOICE_APPROVAL_REGEX = /\b(approve|confirm|yes dispatch|dispatch now|execute|send the email|go ahead|authorize)\b/i;
 const SERVER_VOICE_REPORT_REGEX =
-  /\b(report|reporting|ticket|work order|new incident|open an incident|down|broken|failed|tripped|overheating|offline|fault|alarm|malfunction|not working|shut down|outage)\b/i;
+  /\b(report|reporting|ticket|work order|new incident|open an incident|incident|down|broken|failed|tripped|overheating|offline|fault|alarm|malfunction|not working|shut down|outage|issue|problem|leak|leaking|smoke|fire|hot|freeze|frozen)\b/i;
 
 function detectReportedNodeId(text: string): string {
   const lower = text.toLowerCase();
@@ -796,14 +796,15 @@ export async function syncLatestRetellCalls(): Promise<typeof latestSyncedCall> 
       const lines = parseRawTranscript(c);
       const { autoDispatched, createdTicket } = await processVoiceCallTranscript(c.call_id, lines);
 
-      if (c === calls[0]) {
+      // Return the most recent call or the call that created a ticket / dispatched
+      if (c === calls[0] || createdTicket) {
         latestSyncedCall = {
           call_id: c.call_id,
           call_status: c.call_status ?? 'ongoing',
           transcript: lines,
           call_summary: c.call_analysis?.call_summary,
           auto_dispatched: autoDispatched,
-          created_ticket: createdTicket,
+          created_ticket: createdTicket ?? voiceTicketsByCall.get(c.call_id),
         };
       }
     }

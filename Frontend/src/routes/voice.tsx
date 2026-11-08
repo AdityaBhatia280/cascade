@@ -103,6 +103,8 @@ function Voice() {
     };
   }, []);
 
+  const [dismissedActionIds, setDismissedActionIds] = useState<Set<string>>(() => new Set());
+
   const runActions = useMemo(() => {
     const all = actionsQ.data ?? [];
     if (!activeIncident) return all;
@@ -110,9 +112,39 @@ function Voice() {
     return filtered.length > 0 ? filtered : all;
   }, [actionsQ.data, activeIncident]);
 
-  const done = runActions.filter((a) => a.status === 'executed' || a.status === 'approved');
+  const done = runActions.filter((a) => (a.status === 'executed' || a.status === 'approved') && !dismissedActionIds.has(a.id));
   const needs = runActions.filter((a) => a.status === 'pending');
   const suggestions = activeSteps.filter((s) => s.stage === 'plan').map((s) => s.summary);
+
+  const handleClearApproved = async () => {
+    try {
+      await api.clearActions(false);
+      await actionsQ.refetch();
+    } catch {
+      // Fallback: dismiss in local state
+    }
+    setDismissedActionIds((prev) => {
+      const next = new Set(prev);
+      runActions.forEach((a) => next.add(a.id));
+      return next;
+    });
+  };
+
+  const handleStartFreshIncident = async () => {
+    try {
+      await api.clearIncidents(false);
+      await api.clearActions(false);
+      setVoiceCreatedTicket(null);
+      setVoiceAutoApproved(false);
+      setSelectedIncId(null);
+      setTranscript([]);
+      setState('idle');
+      await incidentsQ.refetch();
+      await actionsQ.refetch();
+    } catch {
+      // Ignore
+    }
+  };
 
   const scripted = (): Line[] => {
     if (!activeIncident) {
@@ -145,7 +177,7 @@ function Voice() {
     if (needs.length > 0) {
       lines.push({
         role: 'agent',
-        content: `Would you like me to approve and dispatch these ${needs.length} pending actions to JMJMJMJohnMan@gmail.com now?`,
+        content: `Would you like me to approve and dispatch these ${needs.length} pending actions to vicalexsim@gmail.com now?`,
       });
     }
     return lines;
@@ -400,6 +432,15 @@ function Voice() {
                   </option>
                 ))}
               </select>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 px-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+                onClick={() => void handleStartFreshIncident()}
+                title="Reset active tickets & actions to start clean"
+              >
+                Reset
+              </Button>
             </div>
           )}
           <StatusBadge
@@ -424,7 +465,7 @@ function Voice() {
                 </span>
               </div>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Have Cascade AI call your physical phone or answer in your browser. Say <strong>&ldquo;Approve and dispatch&rdquo;</strong> during the call to send real emails &amp; `.ics` invites to <Mono>JMJMJMJohnMan@gmail.com</Mono>.
+                Have Cascade AI call your physical phone or answer in your browser. Say <strong>&ldquo;Approve and dispatch&rdquo;</strong> during the call to send real emails &amp; `.ics` invites to <Mono>vicalexsim@gmail.com</Mono>.
               </p>
             </div>
           </div>
@@ -460,7 +501,7 @@ function Voice() {
         <div className="flex items-center gap-2 rounded-md border border-chart-4/40 bg-chart-4/10 px-4 py-3 text-xs text-foreground">
           <CheckCircle2 className="size-4 shrink-0 text-chart-4" />
           <span>
-            <strong>Dispatched via Resend:</strong> Pending actions for <Mono>{activeIncident?.id ?? 'INC'}</Mono> were approved and sent to <Mono>JMJMJMJohnMan@gmail.com</Mono>.
+            <strong>Dispatched via Resend:</strong> Pending actions for <Mono>{activeIncident?.id ?? 'INC'}</Mono> were approved and sent to <Mono>vicalexsim@gmail.com</Mono>.
           </span>
         </div>
       )}
@@ -568,7 +609,7 @@ function Voice() {
                   <dt className="label-text">Demo email routing (Resend)</dt>
                   <dd className="flex items-center gap-1.5 text-xs">
                     <Mail className="size-3.5 text-muted-foreground" />
-                    <Mono>JMJMJMJohnMan@gmail.com</Mono>
+                    <Mono>vicalexsim@gmail.com</Mono>
                   </dd>
                 </div>
                 <div>
@@ -653,7 +694,7 @@ function Voice() {
                   idx: 4,
                   stage: '4. Multi-Tool Cross-System Execution',
                   model: 'Resend API + RFC 5545 .ics',
-                  detail: `Executes send_email (Acme Cloud SLA notice), schedule_maintenance (.ics vendor invite), and create_work_order to JMJMJMJohnMan@gmail.com.`,
+                  detail: `Executes send_email (Acme Cloud SLA notice), schedule_maintenance (.ics vendor invite), and create_work_order to vicalexsim@gmail.com.`,
                   done: voiceAutoApproved || (done.length > 0 && needs.length === 0),
                   active: busyActionId !== null,
                 },
@@ -722,16 +763,28 @@ function Voice() {
           <Panel
             title="Call items & dispatch controls"
             action={
-              needs.length > 0 ? (
-                <Button
-                  size="sm"
-                  disabled={busyActionId !== null}
-                  onClick={() => void handleApproveAll()}
-                >
-                  <Check className="size-3.5" />
-                  {busyActionId === 'all' ? 'Dispatching…' : `Approve & send all (${needs.length})`}
-                </Button>
-              ) : undefined
+              <div className="flex items-center gap-2">
+                {done.length > 0 && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 px-2 text-xs text-muted-foreground"
+                    onClick={() => void handleClearApproved()}
+                  >
+                    Clear executed ({done.length})
+                  </Button>
+                )}
+                {needs.length > 0 && (
+                  <Button
+                    size="sm"
+                    disabled={busyActionId !== null}
+                    onClick={() => void handleApproveAll()}
+                  >
+                    <Check className="size-3.5" />
+                    {busyActionId === 'all' ? 'Dispatching…' : `Approve & send all (${needs.length})`}
+                  </Button>
+                )}
+              </div>
             }
           >
             <ul className="space-y-2.5">
@@ -754,7 +807,7 @@ function Voice() {
                           Executed · {a.tool.replace(/_/g, ' ')} → {a.recipient_display}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground">{a.result ?? 'Delivered to JMJMJMJohnMan@gmail.com'}</p>
+                      <p className="text-xs text-muted-foreground">{a.result ?? 'Delivered to vicalexsim@gmail.com'}</p>
                     </div>
                   </div>
                   <StatusBadge status="executed" />

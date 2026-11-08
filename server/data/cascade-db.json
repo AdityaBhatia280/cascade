@@ -1,15 +1,6 @@
 {
-  "updated_at": "2026-11-08T15:08:17.503Z",
+  "updated_at": "2026-11-08T15:53:20.849Z",
   "incidents": [
-    {
-      "id": "INC-1002",
-      "title": "Chiller failures — Data hall 200 cooling at risk",
-      "root_node": "UPS-B",
-      "status": "mitigating",
-      "opened_at": "2026-11-08T15:08:02.657Z",
-      "simulation_id": "SIM-b0ddffc3",
-      "agent_run_id": "RUN-102"
-    },
     {
       "id": "INC-1003",
       "title": "Chiller 2 compressor fault — Cooling loop redundancy degraded (2 of 3)",
@@ -27,23 +18,18 @@
       "opened_at": "2026-11-08T15:08:12.560Z",
       "simulation_id": "SIM-1849c19a",
       "agent_run_id": null
+    },
+    {
+      "id": "INC-1001",
+      "title": "Chiller failures — Data hall 200 cooling at risk",
+      "root_node": "UPS-B",
+      "status": "mitigating",
+      "opened_at": "2026-11-08T15:52:30.580Z",
+      "simulation_id": "SIM-d584479e",
+      "agent_run_id": "RUN-101"
     }
   ],
   "actions": [
-    {
-      "id": "ACT-2003",
-      "run_id": "RUN-102",
-      "tool": "send_email",
-      "recipient_display": "facilities@acme-cloud.example",
-      "content": "Cooling capacity for Data hall 200 is reduced after a UPS-B power event tripped Chiller 1 and CRAH-4 (with Chiller 2 already offline). Hall 200 reaches its 32°C thermal SLA limit in ~4 minutes. Our engineering team is executing emergency mitigation and will brief you shortly.",
-      "usd_impact": 13500,
-      "risk": "normal",
-      "requires_approval": true,
-      "status": "pending",
-      "decided_by": null,
-      "decided_at": null,
-      "result": null
-    },
     {
       "id": "ACT-2004",
       "run_id": "RUN-102",
@@ -53,10 +39,38 @@
       "usd_impact": 2500,
       "risk": "normal",
       "requires_approval": true,
-      "status": "pending",
-      "decided_by": null,
-      "decided_at": null,
-      "result": null
+      "status": "executed",
+      "decided_by": "Demo operator",
+      "decided_at": "2026-11-08T15:43:48.009Z",
+      "result": "Delivered with .ics invite to vicalexsim@gmail.com [id: 01a1bbd4-81f]"
+    },
+    {
+      "id": "ACT-2001",
+      "run_id": "RUN-101",
+      "tool": "send_email",
+      "recipient_display": "facilities@acme-cloud.example",
+      "content": "Cooling capacity for Data hall 200 is reduced after a UPS-B power event tripped Chiller 1 and CRAH-4 (with Chiller 2 already offline). Hall 200 reaches its 32°C thermal SLA limit in ~4 minutes. Our engineering team is executing emergency mitigation and will brief you shortly.",
+      "usd_impact": 13500,
+      "risk": "normal",
+      "requires_approval": true,
+      "status": "executed",
+      "decided_by": "Demo operator",
+      "decided_at": "2026-11-08T15:53:20.413Z",
+      "result": "Delivered to vicalexsim@gmail.com [id: 01a1bbdd-3db]"
+    },
+    {
+      "id": "ACT-2002",
+      "run_id": "RUN-101",
+      "tool": "schedule_maintenance",
+      "recipient_display": "chiller-vendor@example.com",
+      "content": "Calendar invite: Emergency dispatch for Chiller 1 (UPS-B control feed trip) and Chiller 2 at Cascade Tower — Basement 2 Mech Room, Chicago, IL.",
+      "usd_impact": 2500,
+      "risk": "normal",
+      "requires_approval": true,
+      "status": "executed",
+      "decided_by": "Demo operator",
+      "decided_at": "2026-11-08T15:53:20.669Z",
+      "result": "Delivered with .ics invite to vicalexsim@gmail.com [id: 01a1bbdd-3e4]"
     }
   ],
   "simulations": [
@@ -565,6 +579,100 @@
       ],
       "total_usd": 16000,
       "assumptions_version": 1
+    },
+    {
+      "id": "SIM-d584479e",
+      "root_node": "UPS-B",
+      "timeline": [
+        {
+          "t_min": 0,
+          "node_id": "UPS-B",
+          "state": "failed",
+          "reason": "Initiating failure on UPS panel B"
+        },
+        {
+          "t_min": 0,
+          "node_id": "CH-2",
+          "state": "failed",
+          "reason": "Already offline before this event"
+        },
+        {
+          "t_min": 1,
+          "node_id": "CH-1",
+          "state": "failed",
+          "reason": "Lost supply: UPS panel B (powers)"
+        },
+        {
+          "t_min": 1,
+          "node_id": "cooling_loop",
+          "state": "failed",
+          "reason": "Only 1 of 3 providers healthy (2 required). Down: Chiller 1, Chiller 2"
+        },
+        {
+          "t_min": 1,
+          "node_id": "CRAH-4",
+          "state": "failed",
+          "reason": "Lost supply: UPS panel B (powers)"
+        },
+        {
+          "t_min": 2,
+          "node_id": "COOLFLAG.DAT",
+          "state": "degraded",
+          "reason": "Data dependency impaired: Chilled water loop (writes)"
+        },
+        {
+          "t_min": 3,
+          "node_id": "hall_200",
+          "state": "failed",
+          "reason": "Only 0 of 2 providers healthy (2 required). Down: Chilled water loop, CRAH unit 4"
+        },
+        {
+          "t_min": 3,
+          "node_id": "LEASEBIL",
+          "state": "degraded",
+          "reason": "Data dependency impaired: COOLFLAG.DAT (reads)"
+        },
+        {
+          "t_min": 4,
+          "node_id": "acme_sla",
+          "state": "failed",
+          "reason": "Lost supply: Data hall 200 (Acme Cloud) (contractual)"
+        },
+        {
+          "t_min": 4,
+          "node_id": "northwind_retail",
+          "state": "degraded",
+          "reason": "Data dependency impaired: LEASEBIL.cbl (bills)"
+        },
+        {
+          "t_min": 4,
+          "node_id": "meridian_analytics",
+          "state": "degraded",
+          "reason": "Data dependency impaired: LEASEBIL.cbl (bills)"
+        }
+      ],
+      "impacts": [
+        {
+          "tenant_id": "hall_200",
+          "tenant_label": "Data hall 200 (Acme Cloud)",
+          "minutes_to_impact": 4,
+          "sla_credit_usd": 13500
+        },
+        {
+          "tenant_id": "northwind_retail",
+          "tenant_label": "Northwind Retail",
+          "minutes_to_impact": 4,
+          "sla_credit_usd": 0
+        },
+        {
+          "tenant_id": "meridian_analytics",
+          "tenant_label": "Meridian Analytics",
+          "minutes_to_impact": 4,
+          "sla_credit_usd": 0
+        }
+      ],
+      "total_usd": 16000,
+      "assumptions_version": 1
     }
   ],
   "assumptions": {
@@ -593,8 +701,7 @@
   },
   "injectedFaults": [
     "CH-2",
-    "UPS-B",
-    "SW-03"
+    "UPS-B"
   ],
   "nodeStatuses": {
     "UPS-B": "failed",
@@ -613,8 +720,8 @@
     "northwind_retail": "degraded",
     "meridian_analytics": "degraded",
     "coastal_logistics": "healthy",
-    "SW-03": "failed",
-    "CTL-04": "failed",
+    "SW-03": "healthy",
+    "CTL-04": "healthy",
     "work_orders": "healthy",
     "badge_access": "healthy"
   }
