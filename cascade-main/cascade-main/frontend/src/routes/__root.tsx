@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { QueryClientProvider, useQuery, type QueryClient } from "@tanstack/react-query";
-import { Outlet, createRootRouteWithContext, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, useNavigate } from "@tanstack/react-router";
 import { Floor } from "@/components/floor/Floor";
 import { Menubar } from "@/components/Menubar";
 import { Companion } from "@/components/Companion";
 import { useServerEvents } from "@/lib/events";
 import { useSite } from "@/lib/queries";
 import { inFlight, siteStatusQuery, useUploadSession } from "@/lib/uploads";
+import { useViewPath } from "@/lib/viewPath";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: RootComponent,
@@ -26,7 +27,7 @@ function Shell() {
   const { site, error } = useSite();
   const status = useQuery(siteStatusQuery);
   const session = useUploadSession();
-  const path = useRouterState({ select: (s) => s.location.pathname });
+  const path = useViewPath();
   const navigate = useNavigate();
   const empty = status.data?.empty ?? false;
   const firstRun = empty || inFlight(session);

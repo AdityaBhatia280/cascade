@@ -3,11 +3,12 @@
 // opens a small menu whose one item starts over from an empty site, for rehearsing the first run.
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { newIntent } from "@/lib/api";
 import { useProposals } from "@/lib/queries";
 import { resetSite, uploadSession } from "@/lib/uploads";
+import { useViewPath } from "@/lib/viewPath";
 
 export const VIEWS = [
   { to: "/site", label: "Site" },
@@ -74,7 +75,7 @@ function BrandMenu() {
 }
 
 export function Menubar({ locked }: { locked: boolean }) {
-  const path = useRouterState({ select: (s) => s.location.pathname });
+  const path = useViewPath();
   const navigate = useNavigate();
   const { pending } = useProposals();
   const seg = useRef<HTMLDivElement>(null);

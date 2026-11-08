@@ -10,6 +10,7 @@ import { api, newIntent } from "@/lib/api";
 import { useDecide, useJobs, useProposals, type Job } from "@/lib/queries";
 import { drawnOf, labelOf, type Site } from "@/lib/site";
 import { uiStore, useUi } from "@/lib/ui";
+import { useViewPath } from "@/lib/viewPath";
 import { Change } from "./Change";
 import { readSiteSearch, type SiteSearch } from "@/routes/site";
 
@@ -68,6 +69,7 @@ export function Companion({ site }: { site: Site }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const location = useRouterState({ select: (s) => s.location });
+  const path = useViewPath();
   const [lines, setLines] = useState<Line[]>([]);
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState("");
@@ -90,7 +92,7 @@ export function Companion({ site }: { site: Site }) {
     if (open) setTimeout(() => input.current?.focus({ preventScroll: true }), 260);
   }, [open]);
 
-  const siteSearch: SiteSearch = location.pathname.startsWith("/site") ? readSiteSearch(location.search as Record<string, unknown>) : {};
+  const siteSearch: SiteSearch = path.startsWith("/site") ? readSiteSearch(location.search as Record<string, unknown>) : {};
   const offNow = (): string[] => {
     if (siteSearch.off) return [siteSearch.off];
     const job = jobs.find((j) => j.wonum === siteSearch.job);
@@ -130,7 +132,7 @@ export function Companion({ site }: { site: Site }) {
     if (steps.length) {
       void navigate({
         to: "/site",
-        search: (prev: Record<string, unknown>) => steps.reduce((s, step) => step(s), location.pathname.startsWith("/site") ? readSiteSearch(prev) : {}),
+        search: (prev: Record<string, unknown>) => steps.reduce((s, step) => step(s), path.startsWith("/site") ? readSiteSearch(prev) : {}),
       });
     }
     return out;
