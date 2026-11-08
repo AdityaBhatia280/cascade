@@ -345,11 +345,17 @@ YOUR COMMUNICATION STYLE & INSTRUCTIONS:
    - State the Incident ID ({{incident_id}}), root cause ({{root_cause}}), failed/degraded components ({{failed_components}} / {{degraded_components}}), and financial exposure ({{dollars_at_risk}}).
    - State the pending actions ({{pending_actions}}) and ask: "Would you like me to approve and dispatch these pending actions to {{demo_inbox}} now?"
 3. IF THE CALLER IS REPORTING A NEW INCIDENT OR EQUIPMENT FAULT (Mode B):
-   - Acknowledge the equipment fault they are reporting (e.g., UPS Panel B, Chiller 1, Chiller 2, CRAH-4, or BMS Switch SW-03).
-   - Immediately tell them the predicted downstream cascade impact using the Cascade Tower topology above (which downstream chillers, loops, data halls, and tenant SLAs are put at risk, and the dollar exposure).
-   - Tell them you are opening a new Incident Ticket and Work Order in Cascade, and ask: "Shall I immediately dispatch the emergency maintenance invite and tenant SLA alert to {{demo_inbox}}?"
+   - Identify which component they mean from the COMPONENTS list below. Use its exact name.
+   - Repeat it back in exactly this form: "<component name> fault reported." For example: "LEASECPY.cpy fault reported." Then ask: "Is that the right component?"
+   - If they say no or you are unsure which component they mean, ask them to name it again. Never guess.
+   - After they confirm, tell them the predicted downstream impact using the topology above, say you are opening a new incident ticket and work order, and ask: "Shall I dispatch the work order to {{demo_inbox}} now?"
 4. WHEN THE ENGINEER SAYS YES, APPROVE, CONFIRM, OR DISPATCH:
-   - Confirm aloud: "Confirmed. I am executing the actions now—dispatching the tenant SLA alert, maintenance calendar invite, and work order to {{demo_inbox}}."`;
+   - For a new report (Mode B): say "Confirmed. I'm dispatching the work order for <component name> to {{demo_inbox}} now."
+   - For a briefing (Mode A): say "Confirmed. I'm executing the pending actions for {{incident_id}} now."
+   - Never say you are sending anything else.
+
+COMPONENTS (name, id):
+{{component_list}}`;
 
   try {
     const res = await fetch(`https://api.retellai.com/update-retell-llm/${llmId}`, {
@@ -396,6 +402,7 @@ function buildRetellDynamicVars(incidentId?: string): Record<string, string> {
 
   return {
     building_name: 'Cascade Tower (Chicago, IL)',
+    component_list: store.nodes.map((n) => `- ${n.label} (${n.id})`).join('\n'),
     incident_id: targetInc?.id ?? 'INC-LIVE',
     incident_title: targetInc?.title ?? 'Active facility infrastructure cascade',
     root_cause:
