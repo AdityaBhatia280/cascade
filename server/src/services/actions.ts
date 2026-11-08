@@ -979,7 +979,15 @@ export async function handleRetellWebhook(body: Record<string, unknown>): Promis
 /**
  * Create a Retell AI web call with live dynamic context for a specific incident ticket (or current live building state).
  */
-export async function createRetellWebCall(incidentId?: string): Promise<{ access_token: string }> {
+/** What the browser needs to join a Retell v3 web call (retell-client-js-sdk 3.x startCall). */
+export interface WebCallJoin {
+  access_token: string;
+  call_id: string;
+  transport?: string;
+  ice_servers?: unknown[];
+}
+
+export async function createRetellWebCall(incidentId?: string): Promise<WebCallJoin> {
   const { apiKey, agentId } = config.retell;
   if (!apiKey || !agentId) {
     throw new Error('Retell API key or Agent ID not configured in .env');
@@ -988,7 +996,7 @@ export async function createRetellWebCall(incidentId?: string): Promise<{ access
   await ensureRetellDynamicPrompt();
   const dynamicVars = buildRetellDynamicVars(incidentId);
 
-  const res = await fetch('https://api.retellai.com/v2/create-web-call', {
+  const res = await fetch('https://api.retellai.com/v3/create-web-call', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -1005,9 +1013,9 @@ export async function createRetellWebCall(incidentId?: string): Promise<{ access
     throw new Error(`Retell create-web-call HTTP ${res.status}: ${errText.slice(0, 120)}`);
   }
 
-  const data = (await res.json()) as { access_token?: string };
-  if (!data.access_token) {
-    throw new Error('Retell response missing access_token');
+  const data = (await res.json()) as Partial<WebCallJoin>;
+  if (!data.access_token || !data.call_id) {
+    throw new Error('Retell response missing access_token or call_id');
   }
-  return { access_token: data.access_token };
+  return { access_token: data.access_token, call_id: data.call_id, transport: data.transport, ice_servers: data.ice_servers };
 }

@@ -19,11 +19,6 @@ export function subscribeFixtureFlag(fn: () => void) {
   flagListeners.add(fn);
   return () => flagListeners.delete(fn);
 }
-function setUsingFixtures() {
-  if (usingFixtures) return;
-  usingFixtures = true;
-  flagListeners.forEach((f) => f());
-}
 
 async function request<T>(path: string, init: RequestInit | undefined, fallback: () => T): Promise<T> {
   if (usingFixtures) return structuredClone(fallback());
@@ -33,9 +28,10 @@ async function request<T>(path: string, init: RequestInit | undefined, fallback:
       ...init,
       headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
     });
-  } catch {
-    setUsingFixtures();
-    return structuredClone(fallback());
+  } catch (err) {
+    // A dropped connection (server restarting) must not switch the page to demo data for good:
+    // fail this call so the caller keeps its last real data and the next call reaches the server.
+    throw err;
   }
   if (!res.ok) {
     // Fall back gracefully for this call without permanently killing live backend mode on 404/500
@@ -248,6 +244,7 @@ export const api = {
     request<WhatIfResult>('/what-if', { method: 'POST', body: JSON.stringify({ faults }) }, () => fixtureWhatIf(faults)),
   incidents: () =>
     request<Incident[]>('/incidents', undefined, () => [...fxState.incidents].sort((a, b) => b.opened_at.localeCompare(a.opened_at))),
+  reset: () => request<{ ok: boolean }>('/reset', { method: 'POST' }, () => ({ ok: true })),
   clearIncidents: (onlyResolved = false) =>
     request<Incident[]>(`/incidents/clear?resolved=${onlyResolved}`, { method: 'POST' }, () => {
       fxState.incidents = onlyResolved ? fxState.incidents.filter((i) => i.status !== 'resolved') : [];
@@ -310,7 +307,9 @@ export const api = {
     }),
   telemetryPoints: () =>
     request<TelemetryPoint[]>('/telemetry/points', undefined, () => fx.fxTelemetryPoints.map(({ baseline: _b, ...p }) => p)),
-  voiceWebCall: async (incidentId?: string): Promise<{ access_token: string }> => {
+  voiceWebCall: async (
+    incidentId?: string,
+  ): Promise<{ access_token: string; call_id: string; transport?: string; ice_servers?: RTCIceServer[] }> => {
     if (usingFixtures) throw new Error('Voice backend not connected in preview');
     const res = await fetch(`${API_BASE}/voice/web-call`, {
       method: 'POST',

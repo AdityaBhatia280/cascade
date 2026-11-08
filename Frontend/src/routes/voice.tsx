@@ -1,3 +1,4 @@
+import type { TransportKind } from 'retell-client-js-sdk';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -132,8 +133,7 @@ function Voice() {
 
   const handleStartFreshIncident = async () => {
     try {
-      await api.clearIncidents(false);
-      await api.clearActions(false);
+      await api.reset();
       setCallOutcome(null);
       setVoiceAutoApproved(false);
       setSelectedIncId(null);
@@ -282,7 +282,7 @@ function Voice() {
     setCallOutcome(null);
     setState('connecting');
     try {
-      const { access_token } = await api.voiceWebCall(activeIncident?.id);
+      const join = await api.voiceWebCall(activeIncident?.id);
       const { RetellWebClient } = await import('retell-client-js-sdk');
       const client = new RetellWebClient();
       clientRef.current = client;
@@ -295,7 +295,12 @@ function Voice() {
         setTranscript(fallback);
         speakLines(fallback);
       });
-      await client.startCall({ accessToken: access_token });
+      await client.startCall({
+        accessToken: join.access_token,
+        callId: join.call_id,
+        transport: join.transport as TransportKind | undefined,
+        iceServers: join.ice_servers,
+      });
     } catch (e) {
       const fallback = scripted();
       setError(isUsingFixtures() ? 'Voice backend is not connected in preview.' : (e as Error).message);

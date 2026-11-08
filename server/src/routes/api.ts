@@ -115,6 +115,7 @@ apiRouter.post('/incidents/clear', (req, res) => {
   } else {
     store.incidents = [];
   }
+  store.saveToDisk();
   res.json(store.incidents);
 });
 
@@ -159,7 +160,19 @@ apiRouter.get('/actions', (req, res) => {
 
 apiRouter.post('/actions/clear', (req, res) => {
   const onlyPending = req.query['pending'] === 'true';
-  res.json(clearActions(onlyPending));
+  const left = clearActions(onlyPending);
+  store.saveToDisk();
+  res.json(left);
+});
+
+/** Start clean: every unit healthy, no incidents, no actions, no simulations. Saved, so a restart keeps it. */
+apiRouter.post('/reset', (_req, res) => {
+  applyCustomFaults([], true);
+  store.incidents = [];
+  clearActions(false);
+  store.simulations = [];
+  store.saveToDisk();
+  res.json({ ok: true });
 });
 
 apiRouter.post('/actions/:id/approve', async (req, res) => {
