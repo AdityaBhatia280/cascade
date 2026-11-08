@@ -789,12 +789,24 @@ async function finalizeVoiceCall(callId: string, call: RetellCall, lines: Uttera
   return outcome;
 }
 
+/** The most recent call any path observed; an ongoing call is not displaced by an older ended one. */
+let latestSyncedCall: VoiceCallView | null = null;
+const lastBroadcastByCall = new Map<string, string>();
+
+/** Broadcast a call to the Voice page whoever started it, but only when something about it changed. */
+function broadcastVoiceCall(view: VoiceCallView): void {
+  const signature = `${view.call_status}|${view.transcript.length}|${view.transcript.at(-1)?.content.length ?? 0}|${Boolean(view.outcome)}|${Boolean(view.call_summary)}`;
+  if (lastBroadcastByCall.get(view.call_id) === signature) return;
+  lastBroadcastByCall.set(view.call_id, signature);
+  broadcastAgentEvent('voice_call', view);
+}
+
 async function observeRetellCall(call: RetellCall & { call_id: string }, ended: boolean): Promise<VoiceCallView> {
   const lines = parseRawTranscript(call);
   const outcome = ended
     ? await finalizeVoiceCall(call.call_id, call, lines)
     : (store.voiceCalls.get(call.call_id) ?? null);
-  return {
+  const view: VoiceCallView = {
     call_id: call.call_id,
     call_status: call.call_status ?? 'ongoing',
     transcript: lines,
@@ -803,6 +815,11 @@ async function observeRetellCall(call: RetellCall & { call_id: string }, ended: 
     call_successful: call.call_analysis?.call_successful,
     outcome,
   };
+  if (!latestSyncedCall || latestSyncedCall.call_id === view.call_id || view.call_status === 'ongoing' || latestSyncedCall.call_status !== 'ongoing') {
+    latestSyncedCall = view;
+  }
+  broadcastVoiceCall(view);
+  return view;
 }
 
 /**
@@ -824,8 +841,6 @@ export async function getRetellCallStatus(callId: string): Promise<VoiceCallView
   const call = { ...data, call_id: data.call_id ?? callId };
   return observeRetellCall(call, ENDED_CALL_STATUSES.has(call.call_status ?? ''));
 }
-
-let latestSyncedCall: VoiceCallView | null = null;
 
 const bootTimestampMs = Date.now() - 15 * 60_000;
 
@@ -863,10 +878,7 @@ export async function syncLatestRetellCalls(): Promise<VoiceCallView | null> {
       const isRecent = !c.start_timestamp || c.start_timestamp >= bootTimestampMs;
       if (!isRecent && c.call_status !== 'ongoing') continue;
 
-      const view = await observeRetellCall({ ...c, call_id: c.call_id }, ENDED_CALL_STATUSES.has(c.call_status ?? ''));
-      if (c === calls[0] || view.outcome?.ticket) {
-        latestSyncedCall = view;
-      }
+      await observeRetellCall({ ...c, call_id: c.call_id }, ENDED_CALL_STATUSES.has(c.call_status ?? ''));
     }
   } catch {
     // Ignore transient network errors
@@ -896,7 +908,7 @@ export async function handleRetellWebhook(body: Record<string, unknown>): Promis
   const callObj = (body['call'] ?? body) as RetellCall;
   if (callObj?.call_id) {
     const ended = ENDED_WEBHOOK_EVENTS.has(event) || ENDED_CALL_STATUSES.has(callObj.call_status ?? '');
-    latestSyncedCall = await observeRetellCall({ ...callObj, call_id: callObj.call_id }, ended);
+    await observeRetellCall({ ...callObj, call_id: callObj.call_id }, ended);
   }
   return { ok: true };
 }

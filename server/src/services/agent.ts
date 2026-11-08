@@ -4,7 +4,7 @@ import { store } from '../db/store.js';
 import { config } from '../config.js';
 import type { AgentRun, AgentStep, Incident, Simulation, Stage } from '../db/schema.js';
 import { evaluateFaults, runSimulation } from '../engines/cascade.js';
-import { createAction, deduplicateStoreHistory } from './actions.js';
+import { createAction, deduplicateStoreHistory, getLatestSyncedCall } from './actions.js';
 import { nextIncidentId } from './simulation.js';
 import { broadcastTelemetryEvent, emitNodeStatus, setPointOverride } from './telemetry.js';
 
@@ -42,6 +42,9 @@ export function streamAgent(req: Request, res: Response): void {
       }
     }
   }
+
+  const latestCall = getLatestSyncedCall();
+  if (latestCall) res.write(`event: voice_call\ndata: ${JSON.stringify(latestCall)}\n\n`);
 
   req.on('close', () => {
     agentSseClients.delete(res);

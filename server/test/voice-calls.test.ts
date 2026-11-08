@@ -7,6 +7,8 @@ import { config } from '../src/config.js';
 import type { Action, Incident } from '../src/db/schema.js';
 import { seedPortfolio } from '../src/services/portfolio.js';
 import { createAction, getRetellCallStatus, handleRetellWebhook, syncLatestRetellCalls } from '../src/services/actions.js';
+import { streamAgent } from '../src/services/agent.js';
+import type { Request, Response } from 'express';
 
 type Line = { role: 'agent' | 'user'; content: string };
 type FakeCall = {
@@ -249,4 +251,47 @@ test('ids continue past persisted records and unrelated open incidents stay open
   for (const id of ['INC-1001', 'INC-1003', 'INC-1004']) {
     assert.notEqual(store.getIncident(id)!.status, 'resolved', `${id} stays open`);
   }
+});
+
+test('"UPS panel B is down and needs a ticket" fails UPS-B and its cascade', async () => {
+  const c = call('call_ups_panel_b', [
+    GREETING,
+    { role: 'user', content: 'UPS panel B is down and needs a ticket.' },
+    { role: 'agent', content: 'Confirmed, UPS Panel B fault reported. That trips Chiller 1 and CRAH-4. I am opening a new incident ticket and work order now.' },
+  ]);
+  await handleRetellWebhook({ event: 'call_ended', call: c });
+
+  assert.equal(voiceIncidents()[0]!.root_node, 'UPS-B');
+  assert.deepEqual([...store.injectedFaults], ['UPS-B']);
+  assert.equal(store.getNode('UPS-B')!.status, 'failed');
+  assert.equal(store.getNode('CH-1')!.status, 'failed', 'cascade reaches Chiller 1');
+  assert.equal(store.getNode('CRAH-4')!.status, 'failed', 'cascade reaches CRAH-4');
+});
+
+test('every observed call is streamed over SSE, including calls the page did not start', async () => {
+  const events: Array<{ event: string; data: { call_id?: string; call_status?: string; outcome?: unknown } }> = [];
+  const res = {
+    writeHead: () => res,
+    write: (chunk: string) => {
+      const m = chunk.match(/^event: (\S+)\ndata: (.*)\n\n$/s);
+      if (m) events.push({ event: m[1]!, data: JSON.parse(m[2]!) });
+      return true;
+    },
+  } as unknown as Response;
+  let close = () => {};
+  streamAgent({ on: (_: string, fn: () => void) => { close = fn; } } as unknown as Request, res);
+
+  const lines: Line[] = [GREETING, { role: 'user', content: 'Chiller 3 is leaking.' }];
+  call('call_external', lines, 'ongoing');
+  await syncLatestRetellCalls();
+  await syncLatestRetellCalls();
+  call('call_external', lines, 'ended');
+  await syncLatestRetellCalls();
+  close();
+
+  const voice = events.filter((e) => e.event === 'voice_call' && e.data.call_id === 'call_external');
+  assert.deepEqual(voice.map((e) => e.data.call_status), ['ongoing', 'ended'], 'one event per change');
+  assert.equal(voice[0]!.data.outcome, null);
+  assert.ok(voice[1]!.data.outcome, 'ended call carries its outcome');
+  assert.ok(events.some((e) => e.event === 'voice_call_outcome'));
 });
