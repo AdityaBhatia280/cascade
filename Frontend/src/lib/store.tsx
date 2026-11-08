@@ -19,6 +19,7 @@ interface CascadeState {
   failNode: (nodeId: string) => Promise<void>;
   healNode: (nodeId: string, upstreamIds?: string[]) => Promise<void>;
   resetFaults: () => Promise<void>;
+  setFaults: (faults: string[]) => Promise<void>;
   steps: AgentStep[];
   incident: Incident | null;
   simulation: Simulation | null;
@@ -252,10 +253,10 @@ export function CascadeProvider({ children }: { children: ReactNode }) {
   const value = useMemo<CascadeState>(() => ({
     mode, setMode, usingFixtures,
     reconnecting: !usingFixtures && (!teleConnected || !agentConnected),
-    readings, anomalies, nodeStatus, faults, whatIf, toggleFault, failNode, healNode, resetFaults,
+    readings, anomalies, nodeStatus, faults, whatIf, toggleFault, failNode, healNode, resetFaults, setFaults: applyFaults,
     steps, incident, simulation, setSimulation, pending,
     approvalOpen, setApprovalOpen, scenarioRunning, lastUpdated, runScenario, approve, reject, createWorkOrder, voiceCall,
-  }), [mode, usingFixtures, teleConnected, agentConnected, readings, anomalies, nodeStatus, faults, whatIf, toggleFault, failNode, healNode, resetFaults, steps, incident, simulation, pending, approvalOpen, scenarioRunning, lastUpdated, runScenario, approve, reject, createWorkOrder, voiceCall]);
+  }), [mode, usingFixtures, teleConnected, agentConnected, readings, anomalies, nodeStatus, faults, whatIf, toggleFault, failNode, healNode, resetFaults, applyFaults, steps, incident, simulation, pending, approvalOpen, scenarioRunning, lastUpdated, runScenario, approve, reject, createWorkOrder, voiceCall]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
