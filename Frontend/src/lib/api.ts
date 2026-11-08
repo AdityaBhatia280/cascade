@@ -8,7 +8,7 @@ import type {
 } from './types';
 
 const env = import.meta.env as Record<string, string | undefined>;
-export const API_BASE = env['VITE_API_BASE'] ?? 'http://127.0.0.1:5001/api';
+export const API_BASE = env['VITE_API_BASE'] ?? '/api';
 const USE_FIXTURES = env['VITE_USE_FIXTURES'] === 'true';
 
 // ---- usingFixtures flag ----
